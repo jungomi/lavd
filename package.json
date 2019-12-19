@@ -1,0 +1,42 @@
+{
+  "name": "lavd",
+  "version": "0.1.0",
+  "description": "Log and Visualise Data",
+  "repository": "https://github.com/jungomi/lavd",
+  "author": "Michael Jungo <michaeljungo92@gmail.com>",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "start": "parcel index.html",
+    "build": "parcel build index.html --public-url /",
+    "lint": "eslint js/ --ext .js,.ts,.tsx ",
+    "type-check": "tsc --noEmit",
+    "fix": "eslint js/ --ext .js,.ts,.tsx --fix",
+    "clean": "rimraf dist/"
+  },
+  "devDependencies": {
+    "@emotion/core": "^10.0.22",
+    "@types/node": "^12.12.20",
+    "@types/react": "^16.9.16",
+    "@types/react-dom": "^16.9.4",
+    "@typescript-eslint/eslint-plugin": "^2.12.0",
+    "@typescript-eslint/parser": "^2.12.0",
+    "eslint": "^6.7.2",
+    "eslint-config-prettier": "^6.7.0",
+    "eslint-config-react-app": "^5.1.0",
+    "eslint-plugin-prettier": "^3.1.2",
+    "eslint-plugin-react": "^7.17.0",
+    "eslint-plugin-react-app": "^6.1.0",
+    "eslint-plugin-react-hooks": "^2.3.0",
+    "parcel-bundler": "^1.12.4",
+    "prettier": "^1.19.1",
+    "rimraf": "^3.0.0",
+    "typescript": "^3.7.3"
+  },
+  "dependencies": {
+    "emotion": "^10.0.23",
+    "emotion-reset": "^2.0.4",
+    "react": "^16.12.0",
+    "react-dom": "^16.12.0"
+  }
+}
