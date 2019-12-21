@@ -60,7 +60,7 @@ export const apexcharts = `
   width: 0.6rem !important;
   height: 0.6rem !important;
   margin-right: 0.4rem !important;
-  border-radius: 100% !important;
+  flex-shrink: 0;
 }
 .apexcharts-tooltip-series-group.active {
   padding-bottom: 0 !important;
