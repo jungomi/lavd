@@ -46,6 +46,35 @@ html, body {
 *::-webkit-scrollbar-thumb:active {
   background-color: ${scrollbar.colour.active};
 }
+
+.apexcharts-tooltip {
+  line-height: 0.5;
+  padding: 0.3rem;
+  color: #ffffff;
+  font-weight: bold;
+  background: rgba(0, 0, 0, 0.65) !important;
+  border: 2px solid #666666 !important;
+  transition: none !important;
+}
+.apexcharts-tooltip-marker {
+  width: 0.6rem !important;
+  height: 0.6rem !important;
+  margin-right: 0.4rem !important;
+  border-radius: 100% !important;
+}
+.apexcharts-tooltip-series-group.active {
+  padding-bottom: 0 !important;
+}
+.apexcharts-tooltip-text {
+  width: 100%;
+}
+.apexcharts-tooltip-y-group {
+  display: flex;
+  justify-content: space-between;
+}
+.apexcharts-tooltip-text-value {
+  margin-left: 0.5rem !important;
+}
 `
 
 ReactDOM.render(<App />, document.getElementById("root"));
