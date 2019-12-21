@@ -14,7 +14,7 @@ function formatAxisValues(value: number): string {
 }
 
 function formatTooltipValues(value?: number): string {
-  if (value === undefined) {
+  if (value === undefined || value === null) {
     return "-";
   }
   return value.toString();
