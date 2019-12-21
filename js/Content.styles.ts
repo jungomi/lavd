@@ -6,5 +6,6 @@ export const main = css({
   padding: "1.0em 2em",
   overflow: "auto",
   width: "100%",
-  background: "#f8fafc"
+  background: "#f8fafc",
+  flexWrap: "wrap"
 });

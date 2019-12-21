@@ -1,5 +1,6 @@
 import React from "react";
 import Chart from "react-apexcharts";
+import * as styles from "./LinePlot.styles";
 import * as icons from "./icons";
 
 function formatAxisValues(value: number): string {
@@ -30,9 +31,10 @@ export type LineData = {
 type Props = {
   data: Array<LineData>;
   colours: Array<string>;
+  title: string;
 };
 
-export const LinePlot: React.FC<Props> = ({ data, colours }) => {
+export const LinePlot: React.FC<Props> = ({ data, colours, title }) => {
   const options = {
     colors: colours,
     chart: {
@@ -122,12 +124,15 @@ export const LinePlot: React.FC<Props> = ({ data, colours }) => {
   };
 
   return (
-    <Chart
-      options={options}
-      series={data}
-      type="line"
-      width={400}
-      height={300}
-    />
+    <div className={styles.container}>
+      <span className={styles.title}>{title}</span>
+      <Chart
+        options={options}
+        series={data}
+        type="line"
+        width={400}
+        height={300}
+      />
+    </div>
   );
 };

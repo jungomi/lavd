@@ -64,8 +64,20 @@ const exampleSeries2: Array<LineData> = [
 
 export const Content = () => (
   <main className={styles.main}>
-    <span>Content</span>
-    <LinePlot data={exampleSeries} colours={exampleColours} />
-    <LinePlot data={exampleSeries2} colours={exampleColours} />
+    <LinePlot
+      data={exampleSeries}
+      colours={exampleColours}
+      title="Character Error Rate"
+    />
+    <LinePlot
+      data={exampleSeries2}
+      colours={exampleColours}
+      title="Something else"
+    />
+    <LinePlot
+      data={exampleSeries}
+      colours={exampleColours}
+      title="An extremely long title that might wrap or break everything in the layout"
+    />
   </main>
 );
