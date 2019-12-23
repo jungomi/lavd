@@ -12,5 +12,5 @@ export const title = css({
   textOverflow: "ellipsis",
   whiteSpace: "nowrap",
   overflow: "hidden",
-  maxWidth: "330px",
+  maxWidth: "330px"
 });

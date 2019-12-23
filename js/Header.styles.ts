@@ -2,7 +2,6 @@ import { css } from "emotion";
 
 export const headerColour = "#353535";
 
-
 export const header = css({
   position: "relative",
   width: "100%",

@@ -21,11 +21,9 @@ function formatTooltipValues(value?: number): string {
   return value.toString();
 }
 
-type Optional<T> = T | undefined;
-
 export type LineData = {
   name: string;
-  data: Array<Array<Optional<number>>>;
+  data: Array<Array<number | null>>;
 };
 
 type Props = {
