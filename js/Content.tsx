@@ -1,5 +1,6 @@
 import React from "react";
 import * as styles from "./Content.styles";
+import { ColourMap, colourString, toRgb } from "./plot/colour";
 import { LinePlot } from "./plot/LinePlot";
 
 type Optional<T> = T | undefined;
@@ -44,11 +45,7 @@ function padSeries(
   return [...padStart, ...series, ...padEnd];
 }
 
-function createPlot(
-  category: string,
-  data: StatMap,
-  colourMap: Map<string, string>
-) {
+function createPlot(category: string, data: StatMap, colourMap: ColourMap) {
   const colours = [];
   const series = [];
   for (const [name, d] of data) {
@@ -71,7 +68,7 @@ function createPlot(
     <LinePlot
       key={category}
       data={paddedSeries}
-      colours={colours}
+      colours={colours.map(toRgb).map(colourString)}
       title={category}
     />
   );
@@ -79,7 +76,7 @@ function createPlot(
 
 type Props = {
   data: StatMap;
-  colours: Map<string, string>;
+  colours: ColourMap;
 };
 
 export const Content: React.FC<Props> = ({ data, colours }) => {

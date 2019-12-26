@@ -6,11 +6,11 @@ export const sidebar = css({
   width: "20em",
   position: "relative",
   padding: "1.0em 1.0em",
-  overflow: "auto",
   flexDirection: "column"
 });
 
 export const entry = css({
+  position: "relative",
   display: "flex",
   alignItems: "flex-start",
   fontWeight: 300,
@@ -22,5 +22,7 @@ export const colour = css({
   height: "1.0rem",
   marginRight: "0.6rem",
   flexShrink: 0,
-  borderRadius: "50%"
+  borderRadius: "50%",
+  border: "1px solid #dadada",
+  cursor: "pointer"
 });
