@@ -2,9 +2,8 @@ import { css } from "emotion";
 import React, { useState } from "react";
 import { Content } from "./Content";
 import { Header } from "./Header";
-import { assignColours } from "./plot/colour";
 import { Sidebar } from "./Sidebar";
-import { Colour } from "./plot/colour";
+import { assignColours, Colour } from "./colour/definition";
 
 import { data } from "./fixture";
 

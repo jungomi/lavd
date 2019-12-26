@@ -1,6 +1,6 @@
 import React from "react";
 import * as styles from "./Content.styles";
-import { ColourMap, colourString, toRgb } from "./plot/colour";
+import { ColourMap, colourString, toRgb } from "./colour/definition";
 import { LinePlot } from "./plot/LinePlot";
 
 type Optional<T> = T | undefined;

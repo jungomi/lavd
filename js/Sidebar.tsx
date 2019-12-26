@@ -1,6 +1,11 @@
 import React, { useState } from "react";
-import { ColourPicker } from "./ColourPicker";
-import { Colour, ColourMap, colourString, defaultColour } from "./plot/colour";
+import { ColourPicker } from "./colour/ColourPicker";
+import {
+  Colour,
+  ColourMap,
+  colourString,
+  defaultColour
+} from "./colour/definition";
 import * as styles from "./Sidebar.styles";
 
 type Props = {
