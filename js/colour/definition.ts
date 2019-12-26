@@ -139,6 +139,68 @@ export function toHsl(colour: Colour): HslColour {
   }
 }
 
+export function toHex(colour: Colour): string {
+  const rgbColour = toRgb(colour).value;
+  const red = rgbColour.red.toString(16).padStart(2, "0");
+  const green = rgbColour.green.toString(16).padStart(2, "0");
+  const blue = rgbColour.blue.toString(16).padStart(2, "0");
+  const currentAlpha = rgbColour.alpha === undefined ? 1.0 : rgbColour.alpha;
+  const alpha =
+    currentAlpha === 1.0
+      ? ""
+      : Math.round(currentAlpha * 255)
+          .toString(16)
+          .padStart(2, "0");
+  return `#${red}${green}${blue}${alpha}`;
+}
+
+export function parseHex(str: string): RgbColour | undefined {
+  let hexString = str.replace("#", "");
+  // Short version of hex (with optional alpha) where it the value is just
+  // repeated once.
+  if (hexString.length === 3 || hexString.length === 4) {
+    hexString = [...hexString].map(s => s.repeat(2)).join("");
+  }
+  // Not a valid hex colour
+  if (hexString.length !== 6 && hexString.length !== 8) {
+    return undefined;
+  }
+  // Incorrect characters
+  if (!/^[0-9a-f]+$/.test(hexString)) {
+    return undefined;
+  }
+  const hex = Number.parseInt(hexString, 16);
+  if (Number.isNaN(hex)) {
+    return undefined;
+  }
+  const hasAlpha = hexString.length === 8;
+  if (hasAlpha) {
+    const red = (hex >> 32) & 255;
+    const green = (hex >> 16) & 255;
+    const blue = (hex >> 8) & 255;
+    const alpha = (hex & 255) / 255;
+    return { kind: "rgb", value: { red, green, blue, alpha } };
+  } else {
+    const red = (hex >> 16) & 255;
+    const green = (hex >> 8) & 255;
+    const blue = hex & 255;
+    return { kind: "rgb", value: { red, green, blue } };
+  }
+}
+
+export function coloursEqual(colour1: Colour, colour2: Colour): boolean {
+  const hsl1 = toHsl(colour1).value;
+  const hsl2 = toHsl(colour2).value;
+  const alpha1 = hsl1.alpha === undefined ? 1.0 : hsl1.alpha;
+  const alpha2 = hsl2.alpha === undefined ? 1.0 : hsl2.alpha;
+  return (
+    hsl1.hue === hsl2.hue &&
+    hsl1.saturation === hsl2.saturation &&
+    hsl1.lightness === hsl2.lightness &&
+    alpha1 === alpha2
+  );
+}
+
 // Kelly's distinct colours
 // Removed some that were too similar.
 export const distinctColours: Array<Colour> = [
