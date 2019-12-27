@@ -1,5 +1,4 @@
 import React from "react";
-import * as styles from "./Content.styles";
 import { ColourMap, colourString, toRgb } from "./colour/definition";
 import { LinePlot } from "./plot/LinePlot";
 
@@ -79,11 +78,7 @@ type Props = {
   colours: ColourMap;
 };
 
-export const Content: React.FC<Props> = ({ data, colours }) => {
+export const Scalars: React.FC<Props> = ({ data, colours }) => {
   const categories = sortedCategories(data);
-  return (
-    <main className={styles.main}>
-      {categories.map(category => createPlot(category, data, colours))}
-    </main>
-  );
+  return <>{categories.map(category => createPlot(category, data, colours))}</>;
 };

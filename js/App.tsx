@@ -1,19 +1,27 @@
-import { css } from "emotion";
 import React, { useState } from "react";
-import { Content } from "./Content";
-import { Header } from "./Header";
-import { Sidebar } from "./Sidebar";
 import { assignColours, Colour } from "./colour/definition";
+import { Header } from "./Header";
+import { Scalars } from "./Scalars";
+import { Sidebar } from "./Sidebar";
+import * as styles from "./App.styles";
 
 import { data } from "./fixture";
+import { useRoutes, navigate } from "hookrouter";
 
-const mainClass = css({
-  display: "flex",
-  height: "100%",
-  position: "relative"
-});
+const routes = {
+  "/scalar": () => Scalars,
+  "/image": () => () => (
+    <span className={styles.noData}>No images available</span>
+  ),
+  "/text": () => () => <span className={styles.noData}>No text available</span>,
+  "/about": () => () => <span>About</span>
+};
 
 export const App = () => {
+  const Content = useRoutes(routes);
+  if (Content === null) {
+    navigate("/scalar");
+  }
   const names = [...data.keys()];
   const colourMap = assignColours(names);
   const [colours, setColours] = useState(new Map(colourMap));
@@ -25,9 +33,11 @@ export const App = () => {
   return (
     <>
       <Header />
-      <div className={mainClass}>
+      <div className={styles.wrapper}>
         <Sidebar names={names} colours={colours} setColour={setNewColour} />
-        <Content data={data} colours={colours} />
+        <main className={styles.main}>
+          {Content && <Content data={data} colours={colours} />}
+        </main>
       </div>
     </>
   );

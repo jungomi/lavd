@@ -1,4 +1,4 @@
-import { css } from "emotion";
+import { css, cx } from "emotion";
 
 export const headerColour = "#353535";
 
@@ -29,7 +29,8 @@ export const item = css({
   margin: "0 0.5em",
   textDecoration: "none",
   height: "100%",
-  color: "#ddd",
+  color: "#aaa",
+  fontWeight: 500,
   userSelect: "none",
   cursor: "pointer",
   ":after": {
@@ -45,10 +46,12 @@ export const item = css({
   }
 });
 
-export const active = css({
-  color: "#fff",
-  fontWeight: "bold",
-  ":after": {
-    transform: "translateY(0)"
-  }
-});
+export const active = cx(
+  item,
+  css({
+    color: "#fff",
+    ":after": {
+      transform: "translateY(0)"
+    }
+  })
+);
