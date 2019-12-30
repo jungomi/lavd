@@ -8,7 +8,13 @@ import flippedImage from "./birds-flipped.png";
 // @ts-ignore
 import greyImage from "./birds-grey.png";
 
-const classes = ["bird", "orange", "cat"];
+const classes = [
+  "bird",
+  "a slightly longer class name",
+  "orange",
+  "An extremely long class name that might wrap or break everything in the layout",
+  "cat"
+];
 
 export const images: ImageMap = new Map([
   [
@@ -24,7 +30,7 @@ export const images: ImageMap = new Map([
               xEnd: 250,
               yStart: 50,
               yEnd: 300,
-              class: "bird",
+              className: "bird",
               probability: 0.9
             },
             {
@@ -32,7 +38,7 @@ export const images: ImageMap = new Map([
               xEnd: 650,
               yStart: 100,
               yEnd: 300,
-              class: "bird",
+              className: "orange",
               probability: 0.3
             }
           ]
@@ -46,7 +52,7 @@ export const images: ImageMap = new Map([
               xEnd: 300,
               yStart: 50,
               yEnd: 250,
-              class: "bird",
+              className: "bird",
               probability: 0.9
             },
             {
@@ -54,7 +60,7 @@ export const images: ImageMap = new Map([
               xEnd: 300,
               yStart: 500,
               yEnd: 650,
-              class: "bird",
+              className: "orange",
               probability: 0.3
             }
           ]
@@ -68,7 +74,7 @@ export const images: ImageMap = new Map([
               xEnd: 250,
               yStart: 50,
               yEnd: 300,
-              class: "bird",
+              className: "bird",
               probability: 0.9
             },
             {
@@ -76,7 +82,7 @@ export const images: ImageMap = new Map([
               xEnd: 650,
               yStart: 100,
               yEnd: 300,
-              class: "bird",
+              className: "orange",
               probability: 0.3
             }
           ]
@@ -97,7 +103,7 @@ export const images: ImageMap = new Map([
               xEnd: 200,
               yStart: 150,
               yEnd: 250,
-              class: "bird",
+              className: "bird",
               probability: 0.2
             },
             {
@@ -105,10 +111,20 @@ export const images: ImageMap = new Map([
               xEnd: 500,
               yStart: 200,
               yEnd: 400,
-              class: "bird",
+              className: "bird",
               probability: 0.4
             }
           ]
+        }
+      }
+    }
+  ],
+  [
+    "different start",
+    {
+      images: {
+        Birds: {
+          source: flippedImage
         }
       }
     }
