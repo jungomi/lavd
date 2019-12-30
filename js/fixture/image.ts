@@ -26,18 +26,18 @@ export const images: ImageMap = new Map([
           classes,
           bbox: [
             {
-              xStart: 50,
+              xStart: 0,
               xEnd: 250,
-              yStart: 50,
+              yStart: 0,
               yEnd: 300,
               className: "bird",
-              probability: 0.9
+              probability: 0.2
             },
             {
               xStart: 500,
-              xEnd: 650,
+              xEnd: 1024,
               yStart: 100,
-              yEnd: 300,
+              yEnd: 682,
               className: "orange",
               probability: 0.3
             }

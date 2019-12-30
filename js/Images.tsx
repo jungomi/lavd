@@ -107,6 +107,8 @@ type BoundingBoxProps = {
   className: string;
   probability?: number;
   classColours: ColourMap;
+  maxWidth?: number;
+  maxHeight?: number;
 };
 
 const BoundingBox: React.FC<BoundingBoxProps> = ({
@@ -116,14 +118,31 @@ const BoundingBox: React.FC<BoundingBoxProps> = ({
   yEnd,
   className,
   probability,
-  classColours
+  classColours,
+  maxWidth,
+  maxHeight
 }) => {
   const colour: Colour = classColours.get(className) || defaultColour;
+  // The paths draw the lines such that the centre of the line is exactly on the
+  // specified coordinates. In order to have the line outside of the actual
+  // covered area (i.e. the coordinates represent the very first pixel that is
+  // inside the bounding box), half of the stroke width need to be
+  // subtracted/added, except when the line would be outside of the image.
+  const xS = Math.max(styles.strokeWidth / 2, xStart - styles.strokeWidth / 2);
+  let xE = xEnd + styles.strokeWidth / 2;
+  if (maxWidth) {
+    xE = Math.min(xE, maxWidth - styles.strokeWidth / 2);
+  }
+  const yS = Math.max(styles.strokeWidth / 2, yStart - styles.strokeWidth / 2);
+  let yE = yEnd + styles.strokeWidth / 2;
+  if (maxHeight) {
+    yE = Math.min(yE, maxHeight - styles.strokeWidth / 2);
+  }
   return (
     <path
       fill="none"
       stroke={colourString(colour)}
-      d={`M${xStart},${yStart} L${xEnd},${yStart} L${xEnd},${yEnd} L${xStart},${yEnd} Z`}
+      d={`M${xS},${yS} L${xE},${yS} L${xE},${yE} L${xS},${yE} Z`}
     />
   );
 };
@@ -133,41 +152,65 @@ type ImageOverlayProps = {
   name: string;
   classColours: ColourMap;
   setClassColour: (className: string, colour: Colour) => void;
+  setSize: (width: number, height: number) => void;
+  width?: number;
+  height?: number;
 };
 
 const ImageOverlay: React.FC<ImageOverlayProps> = ({
   image,
   name,
   classColours,
-  setClassColour
-}) => (
-  <div className={styles.imageOverlay}>
-    <img
-      src={image.source}
-      alt={name}
-      className={styles.image}
-      draggable="false"
-    />
-    {image.classes && (
-      <ClassList
-        classes={image.classes}
-        classColours={classColours}
-        setClassColour={setClassColour}
+  setClassColour,
+  setSize,
+  width,
+  height
+}) => {
+  return (
+    <div className={styles.imageOverlay}>
+      <img
+        src={image.source}
+        alt={name}
+        className={styles.image}
+        draggable="false"
+        onLoad={e => {
+          // This is always a HTMLImageElement, obviously.
+          const imgElem = e.target as HTMLImageElement;
+          setSize(imgElem.width, imgElem.height);
+        }}
       />
-    )}
-    {image.bbox && (
-      <svg xmlns="http://www.w3.org/2000/svg" className={styles.svg}>
-        {image.bbox.map(bbox => (
-          <BoundingBox
-            {...bbox}
-            classColours={classColours}
-            key={bboxKey(bbox)}
-          />
-        ))}
-      </svg>
-    )}
-  </div>
-);
+      {image.classes && (
+        <ClassList
+          classes={image.classes}
+          classColours={classColours}
+          setClassColour={setClassColour}
+        />
+      )}
+      {image.bbox && (
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          className={styles.svg}
+          style={{ width, height }}
+        >
+          {image.bbox.map(bbox => (
+            <BoundingBox
+              {...bbox}
+              classColours={classColours}
+              maxWidth={width}
+              maxHeight={height}
+              key={bboxKey(bbox)}
+            />
+          ))}
+        </svg>
+      )}
+    </div>
+  );
+};
+
+type ImageSize = {
+  width?: number;
+  height?: number;
+};
 
 type ImageCardProps = {
   category: string;
@@ -191,9 +234,16 @@ const ImageCard: React.FC<ImageCardProps> = ({
   const setNewClassColour = (className: string, colour: Colour) => {
     setClassColours(new Map(classColours.set(className, colour)));
   };
+  const [imageSize, setImageSize] = useState<ImageSize>({});
+  const setSize = (width: number, height: number) => {
+    setImageSize({ width, height });
+  };
   return (
     <div className={styles.imageCard}>
-      <div className={styles.title}>
+      <div
+        className={styles.title}
+        style={{ maxWidth: imageSize.width, maxHeight: imageSize.height }}
+      >
         <span className={styles.category}>{category}</span>
         <span className={styles.name} style={{ color: colourString(colour) }}>
           {name}
@@ -204,6 +254,9 @@ const ImageCard: React.FC<ImageCardProps> = ({
         name={category}
         classColours={classColours}
         setClassColour={setNewClassColour}
+        setSize={setSize}
+        width={imageSize.width}
+        height={imageSize.height}
       />
     </div>
   );

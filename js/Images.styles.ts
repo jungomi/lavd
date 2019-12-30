@@ -21,8 +21,7 @@ export const imageCard = css({
 export const title = css({
   display: "flex",
   flexDirection: "column",
-  marginBottom: "0.8rem",
-  maxWidth: "800px"
+  marginBottom: "0.8rem"
 });
 
 export const category = css({
@@ -45,10 +44,7 @@ export const classList = css({
   display: "flex",
   flexDirection: "column",
   marginLeft: "0.8rem",
-  maxWidth: "20rem",
-  // TODO: Remove that, but will need to have the image size, everything is kind
-  // of a mess when not knowing it.
-  zIndex: 20
+  maxWidth: "20rem"
 });
 
 export const classListTitle = css({
@@ -69,11 +65,11 @@ export const imageOverlay = css({
   display: "flex"
 });
 
+export const strokeWidth = 2;
+
 export const svg = css({
   position: "absolute",
-  strokeWidth: "2px",
-  height: "100%",
-  width: "100%"
+  strokeWidth: `${strokeWidth}px`
 });
 
 export const colour = css({
