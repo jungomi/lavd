@@ -9,7 +9,7 @@ export const wrapper = css({
 export const main = css({
   display: "flex",
   position: "relative",
-  padding: "1.0em 2em",
+  padding: "2.0rem",
   overflow: "auto",
   width: "100%",
   background: "#f8fafc",

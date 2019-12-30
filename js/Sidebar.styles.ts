@@ -3,9 +3,9 @@ import { css } from "emotion";
 export const sidebar = css({
   display: "flex",
   height: "100%",
-  width: "20em",
+  width: "20rem",
   position: "relative",
-  padding: "1.0em 1.0em",
+  padding: "1.0rem",
   flexDirection: "column"
 });
 
