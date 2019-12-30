@@ -1,4 +1,4 @@
-import { StatMap } from "./Content";
+import { StatMap } from "../Scalars";
 
 // Some data to test the actual graphs
 export const data: StatMap = new Map([

@@ -1,17 +1,31 @@
+import { navigate, useRoutes } from "hookrouter";
 import React, { useState } from "react";
-import { assignColours, Colour } from "./colour/definition";
-import { Header } from "./Header";
-import { Scalars } from "./Scalars";
-import { Sidebar } from "./Sidebar";
 import * as styles from "./App.styles";
+import { assignColours, Colour, ColourMap } from "./colour/definition";
+import { Header } from "./Header";
+import { ImageMap, Images } from "./Images";
+import { Scalars, StatMap } from "./Scalars";
+import { Sidebar } from "./Sidebar";
 
-import { data } from "./fixture";
-import { useRoutes, navigate } from "hookrouter";
+import { images } from "./fixture/image";
+import { data } from "./fixture/scalar";
 
-const routes = {
-  "/scalar": () => Scalars,
-  "/image": () => () => (
-    <span className={styles.noData}>No images available</span>
+type RouteProps = {
+  scalars: StatMap;
+  images: ImageMap;
+  colours: ColourMap;
+};
+
+type Routes = {
+  [route: string]: () => (props: RouteProps) => JSX.Element;
+};
+
+const routes: Routes = {
+  "/scalar": () => ({ scalars, colours }) => (
+    <Scalars data={scalars} colours={colours} />
+  ),
+  "/image": () => ({ images, colours }) => (
+    <Images data={images} colours={colours} />
   ),
   "/text": () => () => <span className={styles.noData}>No text available</span>,
   "/about": () => () => <span>About</span>
@@ -36,7 +50,9 @@ export const App = () => {
       <div className={styles.wrapper}>
         <Sidebar names={names} colours={colours} setColour={setNewColour} />
         <main className={styles.main}>
-          {Content && <Content data={data} colours={colours} />}
+          {Content && (
+            <Content scalars={data} images={images} colours={colours} />
+          )}
         </main>
       </div>
     </>

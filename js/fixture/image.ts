@@ -1,0 +1,116 @@
+import { ImageMap } from "../Images";
+// This is ignored since TypeScript is not happy with images, but it will
+// automatically be bundled.
+// @ts-ignore
+import birdImage from "./birds-1024.png";
+// @ts-ignore
+import flippedImage from "./birds-flipped.png";
+// @ts-ignore
+import greyImage from "./birds-grey.png";
+
+const classes = ["bird", "orange", "cat"];
+
+export const images: ImageMap = new Map([
+  [
+    "test name",
+    {
+      images: {
+        Birds: {
+          source: birdImage,
+          classes,
+          bbox: [
+            {
+              xStart: 50,
+              xEnd: 250,
+              yStart: 50,
+              yEnd: 300,
+              class: "bird",
+              probability: 0.9
+            },
+            {
+              xStart: 500,
+              xEnd: 650,
+              yStart: 100,
+              yEnd: 300,
+              class: "bird",
+              probability: 0.3
+            }
+          ]
+        },
+        "Birds Flipped": {
+          source: flippedImage,
+          classes,
+          bbox: [
+            {
+              xStart: 50,
+              xEnd: 300,
+              yStart: 50,
+              yEnd: 250,
+              class: "bird",
+              probability: 0.9
+            },
+            {
+              xStart: 100,
+              xEnd: 300,
+              yStart: 500,
+              yEnd: 650,
+              class: "bird",
+              probability: 0.3
+            }
+          ]
+        },
+        "Birds Greyscale": {
+          source: greyImage,
+          classes,
+          bbox: [
+            {
+              xStart: 50,
+              xEnd: 250,
+              yStart: 50,
+              yEnd: 300,
+              class: "bird",
+              probability: 0.9
+            },
+            {
+              xStart: 500,
+              xEnd: 650,
+              yStart: 100,
+              yEnd: 300,
+              class: "bird",
+              probability: 0.3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  [
+    "An extremely long title name that might wrap or break everything in the layout",
+    {
+      images: {
+        Birds: {
+          source: birdImage,
+          classes,
+          bbox: [
+            {
+              xStart: 150,
+              xEnd: 200,
+              yStart: 150,
+              yEnd: 250,
+              class: "bird",
+              probability: 0.2
+            },
+            {
+              xStart: 50,
+              xEnd: 500,
+              yStart: 200,
+              yEnd: 400,
+              class: "bird",
+              probability: 0.4
+            }
+          ]
+        }
+      }
+    }
+  ]
+]);
