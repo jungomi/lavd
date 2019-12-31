@@ -3,10 +3,11 @@ import * as styles from "./ColourInput.styles";
 import {
   Colour,
   coloursEqual,
-  Hsl,
+  Hsv,
   parseHex,
   toHex,
   toHsl,
+  toHsv,
   toRgb
 } from "./definition";
 
@@ -20,13 +21,13 @@ export type InputFormat = "rgb" | "hsl" | "hex";
 export const defaultInputFormat = "rgb";
 
 type InputProps = {
-  colour: Hsl;
-  setColour: (colour: Hsl) => void;
+  colour: Hsv;
+  setColour: (colour: Hsv) => void;
   switchMode: () => void;
 };
 
 const RgbInput: React.FC<InputProps> = ({ colour, setColour, switchMode }) => {
-  const rgbColour = toRgb({ kind: "hsl", value: colour }).value;
+  const rgbColour = toRgb({ kind: "hsv", value: colour }).value;
   const currentAlpha = rgbColour.alpha === undefined ? 1.0 : rgbColour.alpha;
   return (
     <div className={styles.inputPanel}>
@@ -43,7 +44,7 @@ const RgbInput: React.FC<InputProps> = ({ colour, setColour, switchMode }) => {
               kind: "rgb",
               value: { ...rgbColour, red }
             };
-            setColour(toHsl(newColour).value);
+            setColour(toHsv(newColour).value);
           }}
         />
         <span className={styles.label}>R</span>
@@ -61,7 +62,7 @@ const RgbInput: React.FC<InputProps> = ({ colour, setColour, switchMode }) => {
               kind: "rgb",
               value: { ...rgbColour, green }
             };
-            setColour(toHsl(newColour).value);
+            setColour(toHsv(newColour).value);
           }}
         />
         <span className={styles.label}>G</span>
@@ -79,7 +80,7 @@ const RgbInput: React.FC<InputProps> = ({ colour, setColour, switchMode }) => {
               kind: "rgb",
               value: { ...rgbColour, blue }
             };
-            setColour(toHsl(newColour).value);
+            setColour(toHsv(newColour).value);
           }}
         />
         <span className={styles.label}>B</span>
@@ -112,6 +113,7 @@ const RgbInput: React.FC<InputProps> = ({ colour, setColour, switchMode }) => {
 };
 
 const HslInput: React.FC<InputProps> = ({ colour, setColour, switchMode }) => {
+  const hslColour = toHsl({ kind: "hsv", value: colour }).value;
   const currentAlpha = colour.alpha === undefined ? 1.0 : colour.alpha;
   return (
     <div className={styles.inputPanel}>
@@ -121,8 +123,9 @@ const HslInput: React.FC<InputProps> = ({ colour, setColour, switchMode }) => {
           className={styles.input}
           min={0}
           max={360}
-          value={Math.round(colour.hue)}
+          value={Math.round(hslColour.hue)}
           onChange={e => {
+            // Hue is the same for HSL and HSV
             const hue = Number.parseInt(e.target.value);
             setColour({ ...colour, hue });
           }}
@@ -135,10 +138,14 @@ const HslInput: React.FC<InputProps> = ({ colour, setColour, switchMode }) => {
           className={styles.input}
           min={0}
           max={100}
-          value={Math.round(colour.saturation)}
+          value={Math.round(hslColour.saturation)}
           onChange={e => {
             const saturation = Number.parseInt(e.target.value);
-            setColour({ ...colour, saturation });
+            const newColour: Colour = {
+              kind: "hsl",
+              value: { ...hslColour, saturation }
+            };
+            setColour(toHsv(newColour).value);
           }}
         />
         <span className={styles.label}>S</span>
@@ -149,10 +156,14 @@ const HslInput: React.FC<InputProps> = ({ colour, setColour, switchMode }) => {
           className={styles.input}
           min={0}
           max={100}
-          value={Math.round(colour.lightness)}
+          value={Math.round(hslColour.lightness)}
           onChange={e => {
             const lightness = Number.parseInt(e.target.value);
-            setColour({ ...colour, lightness });
+            const newColour: Colour = {
+              kind: "hsl",
+              value: { ...hslColour, lightness }
+            };
+            setColour(toHsv(newColour).value);
           }}
         />
         <span className={styles.label}>L</span>
@@ -185,7 +196,7 @@ const HslInput: React.FC<InputProps> = ({ colour, setColour, switchMode }) => {
 };
 
 const HexInput: React.FC<InputProps> = ({ colour, setColour, switchMode }) => {
-  const currentColour: Colour = { kind: "hsl", value: colour };
+  const currentColour: Colour = { kind: "hsv", value: colour };
   const hex = toHex(currentColour);
   const [value, setValue] = useState(hex);
 
@@ -214,7 +225,7 @@ const HexInput: React.FC<InputProps> = ({ colour, setColour, switchMode }) => {
             const rgbColour = parseHex(e.target.value);
             setValue(e.target.value);
             if (rgbColour !== undefined) {
-              const newColour = toHsl(rgbColour).value;
+              const newColour = toHsv(rgbColour).value;
               setColour(newColour);
             }
           }}
@@ -234,8 +245,8 @@ const HexInput: React.FC<InputProps> = ({ colour, setColour, switchMode }) => {
 };
 
 type Props = {
-  colour: Hsl;
-  setColour: (colour: Hsl) => void;
+  colour: Hsv;
+  setColour: (colour: Hsv) => void;
 };
 
 export const ColourInput: React.FC<Props> = ({ colour, setColour }) => {

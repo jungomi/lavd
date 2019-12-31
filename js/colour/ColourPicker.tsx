@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
-import * as styles from "./ColourPicker.styles";
 import { ColourInput } from "./ColourInput";
-import { Colour, colourString, toHsl } from "./definition";
+import * as styles from "./ColourPicker.styles";
+import { Colour, colourString, toHsv } from "./definition";
 
 function clamp(x: number, min: number, max: number): number {
   return Math.min(Math.max(min, x), max);
@@ -23,7 +23,7 @@ const movingStates = {
 };
 
 export const ColourPicker: React.FC<Props> = ({ colour, onSelect }) => {
-  const [currentColour, setCurrentColour] = useState(toHsl(colour).value);
+  const [currentColour, setCurrentColour] = useState(toHsv(colour).value);
   const [isMoving, setMoving] = useState(movingStates.off);
   const popupRef = useRef<HTMLDivElement>(null);
   const fieldRef = useRef<HTMLDivElement>(null);
@@ -33,14 +33,7 @@ export const ColourPicker: React.FC<Props> = ({ colour, onSelect }) => {
   const currentAlpha =
     currentColour.alpha === undefined ? 1.0 : currentColour.alpha;
   const posX = clamp((currentColour.saturation * maxX) / 100, 0, maxX);
-  const posY = clamp(
-    ((100 -
-      (currentColour.lightness / (2 - currentColour.saturation / 100)) * 2) *
-      maxY) /
-      100,
-    0,
-    maxY
-  );
+  const posY = clamp(((100 - currentColour.value) * maxY) / 100, 0, maxY);
   const posHue = (currentColour.hue / 360) * styles.sliderWidth;
   const posAlpha = currentAlpha * styles.sliderWidth;
 
@@ -53,9 +46,8 @@ export const ColourPicker: React.FC<Props> = ({ colour, onSelect }) => {
       const x = clamp(clientX - left, 0, maxX);
       const y = clamp(clientY - top, 0, maxY);
       const saturation = (x / maxX) * 100;
-      const lightness =
-        Math.round((100 - (y / maxY) * 100) / 2) * (2 - saturation / 100);
-      setCurrentColour({ ...currentColour, saturation, lightness });
+      const value = 100 - (y / maxY) * 100;
+      setCurrentColour({ ...currentColour, saturation, value });
     }
   };
   const updateHue = (clientX: number) => {
@@ -92,12 +84,12 @@ export const ColourPicker: React.FC<Props> = ({ colour, onSelect }) => {
       popupRef.current &&
       !popupRef.current.contains(e.target as Node)
     ) {
-      onSelect({ kind: "hsl", value: currentColour });
+      onSelect({ kind: "hsv", value: currentColour });
     }
   };
   const pressEscape = (e: KeyboardEvent) => {
     if (e.key === "Escape") {
-      onSelect({ kind: "hsl", value: currentColour });
+      onSelect({ kind: "hsv", value: currentColour });
     }
   };
   // A global event listener on the mouse position, since the slider can be
@@ -122,7 +114,7 @@ export const ColourPicker: React.FC<Props> = ({ colour, onSelect }) => {
     value: { hue: currentColour.hue, saturation: 100, lightness: 50 }
   });
   const previewColour = colourString({
-    kind: "hsl",
+    kind: "hsv",
     value: currentColour
   });
 
