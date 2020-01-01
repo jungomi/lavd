@@ -33,11 +33,18 @@ export const image = css({
   objectFit: "contain"
 });
 
-export const classList = css({
+export const sidebar = css({
   display: "flex",
   flexDirection: "column",
   marginLeft: "0.8rem",
+  fontWeight: 300,
   maxWidth: "20rem"
+});
+
+export const classList = css({
+  display: "flex",
+  flexDirection: "column",
+  marginBottom: "1rem"
 });
 
 export const classListTitle = css({
@@ -49,7 +56,6 @@ export const classListTitle = css({
 export const classEntry = css({
   position: "relative",
   display: "flex",
-  fontWeight: 300,
   marginBottom: "0.1rem",
   alignItems: "center"
 });
@@ -73,4 +79,23 @@ export const colour = css({
   border: "1px solid #dadada",
   cursor: "pointer",
   marginRight: "0.4rem"
+});
+
+export const probability = css({
+  display: "flex",
+  alignItems: "center",
+  marginBottom: "1rem"
+});
+
+export const probabilityLabel = css({
+  marginRight: "0.5rem"
+});
+
+export const probabilityInput = css({
+  background: "none",
+  height: "1.6rem",
+  border: "thin solid rgba(0, 0, 0, 0.12)",
+  borderRadius: "4px",
+  textAlign: "center",
+  color: "rgba(0, 0, 0, 0.6)"
 });

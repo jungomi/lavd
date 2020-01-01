@@ -35,6 +35,7 @@ export type Image = {
   source: string;
   classes?: Array<string>;
   bbox?: Array<Bbox>;
+  minProbability?: number;
 };
 
 type Optional<T> = T | undefined;
@@ -117,7 +118,6 @@ const BoundingBox: React.FC<BoundingBoxProps> = ({
   xEnd,
   yEnd,
   className,
-  probability,
   classColours,
   maxWidth,
   maxHeight
@@ -166,6 +166,35 @@ const ImageOverlay: React.FC<ImageOverlayProps> = ({
   width,
   height
 }) => {
+  const [minProbability, setMinProbability] = useState(image.minProbability);
+  const boxes = [];
+  // The probability threshold should only be visible when there are actually
+  // bounding boxes that have specified a probability.
+  let hasProbabilities = false;
+  if (image.bbox !== undefined) {
+    for (const bbox of image.bbox) {
+      if (bbox.probability !== undefined) {
+        hasProbabilities = true;
+      }
+      if (
+        minProbability !== undefined &&
+        bbox.probability !== undefined &&
+        bbox.probability < minProbability
+      ) {
+        continue;
+      }
+      boxes.push(
+        <BoundingBox
+          {...bbox}
+          classColours={classColours}
+          maxWidth={width}
+          maxHeight={height}
+          key={bboxKey(bbox)}
+        />
+      );
+    }
+  }
+  const hasSidebar = hasProbabilities || image.classes !== undefined;
   return (
     <div className={styles.imageOverlay}>
       <img
@@ -179,29 +208,44 @@ const ImageOverlay: React.FC<ImageOverlayProps> = ({
           setSize(imgElem.width, imgElem.height);
         }}
       />
-      {image.classes && (
-        <ClassList
-          classes={image.classes}
-          classColours={classColours}
-          setClassColour={setClassColour}
-        />
-      )}
-      {image.bbox && (
+      {boxes && (
         <svg
           xmlns="http://www.w3.org/2000/svg"
           className={styles.svg}
           style={{ width, height }}
         >
-          {image.bbox.map(bbox => (
-            <BoundingBox
-              {...bbox}
-              classColours={classColours}
-              maxWidth={width}
-              maxHeight={height}
-              key={bboxKey(bbox)}
-            />
-          ))}
+          {boxes}
         </svg>
+      )}
+      {hasSidebar && (
+        <div className={styles.sidebar}>
+          {image.classes && (
+            <ClassList
+              classes={image.classes}
+              classColours={classColours}
+              setClassColour={setClassColour}
+            />
+          )}
+          {hasProbabilities && (
+            <div className={styles.probability}>
+              <span className={styles.probabilityLabel}>
+                Probability threshold
+              </span>
+              <input
+                type="number"
+                min={0}
+                max={1}
+                step={0.01}
+                className={styles.probabilityInput}
+                value={minProbability === undefined ? "" : minProbability}
+                onChange={e => {
+                  const prob = Number.parseFloat(e.target.value);
+                  setMinProbability(prob);
+                }}
+              />
+            </div>
+          )}
+        </div>
       )}
     </div>
   );

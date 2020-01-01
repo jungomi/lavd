@@ -74,16 +74,14 @@ export const images: ImageMap = new Map([
               xEnd: 250,
               yStart: 50,
               yEnd: 300,
-              className: "bird",
-              probability: 0.9
+              className: "bird"
             },
             {
               xStart: 500,
               xEnd: 650,
               yStart: 100,
               yEnd: 300,
-              className: "orange",
-              probability: 0.3
+              className: "orange"
             }
           ]
         }
