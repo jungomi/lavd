@@ -10,6 +10,7 @@ export const main = css({
   display: "flex",
   position: "relative",
   padding: "2.0rem",
+  marginBottom: "1rem",
   overflow: "auto",
   width: "100%",
   background: "#f8fafc",

@@ -301,7 +301,7 @@ type Props = {
 export const Images: React.FC<Props> = ({ data, colours }) => {
   const categories = sortedCategories(data);
   return (
-    <div className={styles.container}>
+    <>
       {categories.map(category => (
         <ImageCategory
           category={category}
@@ -310,6 +310,6 @@ export const Images: React.FC<Props> = ({ data, colours }) => {
           key={category}
         />
       ))}
-    </div>
+    </>
   );
 };

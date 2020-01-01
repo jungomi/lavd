@@ -1,13 +1,6 @@
 import { css } from "emotion";
 import { boxShadow } from "./colour/ColourPicker.styles";
 
-export const container = css({
-  display: "flex",
-  height: "fit-content",
-  flexWrap: "wrap",
-  marginBottom: "1rem"
-});
-
 export const imageCard = css({
   display: "flex",
   flexDirection: "column",
