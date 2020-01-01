@@ -75,4 +75,8 @@ export const apexcharts = `
 .apexcharts-tooltip-text-value {
   margin-left: 0.5rem !important;
 }
+.apexcharts-tooltip-title {
+  background: none !important;
+  border-bottom: none !important;
+}
 `;

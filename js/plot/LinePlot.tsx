@@ -109,14 +109,19 @@ export const LinePlot: React.FC<Props> = ({ data, colours, title }) => {
         show: true
       },
       x: {
-        show: false,
-        formatter: formatTooltipValues
+        show: true,
+        formatter: (n?: number) => `Step ${formatTooltipValues(n)}`
       },
       y: {
         formatter: formatTooltipValues
       },
       style: {
         fontSize: "0.7rem"
+      },
+      fixed: {
+        enabled: true,
+        position: "topLeft",
+        offsetY: 290
       }
     }
   };
