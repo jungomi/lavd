@@ -1,6 +1,8 @@
 import { css } from "emotion";
 import { boxShadow } from "./colour/ColourPicker.styles";
 
+const labelColour = "#616161";
+
 export const imageCard = css({
   display: "flex",
   flexDirection: "column",
@@ -20,7 +22,7 @@ export const title = css({
 export const category = css({
   fontSize: "1.1rem",
   fontWeight: 500,
-  color: "#616161",
+  color: labelColour,
   marginBottom: "0.2rem"
 });
 
@@ -34,22 +36,22 @@ export const image = css({
 });
 
 export const sidebar = css({
+  position: "relative",
   display: "flex",
   flexDirection: "column",
   marginLeft: "0.8rem",
-  fontWeight: 300,
   maxWidth: "20rem"
 });
 
 export const classList = css({
   display: "flex",
   flexDirection: "column",
-  marginBottom: "1rem"
+  marginBottom: "2rem"
 });
 
 export const classListTitle = css({
   fontWeight: 500,
-  color: "#616161",
+  color: labelColour,
   margin: "0 auto 0.8rem auto"
 });
 
@@ -57,7 +59,8 @@ export const classEntry = css({
   position: "relative",
   display: "flex",
   marginBottom: "0.1rem",
-  alignItems: "center"
+  alignItems: "center",
+  fontWeight: 300
 });
 
 export const imageOverlay = css({
@@ -84,11 +87,12 @@ export const colour = css({
 export const probability = css({
   display: "flex",
   alignItems: "center",
-  marginBottom: "1rem"
+  marginBottom: "2rem"
 });
 
 export const probabilityLabel = css({
-  marginRight: "0.5rem"
+  marginRight: "0.5rem",
+  color: labelColour
 });
 
 export const probabilityInput = css({
@@ -98,4 +102,46 @@ export const probabilityInput = css({
   borderRadius: "4px",
   textAlign: "center",
   color: "rgba(0, 0, 0, 0.6)"
+});
+
+export const tooltipTitle = css({
+  fontWeight: 500,
+  margin: "0 auto 0.8rem auto"
+});
+
+export const tooltipLabel = css({
+  marginRight: "0.4em",
+  fontWeight: 600
+});
+
+export const tooltipValue = css({
+  fontWeight: 500,
+  color: "rgba(247, 247, 247, 0.890)"
+});
+
+export const tooltipBoxList = css({
+  position: "absolute",
+  display: "flex",
+  flexWrap: "wrap",
+  flexDirection: "column-reverse",
+  height: "100%"
+});
+
+export const tooltipBox = css({
+  display: "flex",
+  flexDirection: "column",
+  padding: "0.6rem",
+  color: "#ffffff",
+  background: "rgba(0, 0, 0, 0.65)",
+  border: "2px solid #666666",
+  borderRadius: "6px",
+  width: "fit-content",
+  marginBottom: "0.2em",
+  marginRight: "0.2em"
+});
+
+export const tooltipBoxEntry = css({
+  display: "flex",
+  justifyContent: "space-between",
+  fontSize: "0.8rem"
 });

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { ColourPicker } from "./colour/ColourPicker";
 import {
   assignColours,
@@ -147,6 +147,12 @@ const BoundingBox: React.FC<BoundingBoxProps> = ({
   );
 };
 
+function boxesInside(boxes: Array<Bbox>, x: number, y: number): Array<Bbox> {
+  return boxes.filter(
+    box => box.xStart <= x && box.xEnd >= x && box.yStart <= y && box.yEnd >= y
+  );
+}
+
 type ImageOverlayProps = {
   image: Image;
   name: string;
@@ -166,8 +172,10 @@ const ImageOverlay: React.FC<ImageOverlayProps> = ({
   width,
   height
 }) => {
+  const svgRef = useRef<SVGSVGElement>(null);
+  const [tooltipBoxes, setTooltipBoxes] = useState<Array<Bbox>>([]);
   const [minProbability, setMinProbability] = useState(image.minProbability);
-  const boxes = [];
+  const boxes: Array<Bbox> = [];
   // The probability threshold should only be visible when there are actually
   // bounding boxes that have specified a probability.
   let hasProbabilities = false;
@@ -183,17 +191,17 @@ const ImageOverlay: React.FC<ImageOverlayProps> = ({
       ) {
         continue;
       }
-      boxes.push(
-        <BoundingBox
-          {...bbox}
-          classColours={classColours}
-          maxWidth={width}
-          maxHeight={height}
-          key={bboxKey(bbox)}
-        />
-      );
+      boxes.push(bbox);
     }
   }
+  const updateTooltip = (clientX: number, clientY: number) => {
+    if (svgRef.current !== null) {
+      const { left, top } = svgRef.current.getBoundingClientRect();
+      const x = clientX - left;
+      const y = clientY - top;
+      setTooltipBoxes(boxesInside(boxes, x, y));
+    }
+  };
   const hasSidebar = hasProbabilities || image.classes !== undefined;
   return (
     <div className={styles.imageOverlay}>
@@ -213,8 +221,21 @@ const ImageOverlay: React.FC<ImageOverlayProps> = ({
           xmlns="http://www.w3.org/2000/svg"
           className={styles.svg}
           style={{ width, height }}
+          onMouseMove={e => updateTooltip(e.clientX, e.clientY)}
+          onMouseLeave={() => {
+            setTooltipBoxes([]);
+          }}
+          ref={svgRef}
         >
-          {boxes}
+          {boxes.map(bbox => (
+            <BoundingBox
+              {...bbox}
+              classColours={classColours}
+              maxWidth={width}
+              maxHeight={height}
+              key={bboxKey(bbox)}
+            />
+          ))}
         </svg>
       )}
       {hasSidebar && (
@@ -243,6 +264,57 @@ const ImageOverlay: React.FC<ImageOverlayProps> = ({
                   setMinProbability(prob);
                 }}
               />
+            </div>
+          )}
+          {tooltipBoxes.length > 0 && (
+            <div className={styles.tooltipBoxList}>
+              {tooltipBoxes.map(bbox => {
+                const classColour = classColours.get(bbox.className);
+                return (
+                  <div
+                    className={styles.tooltipBox}
+                    key={`${bboxKey(bbox)}-tooltip`}
+                  >
+                    <div className={styles.tooltipBoxEntry}>
+                      <span className={styles.tooltipLabel}>Class:</span>
+                      <span
+                        className={styles.tooltipValue}
+                        style={{
+                          color: classColour && colourString(classColour)
+                        }}
+                      >
+                        {bbox.className}
+                      </span>
+                    </div>
+                    <div className={styles.tooltipBoxEntry}>
+                      <span className={styles.tooltipLabel}>x-start:</span>
+                      <span className={styles.tooltipValue}>{bbox.xStart}</span>
+                    </div>
+                    <div className={styles.tooltipBoxEntry}>
+                      <span className={styles.tooltipLabel}>x-end:</span>
+                      <span className={styles.tooltipValue}>{bbox.xEnd}</span>
+                    </div>
+                    <div className={styles.tooltipBoxEntry}>
+                      <span className={styles.tooltipLabel}>y-start:</span>
+                      <span className={styles.tooltipValue}>{bbox.yStart}</span>
+                    </div>
+                    <div className={styles.tooltipBoxEntry}>
+                      <span className={styles.tooltipLabel}>y-end:</span>
+                      <span className={styles.tooltipValue}>{bbox.yEnd}</span>
+                    </div>
+                    {bbox.probability !== undefined && (
+                      <div className={styles.tooltipBoxEntry}>
+                        <span className={styles.tooltipLabel}>
+                          Probability:
+                        </span>
+                        <span className={styles.tooltipValue}>
+                          {bbox.probability}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
             </div>
           )}
         </div>
