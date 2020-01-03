@@ -14,7 +14,8 @@ export const main = css({
   overflow: "auto",
   width: "100%",
   background: "#f8fafc",
-  flexWrap: "wrap"
+  flexWrap: "wrap",
+  alignContent: "flex-start"
 });
 
 export const noData = css({

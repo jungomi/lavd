@@ -847,6 +847,11 @@
     "@parcel/utils" "^1.11.0"
     physical-cpu-count "^2.0.0"
 
+"@types/diff@^4.0.2":
+  version "4.0.2"
+  resolved "https://registry.yarnpkg.com/@types/diff/-/diff-4.0.2.tgz#2e9bb89f9acc3ab0108f0f3dc4dbdcf2fff8a99c"
+  integrity sha512-mIenTfsIe586/yzsyfql69KRnA75S8SVXQbTLpDejRrjH0QSJcpu3AUOi/Vjnt9IOsXKxPhJfGpQUNMueIU1fQ==
+
 "@types/eslint-visitor-keys@^1.0.0":
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/@types/eslint-visitor-keys/-/eslint-visitor-keys-1.0.0.tgz#1ee30d79544ca84d68d4b3cdb0af4f205663dd2d"
@@ -2166,6 +2171,11 @@ destroy@~1.0.4:
   version "1.0.4"
   resolved "https://registry.yarnpkg.com/destroy/-/destroy-1.0.4.tgz#978857442c44749e4206613e37946205826abd80"
   integrity sha1-l4hXRCxEdJ5CBmE+N5RiBYJqvYA=
+
+diff@^4.0.1:
+  version "4.0.1"
+  resolved "https://registry.yarnpkg.com/diff/-/diff-4.0.1.tgz#0c667cb467ebbb5cea7f14f135cc2dba7780a8ff"
+  integrity sha512-s2+XdvhPCOF01LRQBC8hf4vhbVmI2CGS5aZnxLJlT5FtdhPCDFq80q++zK2KlrVorVDdL5BOGZ/VfLrVtYNF+Q==
 
 diffie-hellman@^5.0.0:
   version "5.0.3"

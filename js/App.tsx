@@ -6,13 +6,16 @@ import { Header } from "./Header";
 import { ImageMap, Images } from "./Images";
 import { Scalars, StatMap } from "./Scalars";
 import { Sidebar } from "./Sidebar";
+import { Texts, TextMap } from "./Texts";
 
 import { images } from "./fixture/image";
 import { data } from "./fixture/scalar";
+import { texts } from "./fixture/text";
 
 type RouteProps = {
   scalars: StatMap;
   images: ImageMap;
+  texts: TextMap;
   colours: ColourMap;
 };
 
@@ -27,7 +30,9 @@ const routes: Routes = {
   "/image": () => ({ images, colours }) => (
     <Images data={images} colours={colours} />
   ),
-  "/text": () => () => <span className={styles.noData}>No text available</span>,
+  "/text": () => ({ texts, colours }) => (
+    <Texts data={texts} colours={colours} />
+  ),
   "/about": () => () => <span>About</span>
 };
 
@@ -51,7 +56,12 @@ export const App = () => {
         <Sidebar names={names} colours={colours} setColour={setNewColour} />
         <main className={styles.main}>
           {Content && (
-            <Content scalars={data} images={images} colours={colours} />
+            <Content
+              scalars={data}
+              images={images}
+              texts={texts}
+              colours={colours}
+            />
           )}
         </main>
       </div>
