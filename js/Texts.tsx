@@ -39,9 +39,7 @@ export const Text: React.FC<TextProps> = ({ actual, expected }) => {
   if (expected === undefined) {
     return (
       <div className={styles.text}>
-        <div className={styles.column}>
-          <span className={styles.columnText}>{actual}</span>
-        </div>
+        <span className={styles.columnText}>{actual}</span>
       </div>
     );
   } else {
@@ -95,10 +93,10 @@ export const Text: React.FC<TextProps> = ({ actual, expected }) => {
         <div className={styles.column}>
           <span className={styles.columnTitle}>Diff</span>
           {!identical && (
-            <>
+            <div className={styles.columnDiff}>
               <div className={styles.columnTextActual}>{diffActual}</div>
               <div className={styles.columnText}>{diffExpected}</div>
-            </>
+            </div>
           )}
         </div>
       </div>

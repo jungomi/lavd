@@ -11,9 +11,11 @@ export const text = css({
 export const column = css({
   display: "flex",
   flexDirection: "column",
-  marginRight: "2em",
+  marginLeft: "1em",
+  marginRight: "1em",
   // Needed to show trailing white space, otherwise they are not rendered.
-  whiteSpace: "pre-wrap"
+  whiteSpace: "pre-wrap",
+  maxWidth: "33%"
 });
 
 export const columnTitle = css({
@@ -24,7 +26,20 @@ export const columnTitle = css({
 });
 
 export const columnText = css({
-  fontFamily: "monospace"
+  fontFamily: "monospace",
+  display: "flex",
+  flexWrap: "nowrap",
+  alignItems: "center"
+});
+
+export const columnDiff = css({
+  display: "flex",
+  flexDirection: "column",
+  flexWrap: "nowrap",
+  // Show trailing spaces but don't wrap.
+  whiteSpace: "pre",
+  overflowX: "auto",
+  overflowY: "hidden"
 });
 
 export const columnTextActual = cx(
