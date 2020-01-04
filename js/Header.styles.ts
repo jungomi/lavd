@@ -33,6 +33,8 @@ export const item = css({
   fontWeight: 500,
   userSelect: "none",
   cursor: "pointer",
+  // Firefox draws a border on it when clicking, get rid of it.
+  outline: "none",
   ":after": {
     content: '""',
     display: "block",

@@ -101,7 +101,14 @@ export const probabilityInput = css({
   border: "thin solid rgba(0, 0, 0, 0.12)",
   borderRadius: "4px",
   textAlign: "center",
-  color: "rgba(0, 0, 0, 0.6)"
+  color: "rgba(0, 0, 0, 0.6)",
+  // Firefox is very weird with <input> in flex, without setting a (max-)width,
+  // it is blown out of proportion and takes up way too much space and causes
+  // the label to wrap, which shouldn't happen since there is plenty of space
+  // without the input being so massive (in the worst case it even breaks out of
+  // the container).
+  // This restricts it roughly to the size that Chrome naturally renders.
+  maxWidth: "4rem"
 });
 
 export const tooltipTitle = css({
