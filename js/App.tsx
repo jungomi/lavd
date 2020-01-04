@@ -4,6 +4,7 @@ import * as styles from "./App.styles";
 import { assignColours, Colour, ColourMap } from "./colour/definition";
 import { Header } from "./Header";
 import { ImageMap, Images } from "./Images";
+import { Logs, LogMap } from "./Logs";
 import { Scalars, StatMap } from "./Scalars";
 import { Sidebar } from "./Sidebar";
 import { Texts, TextMap } from "./Texts";
@@ -11,11 +12,13 @@ import { Texts, TextMap } from "./Texts";
 import { images } from "./fixture/image";
 import { data } from "./fixture/scalar";
 import { texts } from "./fixture/text";
+import { logs } from "./fixture/log";
 
 type RouteProps = {
   scalars: StatMap;
   images: ImageMap;
   texts: TextMap;
+  logs: LogMap;
   colours: ColourMap;
 };
 
@@ -33,6 +36,7 @@ const routes: Routes = {
   "/text": () => ({ texts, colours }) => (
     <Texts data={texts} colours={colours} />
   ),
+  "/log": () => ({ logs, colours }) => <Logs data={logs} colours={colours} />,
   "/about": () => () => <span>About</span>
 };
 
@@ -60,6 +64,7 @@ export const App = () => {
               scalars={data}
               images={images}
               texts={texts}
+              logs={logs}
               colours={colours}
             />
           )}

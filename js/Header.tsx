@@ -45,6 +45,9 @@ export const Header = () => (
       >
         Text
       </Link>
+      <Link href="/log" className={styles.item} activeClassName={styles.active}>
+        Logs
+      </Link>
       <Link
         href="/about"
         className={styles.item}

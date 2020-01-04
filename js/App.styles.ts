@@ -1,5 +1,7 @@
 import { css } from "emotion";
 
+export const bgColour = "#f8fafc";
+
 export const wrapper = css({
   display: "flex",
   height: "100%",
@@ -13,7 +15,7 @@ export const main = css({
   marginBottom: "1rem",
   overflow: "auto",
   width: "100%",
-  background: "#f8fafc",
+  background: bgColour,
   flexWrap: "wrap",
   alignContent: "flex-start"
 });
