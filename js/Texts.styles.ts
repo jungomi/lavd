@@ -3,7 +3,7 @@ import { css, cx } from "emotion";
 const labelColour = "#616161";
 
 export const text = css({
-  fontSize: "1.5rem",
+  fontSize: "1.3rem",
   display: "flex",
   justifyContent: "space-around"
 });
