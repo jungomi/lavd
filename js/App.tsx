@@ -27,23 +27,23 @@ type Routes = {
 };
 
 const routes: Routes = {
-  "/scalar": () => ({ scalars, colours }) => (
+  "/scalars": () => ({ scalars, colours }) => (
     <Scalars data={scalars} colours={colours} />
   ),
-  "/image": () => ({ images, colours }) => (
+  "/images": () => ({ images, colours }) => (
     <Images data={images} colours={colours} />
   ),
   "/text": () => ({ texts, colours }) => (
     <Texts data={texts} colours={colours} />
   ),
-  "/log": () => ({ logs, colours }) => <Logs data={logs} colours={colours} />,
+  "/logs": () => ({ logs, colours }) => <Logs data={logs} colours={colours} />,
   "/about": () => () => <span>About</span>
 };
 
 export const App = () => {
   const Content = useRoutes(routes);
   if (Content === null) {
-    navigate("/scalar");
+    navigate("/scalars");
   }
   const names = [...data.keys()];
   const colourMap = assignColours(names);

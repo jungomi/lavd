@@ -25,14 +25,14 @@ export const Header = () => (
   <header className={styles.header}>
     <nav className={styles.nav}>
       <Link
-        href="/scalar"
+        href="/scalars"
         className={styles.item}
         activeClassName={styles.active}
       >
         Scalars
       </Link>
       <Link
-        href="/image"
+        href="/images"
         className={styles.item}
         activeClassName={styles.active}
       >
@@ -45,7 +45,11 @@ export const Header = () => (
       >
         Text
       </Link>
-      <Link href="/log" className={styles.item} activeClassName={styles.active}>
+      <Link
+        href="/logs"
+        className={styles.item}
+        activeClassName={styles.active}
+      >
         Logs
       </Link>
       <Link
