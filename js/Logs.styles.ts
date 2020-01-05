@@ -6,7 +6,7 @@ const labelColour = "#616161";
 
 export const log = css({
   width: "100%",
-  overflow: "auto"
+  overflow: "scroll"
 });
 
 export const logCard = cx(

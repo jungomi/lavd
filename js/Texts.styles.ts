@@ -38,7 +38,7 @@ export const columnDiff = css({
   flexWrap: "nowrap",
   // Show trailing spaces but don't wrap.
   whiteSpace: "pre",
-  overflowX: "auto",
+  overflowX: "scroll",
   overflowY: "hidden"
 });
 

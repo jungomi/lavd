@@ -13,7 +13,7 @@ export const main = css({
   position: "relative",
   padding: "2.0rem",
   marginBottom: "1rem",
-  overflow: "auto",
+  overflow: "scroll",
   width: "100%",
   background: bgColour,
   flexWrap: "wrap",
