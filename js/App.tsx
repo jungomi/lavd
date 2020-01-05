@@ -8,17 +8,20 @@ import { Logs, LogMap } from "./Logs";
 import { Scalars, StatMap } from "./Scalars";
 import { Sidebar } from "./Sidebar";
 import { Texts, TextMap } from "./Texts";
+import { Markdown, MarkdownMap } from "./Markdown";
 
 import { images } from "./fixture/image";
 import { data } from "./fixture/scalar";
 import { texts } from "./fixture/text";
 import { logs } from "./fixture/log";
+import { markdown } from "./fixture/markdown";
 
 type RouteProps = {
   scalars: StatMap;
   images: ImageMap;
   texts: TextMap;
   logs: LogMap;
+  markdown: MarkdownMap;
   colours: ColourMap;
 };
 
@@ -37,6 +40,9 @@ const routes: Routes = {
     <Texts data={texts} colours={colours} />
   ),
   "/logs": () => ({ logs, colours }) => <Logs data={logs} colours={colours} />,
+  "/markdown": () => ({ markdown, colours }) => (
+    <Markdown data={markdown} colours={colours} />
+  ),
   "/about": () => () => <span>About</span>
 };
 
@@ -65,6 +71,7 @@ export const App = () => {
               images={images}
               texts={texts}
               logs={logs}
+              markdown={markdown}
               colours={colours}
             />
           )}

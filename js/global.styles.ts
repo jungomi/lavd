@@ -80,3 +80,15 @@ export const apexcharts = `
   border-bottom: none !important;
 }
 `;
+
+// The GitHub markdown CSS requires a div with the class markdown-body.
+export const markdown = `
+.markdown-body {
+  overflow: auto;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+.markdown-body > pre {
+  background: #f7f7f7;
+}
+`;

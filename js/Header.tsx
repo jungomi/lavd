@@ -53,6 +53,13 @@ export const Header = () => (
         Logs
       </Link>
       <Link
+        href="/markdown"
+        className={styles.item}
+        activeClassName={styles.active}
+      >
+        Markdown
+      </Link>
+      <Link
         href="/about"
         className={styles.item}
         activeClassName={styles.active}
