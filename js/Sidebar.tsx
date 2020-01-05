@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { ColourPicker } from "./colour/ColourPicker";
 import {
   Colour,
@@ -18,10 +18,17 @@ export const Sidebar: React.FC<Props> = ({ names, colours, setColour }) => {
   const [shownColourPicker, setShownColourPicker] = useState<
     string | undefined
   >(undefined);
-  const [shown, setShown] = useState(true);
-  const toggle = () => {
-    setShown(!shown);
-  };
+  const mediaQuery = window.matchMedia("(min-width: 896px)");
+  const [shown, setShown] = useState(mediaQuery.matches);
+  const toggle = () => setShown(!shown);
+  useEffect(() => {
+    const updateShown = () => setShown(mediaQuery.matches);
+    // Update when the media media query is toggled.
+    mediaQuery.addListener(updateShown);
+    return () => {
+      mediaQuery.removeListener(updateShown);
+    };
+  });
 
   return (
     <div className={shown ? styles.sidebar : styles.sidebarHidden}>
