@@ -123,7 +123,7 @@ export const Log: React.FC<Log> = ({ lines }) => {
             <LogLine
               {...line}
               showColumn={showColumn}
-              key={`${line.message}-${line.timestamp}-${line.tag}`}
+              key={`${line.lineNr}-${line.message}-${line.timestamp}-${line.tag}`}
             />
           ))}
         </tbody>
