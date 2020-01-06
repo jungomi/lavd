@@ -1,8 +1,8 @@
 import React from "react";
 import { Colour, ColourMap, colourString } from "./colour/definition";
 import * as imageStyles from "./Images.styles";
-import { timeElapsed, formatDate } from "./time";
 import * as styles from "./Logs.styles";
+import { formatDate, parseDate, timeElapsed } from "./time";
 
 type Optional<T> = T | undefined;
 
@@ -86,16 +86,18 @@ export const Log: React.FC<Log> = ({ lines }) => {
   for (const [i, line] of lines.entries()) {
     const currentLine: LogLine = { message: line.message, lineNr: i + 1 };
     if (line.timestamp) {
-      const timestamp = new Date(line.timestamp);
-      currentLine.timestamp = formatDate(timestamp);
-      showColumn.timestamp = true;
-      // The start is set to the first timestamp that is encountered. This
-      // allows to have some text before it, let's say a description.
-      if (start === undefined) {
-        start = timestamp;
-      } else {
-        currentLine.elapsed = timeElapsed(start, timestamp);
-        showColumn.elapsed = true;
+      const timestamp = parseDate(line.timestamp);
+      if (timestamp) {
+        currentLine.timestamp = formatDate(timestamp);
+        showColumn.timestamp = true;
+        // The start is set to the first timestamp that is encountered. This
+        // allows to have some text before it, let's say a description.
+        if (start === undefined) {
+          start = timestamp;
+        } else {
+          currentLine.elapsed = timeElapsed(start, timestamp);
+          showColumn.elapsed = true;
+        }
       }
     }
     if (line.tag) {

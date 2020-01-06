@@ -95,3 +95,23 @@ export function formatDate(
   }
   return `${dateStr} ${timeStr}`;
 }
+
+export function parseDate(str: string): Date | undefined {
+  const date = new Date(str);
+  if (Number.isNaN(date.getTime())) {
+    const parts = str.split(" ");
+    // This is a special case for Safari.
+    // 2019-11-15 13:35:52.809545 is not considered valid and must be
+    // 2019-11-15T13:35:52.809545 (the space needs to be replaced by a T for it
+    // to be valid.
+    // Chrome and Firefox both happily accept that format.
+    if (parts.length === 2) {
+      const joinedDate = new Date(parts.join("T"));
+      if (!Number.isNaN(joinedDate.getTime())) {
+        return joinedDate;
+      }
+    }
+    return undefined;
+  }
+  return date;
+}
