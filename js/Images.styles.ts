@@ -16,6 +16,7 @@ export const imageCard = css({
 export const title = css({
   display: "flex",
   flexDirection: "column",
+  flexShrink: 0,
   marginBottom: "0.8rem"
 });
 
