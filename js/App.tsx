@@ -9,12 +9,14 @@ import { Scalars, StatMap } from "./Scalars";
 import { Sidebar } from "./Sidebar";
 import { Texts, TextMap } from "./Texts";
 import { Markdown, MarkdownMap } from "./Markdown";
+import { Commands, CommandMap } from "./Commands";
 
 import { images } from "./fixture/image";
 import { data } from "./fixture/scalar";
 import { texts } from "./fixture/text";
 import { logs } from "./fixture/log";
 import { markdown } from "./fixture/markdown";
+import { commands } from "./fixture/command";
 
 type RouteProps = {
   scalars: StatMap;
@@ -22,6 +24,7 @@ type RouteProps = {
   texts: TextMap;
   logs: LogMap;
   markdown: MarkdownMap;
+  commands: CommandMap;
   colours: ColourMap;
 };
 
@@ -42,6 +45,9 @@ const routes: Routes = {
   "/logs": () => ({ logs, colours }) => <Logs data={logs} colours={colours} />,
   "/markdown": () => ({ markdown, colours }) => (
     <Markdown data={markdown} colours={colours} />
+  ),
+  "/commands": () => ({ commands, colours }) => (
+    <Commands data={commands} colours={colours} />
   ),
   "/about": () => () => <span>About</span>
 };
@@ -72,6 +78,7 @@ export const App = () => {
               texts={texts}
               logs={logs}
               markdown={markdown}
+              commands={commands}
               colours={colours}
             />
           )}
