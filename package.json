@@ -15,16 +15,16 @@
     "clean": "rimraf dist/"
   },
   "devDependencies": {
-    "@emotion/core": "^10.0.22",
+    "@emotion/core": "^10.0.27",
     "@types/diff": "^4.0.2",
     "@types/hookrouter": "^2.2.1",
-    "@types/node": "^12.12.20",
+    "@types/node": "^13.1.6",
     "@types/react": "^16.9.16",
     "@types/react-dom": "^16.9.4",
-    "@typescript-eslint/eslint-plugin": "^2.12.0",
-    "@typescript-eslint/parser": "^2.12.0",
-    "eslint": "^6.7.2",
-    "eslint-config-prettier": "^6.7.0",
+    "@typescript-eslint/eslint-plugin": "^2.15.0",
+    "@typescript-eslint/parser": "^2.15.0",
+    "eslint": "^6.8.0",
+    "eslint-config-prettier": "^6.9.0",
     "eslint-config-react-app": "^5.1.0",
     "eslint-plugin-prettier": "^3.1.2",
     "eslint-plugin-react": "^7.17.0",
@@ -33,18 +33,18 @@
     "parcel-bundler": "^1.12.4",
     "prettier": "^1.19.1",
     "rimraf": "^3.0.0",
-    "typescript": "^3.7.3"
+    "typescript": "^3.7.4"
   },
   "dependencies": {
-    "apexcharts": "^3.11.1",
+    "apexcharts": "^3.13.1",
     "diff": "^4.0.1",
-    "emotion": "^10.0.23",
+    "emotion": "^10.0.27",
     "emotion-reset": "^2.0.4",
     "github-markdown-css": "^3.0.1",
     "hookrouter": "^1.2.3",
     "react": "^16.12.0",
-    "react-apexcharts": "^1.3.3",
+    "react-apexcharts": "^1.3.6",
     "react-dom": "^16.12.0",
-    "react-markdown": "^4.3.0"
+    "react-markdown": "^4.3.1"
   }
 }
