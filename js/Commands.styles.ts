@@ -3,6 +3,8 @@ import { bgColour } from "./App.styles";
 import { imageCard } from "./Images.styles";
 
 const labelColour = "#616161";
+const iconColour = "#cecece";
+const iconHoverColour = "#929292";
 
 export const commandCard = cx(
   imageCard,
@@ -106,7 +108,9 @@ export const inputContainer = css({
   display: "flex",
   width: "100%",
   marginBottom: "0.2rem",
-  marginTop: "0.2rem"
+  marginTop: "0.2rem",
+  alignItems: "center",
+  position: "relative"
 });
 
 export const input = css({
@@ -136,6 +140,13 @@ export const input = css({
     opacity: 1
   }
 });
+
+export const inputWithCount = cx(
+  input,
+  css({
+    paddingRight: "2rem"
+  })
+);
 
 export const checkbox = cx(
   input,
@@ -196,13 +207,18 @@ export const selectContainer = css({
     flexShrink: 0,
     width: "0.4rem",
     height: "0.4rem",
-    color: "rgba(0, 0, 0, 0.6)",
+    color: iconColour,
     borderStyle: "solid",
     borderWidth: "0 2px 2px 0",
     // Rotate to make it point down
     transform: "rotate(45deg)",
     // All mouse events are passed through the element below it.
     pointerEvents: "none"
+  },
+  ":hover": {
+    "::after": {
+      color: iconHoverColour
+    }
   }
 });
 
@@ -214,3 +230,76 @@ export const select = cx(
     cursor: "pointer"
   })
 );
+
+export const inputRemoveControls = css({
+  position: "absolute",
+  display: "flex",
+  right: "0.6rem",
+  justifyContent: "center",
+  transform: "rotate(45deg)"
+});
+
+export const plus = css({
+  width: "1.1rem",
+  height: "1.1rem",
+  borderRadius: "50%",
+  flexShrink: 0,
+  position: "relative",
+  boxSizing: "border-box",
+  cursor: "pointer",
+  // Horizontal line
+  "::before": {
+    content: "''",
+    background: iconColour,
+    position: "absolute",
+    flexShrink: 0,
+    height: "2px",
+    width: "60%",
+    left: "20%",
+    top: "50%",
+    marginTop: "-1px"
+  },
+  // Vertical line
+  "::after": {
+    content: "''",
+    background: iconColour,
+    position: "absolute",
+    flexShrink: 0,
+    height: "60%",
+    width: "2px",
+    left: "50%",
+    top: "20%",
+    marginLeft: "-1px"
+  },
+  ":hover": {
+    "::before, ::after": {
+      background: iconHoverColour
+    }
+  }
+});
+
+export const addInput = css({
+  display: "flex",
+  justifyContent: "center",
+  width: "100%",
+  height: "1.1rem",
+  position: "relative",
+  cursor: "pointer",
+  "::before": {
+    content: "''",
+    position: "absolute",
+    flexShrink: 0,
+    width: "0.4rem",
+    height: "0.4rem",
+    color: iconColour,
+    borderStyle: "solid",
+    borderWidth: "0 2px 2px 0",
+    // Rotate to make it point down
+    transform: "rotate(45deg)"
+  },
+  ":hover": {
+    "::before": {
+      color: iconHoverColour
+    }
+  }
+});

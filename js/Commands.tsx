@@ -14,11 +14,14 @@ type Optional<T> = T | undefined;
 export type ParserOptionType = string | number | boolean;
 export type ParserOptionTypeKind = "string" | "int" | "float" | "flag";
 
+type ArgumentCount = "+" | number;
+
 export type ParserOption = {
   short?: string;
   default?: ParserOptionType | Array<ParserOptionType>;
   description?: string;
   type?: ParserOptionTypeKind;
+  count?: ArgumentCount;
   choices?: Array<ParserOptionType>;
 };
 
@@ -71,16 +74,68 @@ function optionsToString(opt: OptionalParserOption): string {
   }
 }
 
+function isOptionComplete(
+  name: string,
+  opt: OptionalParserOption,
+  counts: Map<string, number> | undefined
+): boolean {
+  if (opt === undefined) {
+    return false;
+  } else if (Array.isArray(opt)) {
+    // When it's a fixed count, all values need to exist, otherwise it's enough
+    // if it's just one.
+    if (counts && counts.get(name)) {
+      return opt.every(o => o !== undefined);
+    } else {
+      return opt.some(o => o !== undefined);
+    }
+  }
+  return true;
+}
+
+// Completes lists of values with their respetive defaults.
+// Since values with a count must have all of the values to be rednered, it is
+// acceptable to fill in the missing values with their defaults as long as at
+// least one had been specified.
+function completePartialsWithDefaults(
+  name: string,
+  opt: OptionalParserOption,
+  defaults?: Map<string, ParserOptionType | Array<ParserOptionType>> | undefined
+): OptionalParserOption {
+  if (
+    defaults !== undefined &&
+    opt !== undefined &&
+    Array.isArray(opt) &&
+    opt.some(o => o !== undefined)
+  ) {
+    const defaultValue = defaults.get(name);
+    if (defaultValue !== undefined) {
+      return opt.map((o, i) => {
+        if (o === undefined) {
+          return Array.isArray(defaultValue) ? defaultValue[i] : defaultValue;
+        } else {
+          return o;
+        }
+      });
+    }
+  }
+  return opt;
+}
+
 type CommandPreviewProps = {
   bin?: string;
   positional?: Array<string>;
   options?: Map<string, OptionalParserOption>;
+  counts?: Map<string, number>;
+  defaults?: Map<string, ParserOptionType | Array<ParserOptionType>>;
 };
 
 const CommandPreview: React.FC<CommandPreviewProps> = ({
   bin,
   positional,
-  options
+  options,
+  counts,
+  defaults
 }) => {
   const argSpans = [];
   if (positional) {
@@ -91,12 +146,13 @@ const CommandPreview: React.FC<CommandPreviewProps> = ({
   if (options) {
     const sortedKeys = Array.from(options.keys()).sort();
     for (const key of sortedKeys) {
-      const value = options.get(key);
+      const value = completePartialsWithDefaults(
+        key,
+        options.get(key),
+        defaults
+      );
       let valueText: string | undefined = optionsToString(value);
-      if (
-        value === undefined ||
-        (Array.isArray(value) && value.every(v => v === undefined))
-      ) {
+      if (!isOptionComplete(key, value, counts)) {
         continue;
       }
       // When it's a boolean value, it's a flag.
@@ -137,6 +193,7 @@ type InputProps = {
   defaultValue?: ParserOptionType | Array<ParserOptionType>;
   type?: ParserOptionTypeKind;
   choices?: Array<ParserOptionType>;
+  count?: ArgumentCount;
   setValue: (name: string, value: OptionalParserOption) => void;
 };
 
@@ -146,6 +203,7 @@ const Input: React.FC<InputProps> = ({
   defaultValue,
   type,
   choices,
+  count,
   setValue
 }) => {
   const inputs = [];
@@ -166,6 +224,20 @@ const Input: React.FC<InputProps> = ({
       newValues[index] = newValue;
       setValue(name, newValues);
     } else {
+      setValue(name, newValue);
+    }
+  };
+  const addInput = () => {
+    if (Array.isArray(value)) {
+      setValue(name, [...value, undefined]);
+    }
+  };
+  const removeInput = (index: number) => {
+    if (Array.isArray(value)) {
+      const newValue = [...value.slice(0, index), ...value.slice(index + 1)];
+      if (newValue.length === 0) {
+        newValue.push(undefined);
+      }
       setValue(name, newValue);
     }
   };
@@ -219,7 +291,7 @@ const Input: React.FC<InputProps> = ({
                 const newValue = stringToInt(e.target.value);
                 setNewValue(newValue, i);
               }}
-              className={styles.input}
+              className={count === "+" ? styles.inputWithCount : styles.input}
             />
           );
           break;
@@ -235,7 +307,7 @@ const Input: React.FC<InputProps> = ({
                 const newValue = stringToFloat(e.target.value);
                 setNewValue(newValue, i);
               }}
-              className={styles.input}
+              className={count === "+" ? styles.inputWithCount : styles.input}
             />
           );
           break;
@@ -252,7 +324,7 @@ const Input: React.FC<InputProps> = ({
                   e.target.value === "" ? undefined : e.target.value;
                 setNewValue(newValue, i);
               }}
-              className={styles.input}
+              className={count === "+" ? styles.inputWithCount : styles.input}
             />
           );
           break;
@@ -273,15 +345,27 @@ const Input: React.FC<InputProps> = ({
     if (input !== undefined) {
       inputs.push(
         <div className={styles.inputContainer} key={key}>
-          {" "}
-          {input}{" "}
+          {input}
+          {count === "+" && (
+            <div
+              className={styles.inputRemoveControls}
+              onClick={() => removeInput(i)}
+            >
+              <span className={styles.plus}></span>
+            </div>
+          )}
         </div>
       );
     }
   }
   return (
     <td className={styles.tdValues}>
-      <div className={styles.values}>{inputs}</div>
+      <div className={styles.values}>
+        {inputs}
+        {count === "+" && (
+          <div className={styles.addInput} onClick={addInput} />
+        )}
+      </div>
     </td>
   );
 };
@@ -293,6 +377,7 @@ type ParserOptionLineProps = {
   description?: string;
   type?: ParserOptionTypeKind;
   choices?: Array<ParserOptionType>;
+  count?: ArgumentCount;
   defaults?: Map<string, ParserOptionType | Array<ParserOptionType>>;
   showColumn: {
     short: boolean;
@@ -309,6 +394,7 @@ const ParserOptionLine: React.FC<ParserOptionLineProps> = ({
   description,
   type,
   choices,
+  count,
   defaults,
   showColumn,
   setValue
@@ -329,6 +415,7 @@ const ParserOptionLine: React.FC<ParserOptionLineProps> = ({
           setValue={setValue}
           type={type}
           choices={choices}
+          count={count}
         />
       )}
       {showColumn.description && (
@@ -345,6 +432,7 @@ type CurrentParserOption = {
   description?: string;
   type?: ParserOptionTypeKind;
   choices?: Array<ParserOptionType>;
+  count?: ArgumentCount;
 };
 
 type CommandCardProps = {
@@ -356,15 +444,22 @@ type CommandCardProps = {
 type CommandOptions = {
   values: Map<string, OptionalParserOption>;
   defaults?: Map<string, ParserOptionType | Array<ParserOptionType>>;
+  counts?: Map<string, number>;
 };
 
 function initialCommandOptions(command: Command): CommandOptions {
   const values = new Map();
   const defaults = new Map();
+  const exactCounts = new Map();
   if (command.parser) {
     for (const [key, value] of Object.entries(command.parser)) {
-      if (value && value.default !== undefined) {
-        defaults.set(key, value.default);
+      if (value !== undefined) {
+        if (value.default !== undefined) {
+          defaults.set(key, value.default);
+        }
+        if (typeof value.count === "number") {
+          exactCounts.set(key, value.count);
+        }
       }
     }
   }
@@ -374,7 +469,25 @@ function initialCommandOptions(command: Command): CommandOptions {
       values.set(key, value);
     }
   }
-  return { values, defaults: defaults.size > 0 ? defaults : undefined };
+  // Values that have exact counts need to have the exact number of values even
+  // if they were not yet specified.
+  for (const [key, count] of exactCounts.entries()) {
+    let value = values.get(key);
+    if (value === undefined) {
+      value = new Array(count).fill(undefined);
+    } else if (Array.isArray(value)) {
+      const padLength = count - value.length;
+      if (padLength > 0) {
+        value = [...value, ...new Array(padLength).fill(undefined)];
+      }
+    }
+    values.set(key, value);
+  }
+  return {
+    values,
+    defaults: defaults.size > 0 ? defaults : undefined,
+    counts: exactCounts
+  };
 }
 
 const CommandCard: React.FC<CommandCardProps> = ({ name, command, colour }) => {
@@ -401,6 +514,7 @@ const CommandCard: React.FC<CommandCardProps> = ({ name, command, colour }) => {
       if (parserOpt) {
         currentOption.type = parserOpt.type;
         currentOption.choices = parserOpt.choices;
+        currentOption.count = parserOpt.count;
         if (parserOpt.short) {
           currentOption.short = parserOpt.short;
           showColumn.short = true;
@@ -434,6 +548,8 @@ const CommandCard: React.FC<CommandCardProps> = ({ name, command, colour }) => {
           bin={command.bin}
           positional={positional}
           options={optionsValues}
+          counts={commandOptions.counts}
+          defaults={commandOptions.defaults}
         />
       )}
       {command.parser && (
@@ -456,6 +572,7 @@ const CommandCard: React.FC<CommandCardProps> = ({ name, command, colour }) => {
                   defaults={commandOptions.defaults}
                   showColumn={showColumn}
                   setValue={setNewOptionValue}
+                  count={opt.count}
                   key={opt.name}
                 />
               ))}

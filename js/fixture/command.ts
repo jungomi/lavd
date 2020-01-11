@@ -35,7 +35,7 @@ export const commands: CommandMap = new Map([
           "validation-text": {
             description:
               "List of text files for validation. If no name is specified it uses the name of the text file",
-            num: "+",
+            count: "+",
             type: "string"
           },
           "batch-size": {
@@ -73,6 +73,24 @@ export const commands: CommandMap = new Map([
           "no-cuda": {
             description: "Do not use CUDA even if it's available",
             type: "flag"
+          },
+          weights: {
+            description: "Weights for the different categories",
+            type: "float",
+            count: 3
+          },
+          "weights-with-defaults": {
+            description: "Weights for the different categories with defaults",
+            type: "float",
+            count: 3,
+            default: [0.8, 0.4, 1.0]
+          },
+          "weights-with-single-default": {
+            description:
+              "Weights for the different categories with the same default for all",
+            type: "float",
+            count: 3,
+            default: 1.0
           }
         }
       }
