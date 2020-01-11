@@ -110,6 +110,7 @@ type OptionalParserOption =
 type InputProps = {
   name: string;
   value?: OptionalParserOption;
+  defaultValue?: ParserOptionType | Array<ParserOptionType>;
   type?: ParserOptionTypeKind;
   choices?: Array<ParserOptionType>;
   setValue: (name: string, value: OptionalParserOption) => void;
@@ -118,6 +119,7 @@ type InputProps = {
 const Input: React.FC<InputProps> = ({
   name,
   value,
+  defaultValue,
   type,
   choices,
   setValue
@@ -145,12 +147,24 @@ const Input: React.FC<InputProps> = ({
   };
   for (const [i, val] of inputValues.entries()) {
     const key = `${name}-${i}`;
+    const currentDefault = Array.isArray(defaultValue)
+      ? defaultValue[i]
+      : defaultValue;
+    const placeholder =
+      currentDefault === undefined
+        ? ""
+        : `Default: ${currentDefault.toString()}`;
     let input = undefined;
     // NOTE: The value always respects the type that has been specified, so the
     // type casts (val as X) are just there to tell off TypeScript.
     if (choiceStrs) {
+      // select doesn't have placeholder, to work around that a ::before pseudo
+      // element is used to show the placeholder with a data attribute.
       input = (
-        <div className={styles.selectContainer}>
+        <div
+          data-placeholder={val === "" ? placeholder : ""}
+          className={styles.selectContainer}
+        >
           <select
             value={val.toString()}
             onChange={e => {
@@ -176,6 +190,7 @@ const Input: React.FC<InputProps> = ({
             <input
               type="number"
               value={val as number | string}
+              placeholder={placeholder}
               onChange={e => {
                 const newValue = stringToInt(e.target.value);
                 setNewValue(newValue, i);
@@ -190,6 +205,7 @@ const Input: React.FC<InputProps> = ({
             <input
               type="number"
               value={val as number | string}
+              placeholder={placeholder}
               step={0.01}
               onChange={e => {
                 const newValue = stringToFloat(e.target.value);
@@ -205,6 +221,7 @@ const Input: React.FC<InputProps> = ({
             <input
               type="text"
               value={val as string}
+              placeholder={placeholder}
               onChange={e => {
                 // When the input is empty, it needs to be unset.
                 const newValue =
@@ -252,6 +269,7 @@ type ParserOptionLineProps = {
   description?: string;
   type?: ParserOptionTypeKind;
   choices?: Array<ParserOptionType>;
+  defaults?: Map<string, ParserOptionType | Array<ParserOptionType>>;
   showColumn: {
     short: boolean;
     value: boolean;
@@ -267,9 +285,11 @@ const ParserOptionLine: React.FC<ParserOptionLineProps> = ({
   description,
   type,
   choices,
+  defaults,
   showColumn,
   setValue
 }) => {
+  const defaultValue = defaults && defaults.get(name);
   // Only columns are rendered that have at least one entry.
   return (
     <tr className={styles.tr}>
@@ -281,6 +301,7 @@ const ParserOptionLine: React.FC<ParserOptionLineProps> = ({
         <Input
           name={name}
           value={value}
+          defaultValue={defaultValue}
           setValue={setValue}
           type={type}
           choices={choices}
@@ -308,30 +329,33 @@ type CommandCardProps = {
   colour: Colour;
 };
 
-function initialOptionsValues(
-  command: Command
-): Map<string, ParserOptionValue> {
-  const initialValues = new Map();
+type CommandOptions = {
+  values: Map<string, OptionalParserOption>;
+  defaults?: Map<string, ParserOptionType | Array<ParserOptionType>>;
+};
+
+function initialCommandOptions(command: Command): CommandOptions {
+  const values = new Map();
+  const defaults = new Map();
   if (command.parser) {
     for (const [key, value] of Object.entries(command.parser)) {
-      if (value && value.default) {
-        initialValues.set(key, value.default);
+      if (value && value.default !== undefined) {
+        defaults.set(key, value.default);
       }
     }
   }
   // Overwrite the defaults (if any) with the actual given values.
   if (command.arguments && command.arguments.options) {
     for (const [key, value] of Object.entries(command.arguments.options)) {
-      initialValues.set(key, value);
+      values.set(key, value);
     }
   }
-  return initialValues;
+  return { values, defaults: defaults.size > 0 ? defaults : undefined };
 }
 
 const CommandCard: React.FC<CommandCardProps> = ({ name, command, colour }) => {
-  const [optionsValues, setOptionsValues] = useState<
-    Map<string, OptionalParserOption>
-  >(initialOptionsValues(command));
+  const commandOptions = initialCommandOptions(command);
+  const [optionsValues, setOptionsValues] = useState(commandOptions.values);
   // A copy map of the Map is created such that React re-renders it, since
   // mutating it won't change the reference and therefore won't trigger
   // a re-render.
@@ -405,6 +429,7 @@ const CommandCard: React.FC<CommandCardProps> = ({ name, command, colour }) => {
               {parserOptions.map(opt => (
                 <ParserOptionLine
                   {...opt}
+                  defaults={commandOptions.defaults}
                   showColumn={showColumn}
                   setValue={setNewOptionValue}
                   key={opt.name}

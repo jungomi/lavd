@@ -17,7 +17,6 @@ export const commands: CommandMap = new Map([
               "Combined=data/lrec-and-leipzig/lrec-and-leipzig-validation.tsv"
             ],
             "batch-size": 2,
-            model: "bert",
             "opt-level": 1,
             checkpoint: "log/combined-bert/checkpoints/0024/"
           }
@@ -49,7 +48,8 @@ export const commands: CommandMap = new Map([
             short: "m",
             description: "Which kind of model to use",
             type: "string",
-            choices: ["bert", "bert-scratch", "gpt2", "gpt2-scratch"]
+            choices: ["bert", "bert-scratch", "gpt2", "gpt2-scratch"],
+            default: "bert"
           },
           "opt-level": {
             short: "O",

@@ -127,6 +127,13 @@ export const input = css({
   ":focus": {
     // That's the default in Chrome, so other browsers now look the same.
     borderColor: "#469bde"
+  },
+  "::placeholder": {
+    color: "rgba(0, 0, 0, 0.4)",
+    textAlign: "center",
+    // Firefox lowers the opacity for the placeholders, but that has already
+    // been incorporated into the text colour, so that would double dip.
+    opacity: 1
   }
 });
 
@@ -144,7 +151,7 @@ export const checkbox = cx(
     justifyContent: "center",
     alignItems: "center",
     transition: "all 0.2s ease-in-out",
-    ":after": {
+    "::after": {
       content: "''",
       flexShrink: 0,
       // Small rectangle with a border to create an L shape
@@ -159,7 +166,7 @@ export const checkbox = cx(
     },
     ":checked": {
       background: "#5cb85c",
-      ":after": {
+      "::after": {
         borderColor: "white",
         opacity: 1
       }
@@ -171,7 +178,17 @@ export const selectContainer = css({
   display: "flex",
   alignItems: "center",
   position: "relative",
+  fontSize: "0.9rem",
   width: "100%",
+  "::before": {
+    content: "attr(data-placeholder)",
+    position: "absolute",
+    display: "flex",
+    justifyContent: "center",
+    width: "100%",
+    pointerEvents: "none",
+    color: "rgba(0, 0, 0, 0.4)"
+  },
   "::after": {
     content: "''",
     position: "absolute",
