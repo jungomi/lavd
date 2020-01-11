@@ -7,6 +7,7 @@ import {
 } from "./colour/definition";
 import * as styles from "./Commands.styles";
 import * as imageStyles from "./Images.styles";
+import { stringToFloat, stringToInt } from "./number";
 
 type Optional<T> = T | undefined;
 
@@ -48,7 +49,7 @@ export type CommandMap = Map<string, Commands>;
 type CommandPreviewProps = {
   bin?: string;
   positional?: Array<string>;
-  options?: Map<string, ParserOptionValue>;
+  options?: Map<string, OptionalParserOption>;
 };
 
 const CommandPreview: React.FC<CommandPreviewProps> = ({
@@ -67,6 +68,12 @@ const CommandPreview: React.FC<CommandPreviewProps> = ({
     for (const key of sortedKeys) {
       const value = options.get(key);
       let valueText = Array.isArray(value) ? value.join(" ") : value;
+      if (
+        value === undefined ||
+        (Array.isArray(value) && value.every(v => v === undefined))
+      ) {
+        continue;
+      }
       // When it's a boolean value, it's a flag.
       // If it's true, the flag is set, but without any value.
       // If it's false, it should not be listed at all.
@@ -94,51 +101,49 @@ const CommandPreview: React.FC<CommandPreviewProps> = ({
   );
 };
 
+type OptionalParserOption =
+  | ParserOptionType
+  | Array<ParserOptionType | undefined>
+  | undefined;
+
 type InputProps = {
   name: string;
-  value?: ParserOptionType | Array<ParserOptionType>;
+  value?: OptionalParserOption;
   type?: ParserOptionTypeKind;
-  setValue: (
-    name: string,
-    value: ParserOptionType | Array<ParserOptionType>
-  ) => void;
+  setValue: (name: string, value: OptionalParserOption) => void;
 };
 
 const Input: React.FC<InputProps> = ({ name, value, type, setValue }) => {
   const inputs = [];
-  const multipleValues = Array.isArray(value);
-  // The array check needs to be done again, because TypeScript does not realise
-  // that it's literally the same as multipleValues ? ... : [...]
-  // decides it could be undefined.
-  // The type system it just too narrow with special cases.
-  //
   // An empty string is needed for empty values, because otherwise the inputs
   // become uncontrolled.
-  const valueArr = Array.isArray(value)
-    ? value
-    : [value === undefined ? "" : value];
-  const setNewValue = (newValue: ParserOptionType, index: number) => {
-    if (multipleValues) {
-      const newValues = [...valueArr];
+  const valueArr = Array.isArray(value) ? value : [value];
+  const inputValues = valueArr.map(v => (v === undefined ? "" : v));
+  const setNewValue = (
+    newValue: ParserOptionType | undefined,
+    index: number
+  ) => {
+    if (Array.isArray(value)) {
+      const newValues = [...value];
       newValues[index] = newValue;
       setValue(name, newValues);
     } else {
       setValue(name, newValue);
     }
   };
-  for (const [i, v] of valueArr.entries()) {
+  for (const [i, val] of inputValues.entries()) {
     const key = `${name}-${i}`;
     // NOTE: The value always respects the type that has been specified, so the
-    // type casts (v as X) are just there to tell off TypeScript.
+    // type casts (val as X) are just there to tell off TypeScript.
     switch (type) {
       case "int": {
         inputs.push(
           <div className={styles.inputContainer} key={key}>
             <input
               type="number"
-              value={v as number | string}
+              value={val as number | string}
               onChange={e => {
-                const newValue = Number.parseInt(e.target.value);
+                const newValue = stringToInt(e.target.value);
                 setNewValue(newValue, i);
               }}
               className={styles.input}
@@ -152,10 +157,10 @@ const Input: React.FC<InputProps> = ({ name, value, type, setValue }) => {
           <div className={styles.inputContainer} key={key}>
             <input
               type="number"
-              value={v as number | string}
+              value={val as number | string}
               step={0.01}
               onChange={e => {
-                const newValue = Number.parseFloat(e.target.value);
+                const newValue = stringToFloat(e.target.value);
                 setNewValue(newValue, i);
               }}
               className={styles.input}
@@ -169,8 +174,13 @@ const Input: React.FC<InputProps> = ({ name, value, type, setValue }) => {
           <div className={styles.inputContainer} key={key}>
             <input
               type="text"
-              value={v as string}
-              onChange={e => setNewValue(e.target.value, i)}
+              value={val as string}
+              onChange={e => {
+                // When the input is empty, it needs to be unset.
+                const newValue =
+                  e.target.value === "" ? undefined : e.target.value;
+                setNewValue(newValue, i);
+              }}
               className={styles.input}
             />
           </div>
@@ -182,8 +192,8 @@ const Input: React.FC<InputProps> = ({ name, value, type, setValue }) => {
           <div className={styles.inputContainer} key={key}>
             <input
               type="checkbox"
-              checked={Boolean(v)}
-              onChange={() => setNewValue(!v, i)}
+              checked={Boolean(val)}
+              onChange={() => setNewValue(!val, i)}
               className={styles.checkbox}
             />
           </div>
@@ -204,7 +214,7 @@ const Input: React.FC<InputProps> = ({ name, value, type, setValue }) => {
 type ParserOptionLineProps = {
   name: string;
   short?: string;
-  value?: ParserOptionType | Array<ParserOptionType>;
+  value?: OptionalParserOption;
   description?: string;
   type?: ParserOptionTypeKind;
   showColumn: {
@@ -212,10 +222,7 @@ type ParserOptionLineProps = {
     value: boolean;
     description: boolean;
   };
-  setValue: (
-    name: string,
-    value: ParserOptionType | Array<ParserOptionType>
-  ) => void;
+  setValue: (name: string, value: OptionalParserOption) => void;
 };
 
 const ParserOptionLine: React.FC<ParserOptionLineProps> = ({
@@ -247,7 +254,7 @@ const ParserOptionLine: React.FC<ParserOptionLineProps> = ({
 type CurrentParserOption = {
   name: string;
   short?: string;
-  value?: ParserOptionType | Array<ParserOptionType>;
+  value?: OptionalParserOption;
   description?: string;
   type?: ParserOptionTypeKind;
 };
@@ -279,16 +286,13 @@ function initialOptionsValues(
 }
 
 const CommandCard: React.FC<CommandCardProps> = ({ name, command, colour }) => {
-  const [optionsValues, setOptionsValues] = useState(
-    initialOptionsValues(command)
-  );
+  const [optionsValues, setOptionsValues] = useState<
+    Map<string, OptionalParserOption>
+  >(initialOptionsValues(command));
   // A copy map of the Map is created such that React re-renders it, since
   // mutating it won't change the reference and therefore won't trigger
   // a re-render.
-  const setNewOptionValue = (
-    name: string,
-    value: ParserOptionType | Array<ParserOptionType>
-  ) => {
+  const setNewOptionValue = (name: string, value: OptionalParserOption) => {
     setOptionsValues(new Map(optionsValues.set(name, value)));
   };
 

@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+import { roundFloat } from "../number";
 import { ColourInput } from "./ColourInput";
 import * as styles from "./ColourPicker.styles";
 import { Colour, colourString, toHsv } from "./definition";
@@ -62,7 +63,7 @@ export const ColourPicker: React.FC<Props> = ({ colour, onSelect }) => {
     if (alphaRef.current !== null) {
       const { left } = alphaRef.current.getBoundingClientRect();
       const x = clamp(clientX - left, 0, styles.sliderWidth);
-      const alpha = x / styles.sliderWidth;
+      const alpha = roundFloat(x / styles.sliderWidth);
       setCurrentColour({ ...currentColour, alpha });
     }
   };

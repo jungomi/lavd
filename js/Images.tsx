@@ -8,6 +8,7 @@ import {
   defaultColour
 } from "./colour/definition";
 import * as styles from "./Images.styles";
+import { stringToFloat } from "./number";
 
 export type Bbox = {
   xStart: number;
@@ -260,7 +261,7 @@ const ImageOverlay: React.FC<ImageOverlayProps> = ({
                 className={styles.probabilityInput}
                 value={minProbability === undefined ? "" : minProbability}
                 onChange={e => {
-                  const prob = Number.parseFloat(e.target.value);
+                  const prob = stringToFloat(e.target.value);
                   setMinProbability(prob);
                 }}
               />
