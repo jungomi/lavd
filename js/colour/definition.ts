@@ -1,3 +1,5 @@
+import { roundFloat } from "../number";
+
 export type Rgb = {
   red: number;
   green: number;
@@ -75,10 +77,10 @@ function rgbToHsl(colour: Rgb): Hsl {
     }
   }
   return {
-    hue: hue * 60,
-    saturation: saturation * 100,
-    lightness: lightness * 100,
-    alpha: colour.alpha
+    hue: Math.round(hue * 60),
+    saturation: Math.round(saturation * 100),
+    lightness: Math.round(lightness * 100),
+    alpha: colour.alpha && roundFloat(colour.alpha)
   };
 }
 
@@ -125,7 +127,7 @@ function hslToRgb(colour: Hsl): Rgb {
     red: Math.round(red * 255),
     green: Math.round(green * 255),
     blue: Math.round(blue * 255),
-    alpha: colour.alpha
+    alpha: colour.alpha && roundFloat(colour.alpha)
   };
 }
 
@@ -139,7 +141,12 @@ function hsvToHsl(colour: Hsv): Hsl {
       saturation = (colour.saturation * colour.value) / ((100 - lightness) * 2);
     }
   }
-  return { hue: colour.hue, saturation, lightness };
+  return {
+    hue: Math.round(colour.hue),
+    saturation: Math.round(saturation),
+    lightness: Math.round(lightness),
+    alpha: colour.alpha && roundFloat(colour.alpha)
+  };
 }
 
 function hslToHsv(colour: Hsl): Hsv {
@@ -149,7 +156,12 @@ function hslToHsv(colour: Hsl): Hsv {
   const divisor = colour.lightness + temp;
   const saturation = divisor === 0 ? 0 : (200 * temp) / divisor;
   const value = colour.lightness + temp;
-  return { hue: colour.hue, saturation, value };
+  return {
+    hue: Math.round(colour.hue),
+    saturation: Math.round(saturation),
+    value: Math.round(value),
+    alpha: colour.alpha && roundFloat(colour.alpha)
+  };
 }
 
 export function toRgb(colour: Colour): RgbColour {
@@ -224,7 +236,7 @@ export function parseHex(str: string): RgbColour | undefined {
   }
   const hasAlpha = hexString.length === 8;
   if (hasAlpha) {
-    const red = (hex >> 32) & 255;
+    const red = (hex >> 24) & 255;
     const green = (hex >> 16) & 255;
     const blue = (hex >> 8) & 255;
     const alpha = (hex & 255) / 255;
