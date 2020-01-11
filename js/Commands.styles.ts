@@ -91,7 +91,8 @@ export const description = cx(
 export const tdValues = cx(
   td,
   css({
-    width: "50%"
+    width: "50%",
+    minWidth: "6rem"
   })
 );
 
