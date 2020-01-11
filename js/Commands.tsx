@@ -154,10 +154,13 @@ const Input: React.FC<InputProps> = ({
           <select
             value={val.toString()}
             onChange={e => {
-              setNewValue(e.target.value, i);
+              const newValue =
+                e.target.value === "" ? undefined : e.target.value;
+              setNewValue(newValue, i);
             }}
             className={styles.select}
           >
+            <option value="" />
             {choiceStrs.map(c => (
               <option value={c} key={c}>
                 {c}
