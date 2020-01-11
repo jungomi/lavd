@@ -10,6 +10,8 @@ export const commandCard = cx(
   imageCard,
   css({
     maxHeight: "80%",
+    minHeight: "20rem",
+    minWidth: "20rem",
     overflow: "hidden"
   })
 );
@@ -22,6 +24,7 @@ export const commandPreview = css({
   borderRadius: "2px",
   whiteSpace: "pre",
   overflow: "auto",
+  flexShrink: 0,
   "::before": {
     content: "'$'",
     marginRight: "0.8rem"
