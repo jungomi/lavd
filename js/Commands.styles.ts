@@ -113,6 +113,7 @@ export const inputContainer = css({
   marginBottom: "0.2rem",
   marginTop: "0.2rem",
   alignItems: "center",
+  justifyContent: "center",
   position: "relative"
 });
 
