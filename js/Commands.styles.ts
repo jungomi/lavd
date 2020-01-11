@@ -110,12 +110,15 @@ export const inputContainer = css({
 
 export const input = css({
   background: "none",
-  height: "1.6rem",
+  // <input> automatically uses Arial, so make it the same font as the rest.
+  font: "inherit",
+  fontSize: "0.9rem",
+  boxSizing: "border-box",
+  height: "1.8rem",
   border: "thin solid rgba(0, 0, 0, 0.12)",
   borderRadius: "4px",
   color: "rgba(0, 0, 0, 0.6)",
-  paddingLeft: "0.6rem",
-  paddingRight: "0.6rem",
+  padding: "0 0.6rem",
   width: "100%",
   ":hover": {
     borderColor: "rgba(0, 0, 0, 0.36)"
@@ -129,13 +132,13 @@ export const input = css({
 export const checkbox = cx(
   input,
   css({
-    width: "1.6rem",
-    height: "1.6rem",
+    width: "1.8rem",
+    height: "1.8rem",
     appearance: "none",
     outline: "none",
     margin: 0,
     cursor: "pointer",
-    borderRadius: "100%",
+    borderRadius: "50%",
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
@@ -160,5 +163,36 @@ export const checkbox = cx(
         opacity: 1
       }
     }
+  })
+);
+
+export const selectContainer = css({
+  display: "flex",
+  alignItems: "center",
+  position: "relative",
+  width: "100%",
+  "::after": {
+    content: "''",
+    position: "absolute",
+    right: "0.8rem",
+    flexShrink: 0,
+    width: "0.4rem",
+    height: "0.4rem",
+    color: "rgba(0, 0, 0, 0.6)",
+    borderStyle: "solid",
+    borderWidth: "0 2px 2px 0",
+    // Rotate to make it point down
+    transform: "rotate(45deg)",
+    // All mouse events are passed through the element below it.
+    pointerEvents: "none"
+  }
+});
+
+export const select = cx(
+  input,
+  css({
+    outline: "none",
+    appearance: "none",
+    cursor: "pointer"
   })
 );

@@ -19,6 +19,7 @@ export type ParserOption = {
   default?: ParserOptionType | Array<ParserOptionType>;
   description?: string;
   type?: ParserOptionTypeKind;
+  choices?: Array<ParserOptionType>;
 };
 
 type ParserOptionValue = Optional<ParserOptionType | Array<ParserOptionType>>;
@@ -110,14 +111,25 @@ type InputProps = {
   name: string;
   value?: OptionalParserOption;
   type?: ParserOptionTypeKind;
+  choices?: Array<ParserOptionType>;
   setValue: (name: string, value: OptionalParserOption) => void;
 };
 
-const Input: React.FC<InputProps> = ({ name, value, type, setValue }) => {
+const Input: React.FC<InputProps> = ({
+  name,
+  value,
+  type,
+  choices,
+  setValue
+}) => {
   const inputs = [];
   // An empty string is needed for empty values, because otherwise the inputs
   // become uncontrolled.
   const valueArr = Array.isArray(value) ? value : [value];
+  const choiceStrs =
+    choices !== undefined && choices.length > 0
+      ? choices.map(c => c.toString())
+      : undefined;
   const inputValues = valueArr.map(v => (v === undefined ? "" : v));
   const setNewValue = (
     newValue: ParserOptionType | undefined,
@@ -133,12 +145,31 @@ const Input: React.FC<InputProps> = ({ name, value, type, setValue }) => {
   };
   for (const [i, val] of inputValues.entries()) {
     const key = `${name}-${i}`;
+    let input = undefined;
     // NOTE: The value always respects the type that has been specified, so the
     // type casts (val as X) are just there to tell off TypeScript.
-    switch (type) {
-      case "int": {
-        inputs.push(
-          <div className={styles.inputContainer} key={key}>
+    if (choiceStrs) {
+      input = (
+        <div className={styles.selectContainer}>
+          <select
+            value={val.toString()}
+            onChange={e => {
+              setNewValue(e.target.value, i);
+            }}
+            className={styles.select}
+          >
+            {choiceStrs.map(c => (
+              <option value={c} key={c}>
+                {c}
+              </option>
+            ))}
+          </select>
+        </div>
+      );
+    } else {
+      switch (type) {
+        case "int": {
+          input = (
             <input
               type="number"
               value={val as number | string}
@@ -148,13 +179,11 @@ const Input: React.FC<InputProps> = ({ name, value, type, setValue }) => {
               }}
               className={styles.input}
             />
-          </div>
-        );
-        break;
-      }
-      case "float": {
-        inputs.push(
-          <div className={styles.inputContainer} key={key}>
+          );
+          break;
+        }
+        case "float": {
+          input = (
             <input
               type="number"
               value={val as number | string}
@@ -165,13 +194,11 @@ const Input: React.FC<InputProps> = ({ name, value, type, setValue }) => {
               }}
               className={styles.input}
             />
-          </div>
-        );
-        break;
-      }
-      case "string": {
-        inputs.push(
-          <div className={styles.inputContainer} key={key}>
+          );
+          break;
+        }
+        case "string": {
+          input = (
             <input
               type="text"
               value={val as string}
@@ -183,25 +210,29 @@ const Input: React.FC<InputProps> = ({ name, value, type, setValue }) => {
               }}
               className={styles.input}
             />
-          </div>
-        );
-        break;
-      }
-      case "flag": {
-        inputs.push(
-          <div className={styles.inputContainer} key={key}>
+          );
+          break;
+        }
+        case "flag": {
+          input = (
             <input
               type="checkbox"
               checked={Boolean(val)}
               onChange={() => setNewValue(!val, i)}
               className={styles.checkbox}
             />
-          </div>
-        );
-        break;
+          );
+          break;
+        }
       }
-      default: {
-      }
+    }
+    if (input !== undefined) {
+      inputs.push(
+        <div className={styles.inputContainer} key={key}>
+          {" "}
+          {input}{" "}
+        </div>
+      );
     }
   }
   return (
@@ -217,6 +248,7 @@ type ParserOptionLineProps = {
   value?: OptionalParserOption;
   description?: string;
   type?: ParserOptionTypeKind;
+  choices?: Array<ParserOptionType>;
   showColumn: {
     short: boolean;
     value: boolean;
@@ -231,6 +263,7 @@ const ParserOptionLine: React.FC<ParserOptionLineProps> = ({
   value,
   description,
   type,
+  choices,
   showColumn,
   setValue
 }) => {
@@ -242,7 +275,13 @@ const ParserOptionLine: React.FC<ParserOptionLineProps> = ({
         <td className={styles.shortName}>{short && <>-{short}</>}</td>
       )}
       {showColumn.value && (
-        <Input name={name} value={value} setValue={setValue} type={type} />
+        <Input
+          name={name}
+          value={value}
+          setValue={setValue}
+          type={type}
+          choices={choices}
+        />
       )}
       {showColumn.description && (
         <td className={styles.description}>{description}</td>
@@ -257,6 +296,7 @@ type CurrentParserOption = {
   value?: OptionalParserOption;
   description?: string;
   type?: ParserOptionTypeKind;
+  choices?: Array<ParserOptionType>;
 };
 
 type CommandCardProps = {
@@ -308,6 +348,8 @@ const CommandCard: React.FC<CommandCardProps> = ({ name, command, colour }) => {
       const parserOpt = command.parser[key];
       const currentOption: CurrentParserOption = { name: key };
       if (parserOpt) {
+        currentOption.type = parserOpt.type;
+        currentOption.choices = parserOpt.choices;
         if (parserOpt.short) {
           currentOption.short = parserOpt.short;
           showColumn.short = true;
@@ -315,9 +357,6 @@ const CommandCard: React.FC<CommandCardProps> = ({ name, command, colour }) => {
         if (parserOpt.description) {
           currentOption.description = parserOpt.description;
           showColumn.description = true;
-        }
-        if (parserOpt.type) {
-          currentOption.type = parserOpt.type;
         }
         const value = optionsValues.get(key);
         if (value !== undefined) {
