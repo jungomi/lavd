@@ -47,6 +47,30 @@ export type Commands = {
 
 export type CommandMap = Map<string, Commands>;
 
+function optionsToString(opt: OptionalParserOption): string {
+  if (opt === undefined) {
+    return "";
+  } else if (Array.isArray(opt)) {
+    return opt.map(optionsToString).join(" ");
+  } else {
+    const optStr = opt.toString();
+    if (optStr.startsWith('"')) {
+      // When the option starts with a double quote, the user is solely
+      // responsible to close the quotes and escape all special characters.
+      // This allows to have shell expression to be evaluated within the string,
+      // which would not be possible with single quotes.
+      return optStr;
+    } else if (/[^\\] /.test(optStr)) {
+      // Quote with single quotes if there it contains a space.
+      // Since it's wrapped in single quotes, all single quotes need to be
+      // escaped with '\'' (literally)
+      return `'${optStr.replace(/'/g, "'\\''")}'`;
+    } else {
+      return optStr;
+    }
+  }
+}
+
 type CommandPreviewProps = {
   bin?: string;
   positional?: Array<string>;
@@ -68,7 +92,7 @@ const CommandPreview: React.FC<CommandPreviewProps> = ({
     const sortedKeys = Array.from(options.keys()).sort();
     for (const key of sortedKeys) {
       const value = options.get(key);
-      let valueText = Array.isArray(value) ? value.join(" ") : value;
+      let valueText: string | undefined = optionsToString(value);
       if (
         value === undefined ||
         (Array.isArray(value) && value.every(v => v === undefined))
