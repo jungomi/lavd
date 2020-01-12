@@ -187,19 +187,21 @@ const CommandPreview: React.FC<CommandPreviewProps> = ({
   }
   return (
     <div className={styles.commandPreview}>
-      <div
-        className={styles.copy}
-        onClick={e => {
-          e.preventDefault();
-          navigator.clipboard
-            .writeText(commandString)
-            .then(() => setCopied(true))
-            .catch(e => console.error(e));
-        }}
-      >
-        <div className={copied ? styles.copyIconSuccess : styles.copyIcon} />
-        {copied ? "Copied!" : "Copy"}
-      </div>
+      {navigator.clipboard && (
+        <div
+          className={styles.copy}
+          onClick={e => {
+            e.preventDefault();
+            navigator.clipboard
+              .writeText(commandString)
+              .then(() => setCopied(true))
+              .catch(e => console.error(e));
+          }}
+        >
+          <div className={copied ? styles.copyIconSuccess : styles.copyIcon} />
+          {copied ? "Copied!" : "Copy"}
+        </div>
+      )}
       <pre className={styles.commandPreviewCode}>
         <code>
           {bin && <span>{bin} </span>}
