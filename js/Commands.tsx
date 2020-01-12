@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Colour,
   ColourMap,
@@ -137,10 +137,19 @@ const CommandPreview: React.FC<CommandPreviewProps> = ({
   counts,
   defaults
 }) => {
+  const [copied, setCopied] = useState(false);
+  useEffect(() => {
+    if (copied) {
+      const timer = setTimeout(() => setCopied(false), 2000);
+      return () => clearTimeout(timer);
+    }
+  }, [copied]);
   const argSpans = [];
+  let commandString = bin === undefined ? "" : `${bin} `;
   if (positional) {
     for (const posArg of positional) {
       argSpans.push(<span key={posArg}>{posArg} </span>);
+      commandString += `${posArg} `;
     }
   }
   if (options) {
@@ -170,15 +179,34 @@ const CommandPreview: React.FC<CommandPreviewProps> = ({
           --{key} {valueText && <>{valueText} </>}
         </span>
       );
+      commandString += `--${key} `;
+      if (valueText !== undefined) {
+        commandString += `${valueText} `;
+      }
     }
   }
   return (
-    <pre className={styles.commandPreview}>
-      <code>
-        {bin && <span>{bin} </span>}
-        <>{argSpans}</>
-      </code>
-    </pre>
+    <div className={styles.commandPreview}>
+      <div
+        className={styles.copy}
+        onClick={e => {
+          e.preventDefault();
+          navigator.clipboard
+            .writeText(commandString)
+            .then(() => setCopied(true))
+            .catch(e => console.error(e));
+        }}
+      >
+        <div className={copied ? styles.copyIconSuccess : styles.copyIcon} />
+        {copied ? "Copied!" : "Copy"}
+      </div>
+      <pre className={styles.commandPreviewCode}>
+        <code>
+          {bin && <span>{bin} </span>}
+          <>{argSpans}</>
+        </code>
+      </pre>
+    </div>
   );
 };
 
