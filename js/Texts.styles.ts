@@ -13,9 +13,11 @@ export const textCard = cx(
 );
 
 export const text = css({
-  fontSize: "1.3rem",
   display: "flex",
-  justifyContent: "space-around"
+  justifyContent: "space-around",
+  "@media only screen and (min-width: 896px)": {
+    fontSize: "1.3rem"
+  }
 });
 
 export const column = css({
@@ -35,7 +37,7 @@ export const columnTitle = css({
   fontSize: "1rem",
   fontWeight: 500,
   color: labelColour,
-  marginBottom: "0.8rem"
+  marginBottom: "0.8em"
 });
 
 export const columnText = css({
@@ -43,7 +45,7 @@ export const columnText = css({
   display: "flex",
   flexWrap: "nowrap",
   alignItems: "center",
-  padding: "0.1rem",
+  padding: "0.1em",
   overflow: "auto"
 });
 
