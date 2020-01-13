@@ -6,6 +6,7 @@ import {
   colourString,
   defaultColour
 } from "./colour/definition";
+import { SmallEmpty } from "./Empty";
 import * as styles from "./Sidebar.styles";
 
 type Props = {
@@ -30,6 +31,29 @@ export const Sidebar: React.FC<Props> = ({ names, colours, setColour }) => {
     };
   });
 
+  const nameList = names.map(name => {
+    const colour: Colour = colours.get(name) || defaultColour;
+    return (
+      <div key={name} className={styles.entry}>
+        <span
+          className={styles.colour}
+          style={{ background: colourString(colour) }}
+          onClick={() => setShownColourPicker(name)}
+        />
+        <span>{name}</span>
+        {shownColourPicker === name && (
+          <ColourPicker
+            colour={colour}
+            onSelect={colour => {
+              setShownColourPicker(undefined);
+              setColour(name, colour);
+            }}
+          />
+        )}
+      </div>
+    );
+  });
+
   return (
     <div className={shown ? styles.sidebar : styles.sidebarHidden}>
       <svg
@@ -41,28 +65,7 @@ export const Sidebar: React.FC<Props> = ({ names, colours, setColour }) => {
         <path d="M11.727 26.71l9.977-9.999a1.012 1.012 0 000-1.429l-9.97-9.991c-.634-.66-1.748-.162-1.723.734v19.943c-.023.893 1.083 1.377 1.716.742zm7.84-10.713l-7.55 7.566V8.431l7.55 7.566z" />
       </svg>
       <div className={shown ? styles.nameList : styles.nameListHidden}>
-        {names.map(name => {
-          const colour: Colour = colours.get(name) || defaultColour;
-          return (
-            <div key={name} className={styles.entry}>
-              <span
-                className={styles.colour}
-                style={{ background: colourString(colour) }}
-                onClick={() => setShownColourPicker(name)}
-              />
-              <span>{name}</span>
-              {shownColourPicker === name && (
-                <ColourPicker
-                  colour={colour}
-                  onSelect={colour => {
-                    setShownColourPicker(undefined);
-                    setColour(name, colour);
-                  }}
-                />
-              )}
-            </div>
-          );
-        })}
+        {nameList.length === 0 ? <SmallEmpty text="data" /> : nameList}
       </div>
     </div>
   );

@@ -7,6 +7,7 @@ import {
   Optional,
   sortedCategories
 } from "./data";
+import { Empty } from "./Empty";
 import { LinePlot } from "./plot/LinePlot";
 
 export type Scalars = {
@@ -74,14 +75,8 @@ type Props = {
 export const Scalars: React.FC<Props> = ({ data, colours }) => {
   const kind = "scalars";
   const categories = sortedCategories(data, kind);
-  return (
-    <>
-      {categories.map(category =>
-        createPlot(
-          category,
-          nonEmptyCategoryData(data, kind, category, colours)
-        )
-      )}
-    </>
+  const plots = categories.map(category =>
+    createPlot(category, nonEmptyCategoryData(data, kind, category, colours))
   );
+  return plots.length === 0 ? <Empty text={kind} /> : <>{plots}</>;
 };

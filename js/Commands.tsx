@@ -3,6 +3,7 @@ import { Card } from "./Card";
 import { Colour, ColourMap, defaultColour } from "./colour/definition";
 import * as styles from "./Commands.styles";
 import { DataMap, Optional } from "./data";
+import { Empty } from "./Empty";
 import { stringToFloat, stringToInt } from "./number";
 
 export type ParserOptionType = string | number | boolean;
@@ -612,19 +613,11 @@ export const Commands: React.FC<Props> = ({ data, colours }) => {
       commands.push({ name, command });
     }
   }
-  return (
-    <>
-      {commands.map(({ name, command }) => {
-        const colour = colours.get(name) || defaultColour;
-        return (
-          <CommandCard
-            name={name}
-            command={command}
-            colour={colour}
-            key={name}
-          />
-        );
-      })}
-    </>
-  );
+  const cards = commands.map(({ name, command }) => {
+    const colour = colours.get(name) || defaultColour;
+    return (
+      <CommandCard name={name} command={command} colour={colour} key={name} />
+    );
+  });
+  return cards.length === 0 ? <Empty text="commands" /> : <>{cards}</>;
 };

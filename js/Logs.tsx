@@ -2,6 +2,7 @@ import React from "react";
 import { Card } from "./Card";
 import { ColourMap } from "./colour/definition";
 import { DataMap, nonEmptyCategoryData, sortedCategories } from "./data";
+import { Empty } from "./Empty";
 import * as styles from "./Logs.styles";
 import { formatDate, parseDate, timeElapsed } from "./time";
 
@@ -122,20 +123,17 @@ type Props = {
 export const Logs: React.FC<Props> = ({ data, colours }) => {
   const kind = "logs";
   const categories = sortedCategories(data, kind);
-  return (
-    <>
-      {categories.map(category =>
-        nonEmptyCategoryData(data, kind, category, colours).map(d => (
-          <Card
-            category={category}
-            name={d.name}
-            colour={d.colour}
-            key={`${category}-${d.name}`}
-          >
-            <Log lines={d.data.lines} />
-          </Card>
-        ))
-      )}
-    </>
+  const cards = categories.map(category =>
+    nonEmptyCategoryData(data, kind, category, colours).map(d => (
+      <Card
+        category={category}
+        name={d.name}
+        colour={d.colour}
+        key={`${category}-${d.name}`}
+      >
+        <Log lines={d.data.lines} />
+      </Card>
+    ))
   );
+  return cards.length === 0 ? <Empty text={kind} /> : <>{cards}</>;
 };

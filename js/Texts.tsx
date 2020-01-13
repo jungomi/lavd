@@ -3,6 +3,7 @@ import React from "react";
 import { Card } from "./Card";
 import { ColourMap } from "./colour/definition";
 import { DataMap, nonEmptyCategoryData, sortedCategories } from "./data";
+import { Empty } from "./Empty";
 import * as styles from "./Texts.styles";
 
 export type Text = {
@@ -94,20 +95,17 @@ type Props = {
 export const Texts: React.FC<Props> = ({ data, colours }) => {
   const kind = "texts";
   const categories = sortedCategories(data, kind);
-  return (
-    <>
-      {categories.map(category =>
-        nonEmptyCategoryData(data, kind, category, colours).map(d => (
-          <Card
-            category={category}
-            name={d.name}
-            colour={d.colour}
-            key={`${category}-${d.name}`}
-          >
-            <Text actual={d.data.actual} expected={d.data.expected} />
-          </Card>
-        ))
-      )}
-    </>
+  const cards = categories.map(category =>
+    nonEmptyCategoryData(data, kind, category, colours).map(d => (
+      <Card
+        category={category}
+        name={d.name}
+        colour={d.colour}
+        key={`${category}-${d.name}`}
+      >
+        <Text actual={d.data.actual} expected={d.data.expected} />
+      </Card>
+    ))
   );
+  return cards.length === 0 ? <Empty text={kind} /> : <>{cards}</>;
 };

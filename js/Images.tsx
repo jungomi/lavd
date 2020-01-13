@@ -9,6 +9,7 @@ import {
   defaultColour
 } from "./colour/definition";
 import { DataMap, nonEmptyCategoryData, sortedCategories } from "./data";
+import { Empty } from "./Empty";
 import * as styles from "./Images.styles";
 import { stringToFloat } from "./number";
 
@@ -366,19 +367,16 @@ type Props = {
 export const Images: React.FC<Props> = ({ data, colours }) => {
   const kind = "images";
   const categories = sortedCategories(data, kind);
-  return (
-    <>
-      {categories.map(category =>
-        nonEmptyCategoryData(data, kind, category, colours).map(d => (
-          <ImageCard
-            category={category}
-            name={d.name}
-            image={d.data}
-            colour={d.colour}
-            key={`${category}-${d.name}`}
-          />
-        ))
-      )}
-    </>
+  const cards = categories.map(category =>
+    nonEmptyCategoryData(data, kind, category, colours).map(d => (
+      <ImageCard
+        category={category}
+        name={d.name}
+        image={d.data}
+        colour={d.colour}
+        key={`${category}-${d.name}`}
+      />
+    ))
   );
+  return cards.length === 0 ? <Empty text={kind} /> : <>{cards}</>;
 };
