@@ -3,28 +3,19 @@ import React, { useState } from "react";
 import * as styles from "./App.styles";
 import { assignColours, Colour, ColourMap } from "./colour/definition";
 import { Header } from "./Header";
-import { ImageMap, Images } from "./Images";
-import { Logs, LogMap } from "./Logs";
-import { Scalars, StatMap } from "./Scalars";
+import { Images } from "./Images";
+import { Logs } from "./Logs";
+import { Scalars } from "./Scalars";
 import { Sidebar } from "./Sidebar";
-import { Texts, TextMap } from "./Texts";
-import { Markdown, MarkdownMap } from "./Markdown";
-import { Commands, CommandMap } from "./Commands";
+import { Texts } from "./Texts";
+import { Markdown } from "./Markdown";
+import { Commands } from "./Commands";
 
-import { images } from "./fixture/image";
-import { data } from "./fixture/scalar";
-import { texts } from "./fixture/text";
-import { logs } from "./fixture/log";
-import { markdown } from "./fixture/markdown";
-import { commands } from "./fixture/command";
+import { data } from "./fixture";
+import { DataMap } from "./data";
 
 type RouteProps = {
-  scalars: StatMap;
-  images: ImageMap;
-  texts: TextMap;
-  logs: LogMap;
-  markdown: MarkdownMap;
-  commands: CommandMap;
+  data: DataMap;
   colours: ColourMap;
 };
 
@@ -33,21 +24,19 @@ type Routes = {
 };
 
 const routes: Routes = {
-  "/scalars": () => ({ scalars, colours }) => (
-    <Scalars data={scalars} colours={colours} />
+  "/scalars": () => ({ data, colours }) => (
+    <Scalars data={data} colours={colours} />
   ),
-  "/images": () => ({ images, colours }) => (
-    <Images data={images} colours={colours} />
+  "/images": () => ({ data, colours }) => (
+    <Images data={data} colours={colours} />
   ),
-  "/text": () => ({ texts, colours }) => (
-    <Texts data={texts} colours={colours} />
+  "/text": () => ({ data, colours }) => <Texts data={data} colours={colours} />,
+  "/logs": () => ({ data, colours }) => <Logs data={data} colours={colours} />,
+  "/markdown": () => ({ data, colours }) => (
+    <Markdown data={data} colours={colours} />
   ),
-  "/logs": () => ({ logs, colours }) => <Logs data={logs} colours={colours} />,
-  "/markdown": () => ({ markdown, colours }) => (
-    <Markdown data={markdown} colours={colours} />
-  ),
-  "/commands": () => ({ commands, colours }) => (
-    <Commands data={commands} colours={colours} />
+  "/commands": () => ({ data, colours }) => (
+    <Commands data={data} colours={colours} />
   ),
   "/about": () => () => <span>About</span>
 };
@@ -71,17 +60,7 @@ export const App = () => {
       <div className={styles.wrapper}>
         <Sidebar names={names} colours={colours} setColour={setNewColour} />
         <main className={styles.main}>
-          {Content && (
-            <Content
-              scalars={data}
-              images={images}
-              texts={texts}
-              logs={logs}
-              markdown={markdown}
-              commands={commands}
-              colours={colours}
-            />
-          )}
+          {Content && <Content data={data} colours={colours} />}
         </main>
       </div>
     </>

@@ -1,32 +1,14 @@
 import { diffChars } from "diff";
 import React from "react";
-import { Colour, ColourMap, colourString } from "./colour/definition";
-import * as imageStyles from "./Images.styles";
+import { Card } from "./Card";
+import { ColourMap } from "./colour/definition";
+import { DataMap, nonEmptyCategoryData, sortedCategories } from "./data";
 import * as styles from "./Texts.styles";
-
-type Optional<T> = T | undefined;
 
 export type Text = {
   actual: string;
   expected?: string;
 };
-
-export type Texts = {
-  texts: {
-    [name: string]: Optional<Text>;
-  };
-};
-export type TextMap = Map<string, Texts>;
-
-function sortedCategories(data: TextMap): Array<string> {
-  const uniqueCategories: Set<string> = new Set();
-  for (const d of data.values()) {
-    for (const key of Object.keys(d.texts)) {
-      uniqueCategories.add(key);
-    }
-  }
-  return Array.from(uniqueCategories).sort();
-}
 
 type TextProps = {
   actual: string;
@@ -104,83 +86,28 @@ export const Text: React.FC<TextProps> = ({ actual, expected }) => {
   }
 };
 
-type TextCardProps = {
-  category: string;
-  name: string;
-  text: Text;
-  colour: Colour;
-};
-
-const TextCard: React.FC<TextCardProps> = ({
-  category,
-  name,
-  text,
-  colour
-}) => {
-  return (
-    <div className={imageStyles.imageCard}>
-      <div className={imageStyles.title}>
-        <span className={imageStyles.category}>{category}</span>
-        <span
-          className={imageStyles.name}
-          style={{ color: colourString(colour) }}
-        >
-          {name}
-        </span>
-      </div>
-      <Text actual={text.actual} expected={text.expected} />
-    </div>
-  );
-};
-
-type TextCategoryProps = {
-  category: string;
-  data: TextMap;
-  colourMap: ColourMap;
-};
-
-const TextCategory: React.FC<TextCategoryProps> = ({
-  category,
-  data,
-  colourMap
-}) => {
-  const textCards = [];
-  for (const [name, d] of data) {
-    const text = d.texts[category];
-    const colour = colourMap.get(name);
-    if (text === undefined || colour === undefined) {
-      continue;
-    }
-    textCards.push(
-      <TextCard
-        category={category}
-        name={name}
-        text={text}
-        colour={colour}
-        key={`${category}-${name}`}
-      />
-    );
-  }
-  return <>{textCards}</>;
-};
-
 type Props = {
-  data: TextMap;
+  data: DataMap;
   colours: ColourMap;
 };
 
 export const Texts: React.FC<Props> = ({ data, colours }) => {
-  const categories = sortedCategories(data);
+  const kind = "texts";
+  const categories = sortedCategories(data, kind);
   return (
     <>
-      {categories.map(category => (
-        <TextCategory
-          category={category}
-          data={data}
-          colourMap={colours}
-          key={category}
-        />
-      ))}
+      {categories.map(category =>
+        nonEmptyCategoryData(data, kind, category, colours).map(d => (
+          <Card
+            category={category}
+            name={d.name}
+            colour={d.colour}
+            key={`${category}-${d.name}`}
+          >
+            <Text actual={d.data.actual} expected={d.data.expected} />
+          </Card>
+        ))
+      )}
     </>
   );
 };

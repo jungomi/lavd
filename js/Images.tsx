@@ -1,4 +1,5 @@
 import React, { useRef, useState } from "react";
+import { Card } from "./Card";
 import { ColourPicker } from "./colour/ColourPicker";
 import {
   assignColours,
@@ -7,6 +8,7 @@ import {
   colourString,
   defaultColour
 } from "./colour/definition";
+import { DataMap, nonEmptyCategoryData, sortedCategories } from "./data";
 import * as styles from "./Images.styles";
 import { stringToFloat } from "./number";
 
@@ -38,25 +40,6 @@ export type Image = {
   bbox?: Array<Bbox>;
   minProbability?: number;
 };
-
-type Optional<T> = T | undefined;
-
-export type Images = {
-  images: {
-    [name: string]: Optional<Image>;
-  };
-};
-export type ImageMap = Map<string, Images>;
-
-function sortedCategories(data: ImageMap): Array<string> {
-  const uniqueCategories: Set<string> = new Set();
-  for (const d of data.values()) {
-    for (const key of Object.keys(d.images)) {
-      uniqueCategories.add(key);
-    }
-  }
-  return Array.from(uniqueCategories).sort();
-}
 
 type ClassListProps = {
   classes: Array<string>;
@@ -356,16 +339,12 @@ const ImageCard: React.FC<ImageCardProps> = ({
     setImageSize({ width, height });
   };
   return (
-    <div className={styles.imageCard}>
-      <div
-        className={styles.title}
-        style={{ maxWidth: imageSize.width, maxHeight: imageSize.height }}
-      >
-        <span className={styles.category}>{category}</span>
-        <span className={styles.name} style={{ color: colourString(colour) }}>
-          {name}
-        </span>
-      </div>
+    <Card
+      category={category}
+      name={name}
+      colour={colour}
+      style={{ maxWidth: imageSize.width, maxHeight: imageSize.height }}
+    >
       <ImageOverlay
         image={image}
         name={category}
@@ -375,58 +354,31 @@ const ImageCard: React.FC<ImageCardProps> = ({
         width={imageSize.width}
         height={imageSize.height}
       />
-    </div>
+    </Card>
   );
 };
 
-type ImageCategoryProps = {
-  category: string;
-  data: ImageMap;
-  colourMap: ColourMap;
-};
-
-const ImageCategory: React.FC<ImageCategoryProps> = ({
-  category,
-  data,
-  colourMap
-}) => {
-  const imageCards = [];
-  for (const [name, d] of data) {
-    const image = d.images[category];
-    const colour = colourMap.get(name);
-    if (image === undefined || colour === undefined) {
-      continue;
-    }
-    imageCards.push(
-      <ImageCard
-        category={category}
-        name={name}
-        image={image}
-        colour={colour}
-        key={`${category}-${name}`}
-      />
-    );
-  }
-  return <>{imageCards}</>;
-};
-
 type Props = {
-  data: ImageMap;
+  data: DataMap;
   colours: ColourMap;
 };
 
 export const Images: React.FC<Props> = ({ data, colours }) => {
-  const categories = sortedCategories(data);
+  const kind = "images";
+  const categories = sortedCategories(data, kind);
   return (
     <>
-      {categories.map(category => (
-        <ImageCategory
-          category={category}
-          data={data}
-          colourMap={colours}
-          key={category}
-        />
-      ))}
+      {categories.map(category =>
+        nonEmptyCategoryData(data, kind, category, colours).map(d => (
+          <ImageCard
+            category={category}
+            name={d.name}
+            image={d.data}
+            colour={d.colour}
+            key={`${category}-${d.name}`}
+          />
+        ))
+      )}
     </>
   );
 };

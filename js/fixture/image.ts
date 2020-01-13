@@ -1,4 +1,4 @@
-import { ImageMap } from "../Images";
+import { DataMap } from "../data";
 // This is ignored since TypeScript is not happy with images, but it will
 // automatically be bundled.
 // @ts-ignore
@@ -16,7 +16,7 @@ const classes = [
   "cat"
 ];
 
-export const images: ImageMap = new Map([
+export const images: DataMap = new Map([
   [
     "test name",
     {

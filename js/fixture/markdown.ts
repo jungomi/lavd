@@ -1,6 +1,6 @@
-import { MarkdownMap } from "../Markdown";
+import { DataMap } from "../data";
 
-export const markdown: MarkdownMap = new Map([
+export const markdown: DataMap = new Map([
   [
     "test name",
     {

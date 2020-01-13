@@ -1,31 +1,13 @@
 import React from "react";
-import { Colour, ColourMap, colourString } from "./colour/definition";
-import * as imageStyles from "./Images.styles";
+import { Card } from "./Card";
+import { ColourMap } from "./colour/definition";
+import { DataMap, nonEmptyCategoryData, sortedCategories } from "./data";
 import * as styles from "./Logs.styles";
 import { formatDate, parseDate, timeElapsed } from "./time";
-
-type Optional<T> = T | undefined;
 
 export type Log = {
   lines: Array<LogLine>;
 };
-
-export type Logs = {
-  logs: {
-    [name: string]: Optional<Log>;
-  };
-};
-export type LogMap = Map<string, Logs>;
-
-function sortedCategories(data: LogMap): Array<string> {
-  const uniqueCategories: Set<string> = new Set();
-  for (const d of data.values()) {
-    for (const key of Object.keys(d.logs)) {
-      uniqueCategories.add(key);
-    }
-  }
-  return Array.from(uniqueCategories).sort();
-}
 
 type LogLineProps = {
   message: string;
@@ -132,78 +114,28 @@ export const Log: React.FC<Log> = ({ lines }) => {
   );
 };
 
-type LogCardProps = {
-  category: string;
-  name: string;
-  log: Log;
-  colour: Colour;
-};
-
-const LogCard: React.FC<LogCardProps> = ({ category, name, log, colour }) => {
-  return (
-    <div className={styles.logCard}>
-      <div className={imageStyles.title}>
-        <span className={imageStyles.category}>{category}</span>
-        <span
-          className={imageStyles.name}
-          style={{ color: colourString(colour) }}
-        >
-          {name}
-        </span>
-      </div>
-      <Log lines={log.lines} />
-    </div>
-  );
-};
-
-type LogCategoryProps = {
-  category: string;
-  data: LogMap;
-  colourMap: ColourMap;
-};
-
-const LogCategory: React.FC<LogCategoryProps> = ({
-  category,
-  data,
-  colourMap
-}) => {
-  const logCards = [];
-  for (const [name, d] of data) {
-    const log = d.logs[category];
-    const colour = colourMap.get(name);
-    if (log === undefined || colour === undefined) {
-      continue;
-    }
-    logCards.push(
-      <LogCard
-        category={category}
-        name={name}
-        log={log}
-        colour={colour}
-        key={`${category}-${name}`}
-      />
-    );
-  }
-  return <>{logCards}</>;
-};
-
 type Props = {
-  data: LogMap;
+  data: DataMap;
   colours: ColourMap;
 };
 
 export const Logs: React.FC<Props> = ({ data, colours }) => {
-  const categories = sortedCategories(data);
+  const kind = "logs";
+  const categories = sortedCategories(data, kind);
   return (
     <>
-      {categories.map(category => (
-        <LogCategory
-          category={category}
-          data={data}
-          colourMap={colours}
-          key={category}
-        />
-      ))}
+      {categories.map(category =>
+        nonEmptyCategoryData(data, kind, category, colours).map(d => (
+          <Card
+            category={category}
+            name={d.name}
+            colour={d.colour}
+            key={`${category}-${d.name}`}
+          >
+            <Log lines={d.data.lines} />
+          </Card>
+        ))
+      )}
     </>
   );
 };

@@ -1,27 +1,18 @@
 import React from "react";
 import { ColourMap, colourString, toRgb } from "./colour/definition";
+import {
+  CategoryDataEntry,
+  DataMap,
+  nonEmptyCategoryData,
+  Optional,
+  sortedCategories
+} from "./data";
 import { LinePlot } from "./plot/LinePlot";
 
-type Optional<T> = T | undefined;
-
-export type Stat = {
+export type Scalars = {
   start: number;
-  stats: {
-    [name: string]: Optional<Array<number>>;
-  };
+  values: Optional<Array<number>>;
 };
-
-export type StatMap = Map<string, Stat>;
-
-function sortedCategories(data: StatMap): Array<string> {
-  const uniqueCategories: Set<string> = new Set();
-  for (const d of data.values()) {
-    for (const key of Object.keys(d.stats)) {
-      uniqueCategories.add(key);
-    }
-  }
-  return Array.from(uniqueCategories).sort();
-}
 
 // When the series do not cover the same range (x values) the tooltip will be
 // restricted to closest single line, even when there are multiple ones at the
@@ -44,18 +35,20 @@ function padSeries(
   return [...padStart, ...series, ...padEnd];
 }
 
-function createPlot(category: string, data: StatMap, colourMap: ColourMap) {
+function createPlot(
+  category: string,
+  categoryData: Array<CategoryDataEntry<"scalars">>
+) {
   const colours = [];
   const series = [];
-  for (const [name, d] of data) {
-    const stat = d.stats[category];
-    const colour = colourMap.get(name);
-    if (stat === undefined || stat.length === 0 || colour === undefined) {
+  for (const d of categoryData) {
+    const stat = d.data.values;
+    if (stat === undefined || stat.length === 0) {
       continue;
     }
-    colours.push(colour);
-    const enumeratedSeries = stat.map((x, i) => [i + d.start, x]);
-    series.push({ name, data: enumeratedSeries });
+    colours.push(d.colour);
+    const enumeratedSeries = stat.map((x, i) => [i + d.data.start, x]);
+    series.push({ name: d.name, data: enumeratedSeries });
   }
   const min = Math.min(...series.map(s => s.data[0][0]));
   const max = Math.max(...series.map(s => s.data[s.data.length - 1][0]));
@@ -74,11 +67,21 @@ function createPlot(category: string, data: StatMap, colourMap: ColourMap) {
 }
 
 type Props = {
-  data: StatMap;
+  data: DataMap;
   colours: ColourMap;
 };
 
 export const Scalars: React.FC<Props> = ({ data, colours }) => {
-  const categories = sortedCategories(data);
-  return <>{categories.map(category => createPlot(category, data, colours))}</>;
+  const kind = "scalars";
+  const categories = sortedCategories(data, kind);
+  return (
+    <>
+      {categories.map(category =>
+        createPlot(
+          category,
+          nonEmptyCategoryData(data, kind, category, colours)
+        )
+      )}
+    </>
+  );
 };

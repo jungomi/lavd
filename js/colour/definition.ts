@@ -42,6 +42,17 @@ export function colourString(colour: Colour): string {
   }
 }
 
+export function contrastForeground(colour: Colour): Colour {
+  const rgbColour = toRgb(colour).value;
+  const value =
+    (rgbColour.red * 299 + rgbColour.green * 587 + rgbColour.blue * 114) / 1000;
+  const fgColour =
+    value >= 128
+      ? { red: 0, green: 0, blue: 0 }
+      : { red: 255, green: 255, blue: 255 };
+  return { kind: "rgb", value: fgColour };
+}
+
 // Conversion based on
 // https://stackoverflow.com/questions/39118528/rgb-to-hsl-conversion
 function rgbToHsl(colour: Rgb): Hsl {

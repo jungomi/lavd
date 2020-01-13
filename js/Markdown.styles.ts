@@ -1,8 +1,8 @@
 import { css, cx } from "emotion";
-import { imageCard } from "./Images.styles";
+import { card } from "./Card.styles";
 
 export const markdownCard = cx(
-  imageCard,
+  card,
   css({
     maxHeight: "80%",
     maxWidth: "65rem",

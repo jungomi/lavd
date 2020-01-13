@@ -1,15 +1,9 @@
-import React, { useState, useEffect } from "react";
-import {
-  Colour,
-  ColourMap,
-  colourString,
-  defaultColour
-} from "./colour/definition";
+import React, { useEffect, useState } from "react";
+import { Card } from "./Card";
+import { Colour, ColourMap, defaultColour } from "./colour/definition";
 import * as styles from "./Commands.styles";
-import * as imageStyles from "./Images.styles";
+import { DataMap, Optional } from "./data";
 import { stringToFloat, stringToInt } from "./number";
-
-type Optional<T> = T | undefined;
 
 export type ParserOptionType = string | number | boolean;
 export type ParserOptionTypeKind = "string" | "int" | "float" | "flag";
@@ -465,12 +459,6 @@ type CurrentParserOption = {
   count?: ArgumentCount;
 };
 
-type CommandCardProps = {
-  name: string;
-  command: Command;
-  colour: Colour;
-};
-
 type CommandOptions = {
   values: Map<string, OptionalParserOption>;
   defaults?: Map<string, ParserOptionType | Array<ParserOptionType>>;
@@ -520,6 +508,12 @@ function initialCommandOptions(command: Command): CommandOptions {
   };
 }
 
+type CommandCardProps = {
+  name: string;
+  command: Command;
+  colour: Colour;
+};
+
 const CommandCard: React.FC<CommandCardProps> = ({ name, command, colour }) => {
   const commandOptions = initialCommandOptions(command);
   const [optionsValues, setOptionsValues] = useState(commandOptions.values);
@@ -564,15 +558,7 @@ const CommandCard: React.FC<CommandCardProps> = ({ name, command, colour }) => {
   }
   const positional = command.arguments && command.arguments.positional;
   return (
-    <div className={styles.commandCard}>
-      <div className={imageStyles.title}>
-        <span
-          className={imageStyles.name}
-          style={{ color: colourString(colour) }}
-        >
-          {name}
-        </span>
-      </div>
+    <Card name={name} colour={colour} className={styles.commandCard}>
       {(command.bin || positional || optionsValues.size > 0) && (
         <CommandPreview
           bin={command.bin}
@@ -610,19 +596,25 @@ const CommandCard: React.FC<CommandCardProps> = ({ name, command, colour }) => {
           </table>
         </div>
       )}
-    </div>
+    </Card>
   );
 };
 
 type Props = {
-  data: CommandMap;
+  data: DataMap;
   colours: ColourMap;
 };
 
 export const Commands: React.FC<Props> = ({ data, colours }) => {
+  const commands = [];
+  for (const [name, { command }] of data) {
+    if (command !== undefined) {
+      commands.push({ name, command });
+    }
+  }
   return (
     <>
-      {Array.from(data.entries()).map(([name, { command }]) => {
+      {commands.map(({ name, command }) => {
         const colour = colours.get(name) || defaultColour;
         return (
           <CommandCard

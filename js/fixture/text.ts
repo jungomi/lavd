@@ -1,6 +1,6 @@
-import { TextMap } from "../Texts";
+import { DataMap } from "../data";
 
-export const texts: TextMap = new Map([
+export const texts: DataMap = new Map([
   [
     "test name",
     {

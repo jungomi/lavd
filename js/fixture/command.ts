@@ -1,6 +1,6 @@
-import { CommandMap } from "../Commands";
+import { DataMap } from "../data";
 
-export const commands: CommandMap = new Map([
+export const commands: DataMap = new Map([
   [
     "test name",
     {

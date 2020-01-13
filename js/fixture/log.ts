@@ -1,6 +1,6 @@
-import { LogMap } from "../Logs";
+import { DataMap } from "../data";
 
-export const logs: LogMap = new Map([
+export const logs: DataMap = new Map([
   [
     "test name",
     {
