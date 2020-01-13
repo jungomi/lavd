@@ -129,6 +129,7 @@ export const Logs: React.FC<Props> = ({ data, colours }) => {
         category={category}
         name={d.name}
         colour={d.colour}
+        className={styles.logCard}
         key={`${category}-${d.name}`}
       >
         <Log lines={d.data.lines} />

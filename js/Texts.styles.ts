@@ -1,6 +1,16 @@
 import { css, cx } from "emotion";
+import { card } from "./Card.styles";
 
 const labelColour = "#616161";
+
+export const textCard = cx(
+  card,
+  css({
+    maxHeight: "80%",
+    minWidth: "20rem",
+    overflow: "hidden"
+  })
+);
 
 export const text = css({
   fontSize: "1.3rem",
@@ -11,25 +21,30 @@ export const text = css({
 export const column = css({
   display: "flex",
   flexDirection: "column",
-  marginLeft: "1em",
-  marginRight: "1em",
+  marginLeft: "0.3em",
+  marginRight: "0.3em",
   // Needed to show trailing white space, otherwise they are not rendered.
   whiteSpace: "pre-wrap",
-  maxWidth: "33%"
+  maxWidth: "33%",
+  overflow: "hidden"
 });
 
 export const columnTitle = css({
+  display: "flex",
+  justifyContent: "center",
   fontSize: "1rem",
   fontWeight: 500,
   color: labelColour,
-  margin: "0 auto 0.8rem auto"
+  marginBottom: "0.8rem"
 });
 
 export const columnText = css({
   fontFamily: "monospace",
   display: "flex",
   flexWrap: "nowrap",
-  alignItems: "center"
+  alignItems: "center",
+  padding: "0.1rem",
+  overflow: "auto"
 });
 
 export const columnDiff = css({
@@ -45,7 +60,15 @@ export const columnDiff = css({
 export const columnTextActual = cx(
   columnText,
   css({
+    overflow: "unset",
     marginBottom: "0.2em"
+  })
+);
+
+export const columnTextExpected = cx(
+  columnText,
+  css({
+    overflow: "unset"
   })
 );
 

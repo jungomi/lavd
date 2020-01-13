@@ -13,6 +13,7 @@ export const logCard = cx(
   imageCard,
   css({
     maxHeight: "80%",
+    minWidth: "20rem",
     overflow: "hidden"
   })
 );

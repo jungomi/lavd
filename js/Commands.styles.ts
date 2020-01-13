@@ -1,13 +1,13 @@
 import { css, cx } from "emotion";
 import { bgColour } from "./App.styles";
-import { imageCard } from "./Images.styles";
+import { card } from "./Card.styles";
 
 const labelColour = "#616161";
 const iconColour = "#cecece";
 const iconHoverColour = "#929292";
 
 export const commandCard = cx(
-  imageCard,
+  card,
   css({
     maxHeight: "80%",
     minHeight: "20rem",
@@ -189,7 +189,7 @@ export const input = css({
   height: "1.8rem",
   border: "thin solid rgba(0, 0, 0, 0.12)",
   borderRadius: "4px",
-  color: "rgba(0, 0, 0, 0.6)",
+  color: "#484848",
   padding: "0 0.6rem",
   width: "100%",
   ":hover": {

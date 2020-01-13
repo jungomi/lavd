@@ -78,7 +78,7 @@ export const Text: React.FC<TextProps> = ({ actual, expected }) => {
           {!identical && (
             <div className={styles.columnDiff}>
               <div className={styles.columnTextActual}>{diffActual}</div>
-              <div className={styles.columnText}>{diffExpected}</div>
+              <div className={styles.columnTextExpected}>{diffExpected}</div>
             </div>
           )}
         </div>
@@ -101,6 +101,7 @@ export const Texts: React.FC<Props> = ({ data, colours }) => {
         category={category}
         name={d.name}
         colour={d.colour}
+        className={styles.textCard}
         key={`${category}-${d.name}`}
       >
         <Text actual={d.data.actual} expected={d.data.expected} />
