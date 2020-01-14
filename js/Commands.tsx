@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Card } from "./Card";
 import { Colour, ColourMap, defaultColour } from "./colour/definition";
 import * as styles from "./Commands.styles";
@@ -213,6 +213,155 @@ type OptionalParserOption =
   | undefined;
 
 type InputProps = {
+  index: number;
+  count?: ArgumentCount;
+  value: ParserOptionType;
+  placeholder: string;
+  setValue: (newValue: ParserOptionType | undefined, index: number) => void;
+  destroy: (index: number) => void;
+  type?: ParserOptionTypeKind;
+  choices?: Array<string>;
+  focus?: boolean;
+  finishFocus: () => void;
+};
+
+const Input: React.FC<InputProps> = ({
+  index,
+  count,
+  value,
+  type,
+  placeholder,
+  choices,
+  setValue,
+  destroy,
+  focus,
+  finishFocus
+}) => {
+  const inputRef = useRef<HTMLInputElement>(null);
+  useEffect(() => {
+    if (focus && inputRef.current !== null) {
+      inputRef.current.focus();
+      // After it has been focused, the parent needs to know that it's done to
+      // reset the focus value, otherwise if the same index is focused again,
+      // it will not trigger a new focus.
+      finishFocus();
+    }
+  }, [focus, finishFocus]);
+  let input = undefined;
+  // NOTE: The value always respects the type that has been specified, so the
+  // type casts (val as X) are just there to tell off TypeScript.
+  if (choices) {
+    // select doesn't have placeholder, to work around that a ::before pseudo
+    // element is used to show the placeholder with a data attribute.
+    input = (
+      <div
+        data-placeholder={value === "" ? placeholder : ""}
+        className={styles.selectContainer}
+      >
+        <select
+          value={value.toString()}
+          onChange={e => {
+            const newValue = e.target.value === "" ? undefined : e.target.value;
+            setValue(newValue, index);
+          }}
+          className={styles.select}
+        >
+          <option value="" />
+          {choices.map(c => (
+            <option value={c} key={c}>
+              {c}
+            </option>
+          ))}
+        </select>
+      </div>
+    );
+  } else {
+    switch (type) {
+      case "int": {
+        input = (
+          <input
+            type="number"
+            value={value as number | string}
+            placeholder={placeholder}
+            onChange={e => {
+              const newValue = stringToInt(e.target.value);
+              setValue(newValue, index);
+            }}
+            className={count === "+" ? styles.inputWithCount : styles.input}
+            ref={inputRef}
+          />
+        );
+        break;
+      }
+      case "float": {
+        input = (
+          <input
+            type="number"
+            value={value as number | string}
+            placeholder={placeholder}
+            step={0.01}
+            onChange={e => {
+              const newValue = stringToFloat(e.target.value);
+              setValue(newValue, index);
+            }}
+            className={count === "+" ? styles.inputWithCount : styles.input}
+            ref={inputRef}
+          />
+        );
+        break;
+      }
+      case "string": {
+        input = (
+          <input
+            type="text"
+            value={value as string}
+            placeholder={placeholder}
+            onChange={e => {
+              // When the input is empty, it needs to be unset.
+              const newValue =
+                e.target.value === "" ? undefined : e.target.value;
+              setValue(newValue, index);
+            }}
+            className={count === "+" ? styles.inputWithCount : styles.input}
+            ref={inputRef}
+          />
+        );
+        break;
+      }
+      case "flag": {
+        input = (
+          <input
+            type="checkbox"
+            checked={Boolean(value)}
+            onChange={() => setValue(!value, index)}
+            className={styles.checkbox}
+            ref={inputRef}
+          />
+        );
+        break;
+      }
+    }
+  }
+  if (input === undefined) {
+    return null;
+  } else {
+    return (
+      <div className={styles.inputContainer}>
+        {input}
+        {count === "+" && (
+          <div
+            className={styles.inputRemoveControls}
+            onClick={() => destroy(index)}
+          >
+            <span className={styles.plus}></span>
+          </div>
+        )}
+      </div>
+    );
+  }
+};
+
+type InputListProps = {
   name: string;
   value?: OptionalParserOption;
   defaultValue?: ParserOptionType | Array<ParserOptionType>;
@@ -222,7 +371,7 @@ type InputProps = {
   setValue: (name: string, value: OptionalParserOption) => void;
 };
 
-const Input: React.FC<InputProps> = ({
+const InputList: React.FC<InputListProps> = ({
   name,
   value,
   defaultValue,
@@ -231,6 +380,7 @@ const Input: React.FC<InputProps> = ({
   count,
   setValue
 }) => {
+  const [focused, setFocused] = useState<number | undefined>(undefined);
   const inputs = [];
   // An empty string is needed for empty values, because otherwise the inputs
   // become uncontrolled.
@@ -254,6 +404,8 @@ const Input: React.FC<InputProps> = ({
   };
   const addInput = () => {
     if (Array.isArray(value)) {
+      // The new input will be focused.
+      setFocused(value.length);
       setValue(name, [...value, undefined]);
     }
   };
@@ -263,9 +415,14 @@ const Input: React.FC<InputProps> = ({
       if (newValue.length === 0) {
         newValue.push(undefined);
       }
+      // Trying to focus the same index that was removed, but if that was the
+      // last input element in the list, it will focus one before that (the new
+      // last one in the list)
+      setFocused(Math.min(index, newValue.length - 1));
       setValue(name, newValue);
     }
   };
+  const resetFocused = () => setFocused(undefined);
   for (const [i, val] of inputValues.entries()) {
     const key = `${name}-${i}`;
     const currentDefault = Array.isArray(defaultValue)
@@ -275,112 +432,23 @@ const Input: React.FC<InputProps> = ({
       currentDefault === undefined
         ? ""
         : `Default: ${currentDefault.toString()}`;
-    let input = undefined;
-    // NOTE: The value always respects the type that has been specified, so the
-    // type casts (val as X) are just there to tell off TypeScript.
-    if (choiceStrs) {
-      // select doesn't have placeholder, to work around that a ::before pseudo
-      // element is used to show the placeholder with a data attribute.
-      input = (
-        <div
-          data-placeholder={val === "" ? placeholder : ""}
-          className={styles.selectContainer}
-        >
-          <select
-            value={val.toString()}
-            onChange={e => {
-              const newValue =
-                e.target.value === "" ? undefined : e.target.value;
-              setNewValue(newValue, i);
-            }}
-            className={styles.select}
-          >
-            <option value="" />
-            {choiceStrs.map(c => (
-              <option value={c} key={c}>
-                {c}
-              </option>
-            ))}
-          </select>
-        </div>
-      );
-    } else {
-      switch (type) {
-        case "int": {
-          input = (
-            <input
-              type="number"
-              value={val as number | string}
-              placeholder={placeholder}
-              onChange={e => {
-                const newValue = stringToInt(e.target.value);
-                setNewValue(newValue, i);
-              }}
-              className={count === "+" ? styles.inputWithCount : styles.input}
-            />
-          );
-          break;
-        }
-        case "float": {
-          input = (
-            <input
-              type="number"
-              value={val as number | string}
-              placeholder={placeholder}
-              step={0.01}
-              onChange={e => {
-                const newValue = stringToFloat(e.target.value);
-                setNewValue(newValue, i);
-              }}
-              className={count === "+" ? styles.inputWithCount : styles.input}
-            />
-          );
-          break;
-        }
-        case "string": {
-          input = (
-            <input
-              type="text"
-              value={val as string}
-              placeholder={placeholder}
-              onChange={e => {
-                // When the input is empty, it needs to be unset.
-                const newValue =
-                  e.target.value === "" ? undefined : e.target.value;
-                setNewValue(newValue, i);
-              }}
-              className={count === "+" ? styles.inputWithCount : styles.input}
-            />
-          );
-          break;
-        }
-        case "flag": {
-          input = (
-            <input
-              type="checkbox"
-              checked={Boolean(val)}
-              onChange={() => setNewValue(!val, i)}
-              className={styles.checkbox}
-            />
-          );
-          break;
-        }
-      }
-    }
-    if (input !== undefined) {
-      inputs.push(
-        <div className={styles.inputContainer} key={key}>
-          {input}
-          {count === "+" && (
-            <div
-              className={styles.inputRemoveControls}
-              onClick={() => removeInput(i)}
-            >
-              <span className={styles.plus}></span>
-            </div>
-          )}
-        </div>
-      );
+    const input = (
+      <Input
+        index={i}
+        count={count}
+        value={val}
+        type={type}
+        placeholder={placeholder}
+        choices={choiceStrs}
+        setValue={setNewValue}
+        destroy={removeInput}
+        focus={focused === i}
+        finishFocus={resetFocused}
+        key={key}
+      />
+    );
+    if (input !== null) {
+      inputs.push(input);
     }
   }
   return (
@@ -433,7 +501,7 @@ const ParserOptionLine: React.FC<ParserOptionLineProps> = ({
         <td className={styles.shortName}>{short && <>-{short}</>}</td>
       )}
       {showColumn.value && (
-        <Input
+        <InputList
           name={name}
           value={value}
           defaultValue={defaultValue}
