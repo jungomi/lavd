@@ -223,6 +223,7 @@ type InputProps = {
   choices?: Array<string>;
   focus?: boolean;
   finishFocus: () => void;
+  addInput: (at?: number) => void;
 };
 
 const Input: React.FC<InputProps> = ({
@@ -235,7 +236,8 @@ const Input: React.FC<InputProps> = ({
   setValue,
   destroy,
   focus,
-  finishFocus
+  finishFocus,
+  addInput
 }) => {
   const inputRef = useRef<HTMLInputElement>(null);
   useEffect(() => {
@@ -247,6 +249,13 @@ const Input: React.FC<InputProps> = ({
       finishFocus();
     }
   }, [focus, finishFocus]);
+  // When Enter is pressed on the inputs that allow adding new fields, it will
+  // create signal to create a new input field.
+  const pressEnter = (e: React.KeyboardEvent) => {
+    if (count === "+" && e.key === "Enter") {
+      addInput(index);
+    }
+  };
   let input = undefined;
   // NOTE: The value always respects the type that has been specified, so the
   // type casts (val as X) are just there to tell off TypeScript.
@@ -288,6 +297,7 @@ const Input: React.FC<InputProps> = ({
               setValue(newValue, index);
             }}
             className={count === "+" ? styles.inputWithCount : styles.input}
+            onKeyDown={pressEnter}
             ref={inputRef}
           />
         );
@@ -305,6 +315,7 @@ const Input: React.FC<InputProps> = ({
               setValue(newValue, index);
             }}
             className={count === "+" ? styles.inputWithCount : styles.input}
+            onKeyDown={pressEnter}
             ref={inputRef}
           />
         );
@@ -323,6 +334,7 @@ const Input: React.FC<InputProps> = ({
               setValue(newValue, index);
             }}
             className={count === "+" ? styles.inputWithCount : styles.input}
+            onKeyDown={pressEnter}
             ref={inputRef}
           />
         );
@@ -335,7 +347,6 @@ const Input: React.FC<InputProps> = ({
             checked={Boolean(value)}
             onChange={() => setValue(!value, index)}
             className={styles.checkbox}
-            ref={inputRef}
           />
         );
         break;
@@ -402,11 +413,19 @@ const InputList: React.FC<InputListProps> = ({
       setValue(name, newValue);
     }
   };
-  const addInput = () => {
+  const addInput = (at?: number) => {
     if (Array.isArray(value)) {
+      // When an index is given, the input field will be created after that
+      // given index, otherwise at the very end.
+      const newIndex = at === undefined ? value.length : at + 1;
+      const newValue = [
+        ...value.slice(0, newIndex),
+        undefined,
+        ...value.slice(newIndex)
+      ];
+      setValue(name, newValue);
       // The new input will be focused.
-      setFocused(value.length);
-      setValue(name, [...value, undefined]);
+      setFocused(newIndex);
     }
   };
   const removeInput = (index: number) => {
@@ -444,6 +463,7 @@ const InputList: React.FC<InputListProps> = ({
         destroy={removeInput}
         focus={focused === i}
         finishFocus={resetFocused}
+        addInput={addInput}
         key={key}
       />
     );
@@ -456,7 +476,7 @@ const InputList: React.FC<InputListProps> = ({
       <div className={styles.values}>
         {inputs}
         {count === "+" && (
-          <div className={styles.addInput} onClick={addInput} />
+          <div className={styles.addInput} onClick={() => addInput()} />
         )}
       </div>
     </td>
