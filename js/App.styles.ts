@@ -19,10 +19,3 @@ export const main = css({
   flexWrap: "wrap",
   alignContent: "flex-start"
 });
-
-export const noData = css({
-  fontSize: "2rem",
-  fontStyle: "italic",
-  color: "#888",
-  margin: "1rem auto"
-});
