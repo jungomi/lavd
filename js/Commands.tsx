@@ -218,7 +218,7 @@ type InputProps = {
   value: ParserOptionType;
   placeholder: string;
   setValue: (newValue: ParserOptionType | undefined, index: number) => void;
-  destroy: (index: number) => void;
+  destroy: (index: number, backward?: boolean) => void;
   type?: ParserOptionTypeKind;
   choices?: Array<string>;
   focus?: boolean;
@@ -252,8 +252,12 @@ const Input: React.FC<InputProps> = ({
   // When Enter is pressed on the inputs that allow adding new fields, it will
   // create signal to create a new input field.
   const pressEnter = (e: React.KeyboardEvent) => {
-    if (count === "+" && e.key === "Enter") {
-      addInput(index);
+    if (count === "+") {
+      if (e.key === "Enter") {
+        addInput(index);
+      } else if (e.key === "Backspace" && value === "") {
+        destroy(index, true);
+      }
     }
   };
   let input = undefined;
@@ -428,17 +432,25 @@ const InputList: React.FC<InputListProps> = ({
       setFocused(newIndex);
     }
   };
-  const removeInput = (index: number) => {
+  const removeInput = (index: number, backward: boolean = false) => {
     if (Array.isArray(value)) {
       const newValue = [...value.slice(0, index), ...value.slice(index + 1)];
       if (newValue.length === 0) {
         newValue.push(undefined);
       }
-      // Trying to focus the same index that was removed, but if that was the
-      // last input element in the list, it will focus one before that (the new
-      // last one in the list)
-      setFocused(Math.min(index, newValue.length - 1));
       setValue(name, newValue);
+      // Depending on whether the X has been clicked or the Backspace key is
+      // pressed on an empty input, a different focus is expectd.
+      // When clicking on the X the input under the cursor should be focused,
+      // which is the input that moved one up, unless the removed one was the
+      // last one in the list, in which the previous one will be focused.
+      // When pressing the Backspace key, the previous input should be focused,
+      // or if it was the first one, it will remain on the now new first one,
+      // that just moved up.
+      const focusIndex = backward
+        ? Math.max(0, index - 1)
+        : Math.min(index, newValue.length - 1);
+      setFocused(focusIndex);
     }
   };
   const resetFocused = () => setFocused(undefined);
