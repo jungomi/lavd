@@ -10,9 +10,15 @@ export const commandCard = cx(
   card,
   css({
     maxHeight: "80%",
-    minHeight: "20rem",
     minWidth: "20rem",
     overflow: "hidden"
+  })
+);
+
+export const commandCardWithParser = cx(
+  commandCard,
+  css({
+    minHeight: "20rem"
   })
 );
 

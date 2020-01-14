@@ -659,7 +659,13 @@ const CommandCard: React.FC<CommandCardProps> = ({ name, command, colour }) => {
   }
   const positional = command.arguments && command.arguments.positional;
   return (
-    <Card name={name} colour={colour} className={styles.commandCard}>
+    <Card
+      name={name}
+      colour={colour}
+      className={
+        command.parser ? styles.commandCardWithParser : styles.commandCard
+      }
+    >
       {(command.bin || positional || optionsValues.size > 0) && (
         <CommandPreview
           bin={command.bin}
