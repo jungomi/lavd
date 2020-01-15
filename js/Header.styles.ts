@@ -3,9 +3,7 @@ import { css, cx } from "emotion";
 export const headerColour = "#353535";
 
 export const header = css({
-  display: "flex",
   position: "relative",
-  justifyContent: "space-between",
   width: "100%",
   height: "3rem",
   overflow: "auto",
@@ -30,9 +28,19 @@ export const nav = css({
   flexWrap: "wrap",
   alignContent: "flex-start",
   width: "100%",
+  height: "100%",
   overflow: "hidden",
   transition: "all 0.2s ease-out"
 });
+
+export const navOpen = cx(
+  nav,
+  css({
+    "@media only screen and (max-width: 896px)": {
+      height: "unset"
+    }
+  })
+);
 
 export const item = css({
   display: "flex",
@@ -102,7 +110,9 @@ export const active = cx(
 );
 
 export const burgerMenu = css({
-  position: "relative",
+  position: "absolute",
+  top: 0,
+  right: 0,
   display: "flex",
   alignItems: "center",
   justifyContent: "center",

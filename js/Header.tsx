@@ -54,7 +54,7 @@ export const Header = () => {
   };
   return (
     <header className={isOpen ? styles.headerOpen : styles.header}>
-      <nav className={styles.nav}>
+      <nav className={isOpen ? styles.navOpen : styles.nav}>
         <Link
           href="/scalars"
           onClick={clickLink}
