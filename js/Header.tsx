@@ -1,6 +1,6 @@
+import { A, usePath } from "hookrouter";
 import React, { useEffect, useState } from "react";
 import * as styles from "./Header.styles";
-import { A, usePath } from "hookrouter";
 
 type LinkProps = {
   href: string;
@@ -23,22 +23,34 @@ const Link: React.FC<LinkProps> = ({
 
 export const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const mediaQuery = window.matchMedia("(min-width: 896px)");
-  // The menu is closed once the media query triggers, whether it goes from
-  // small to big or the other way around doesn't matter.
+  const mediaQuery = window.matchMedia("(max-width: 896px)");
+  const [smallScreen, setSmallScreen] = useState(mediaQuery.matches);
   useEffect(() => {
-    const resetOpen = () => setIsOpen(false);
+    const updateScreenSize = () => {
+      setSmallScreen(mediaQuery.matches);
+      // The menu is closed once the media query triggers, whether it goes from
+      // small to big or the other way around doesn't matter.
+      setIsOpen(false);
+    };
     // Update when the media media query is toggled.
-    mediaQuery.addListener(resetOpen);
+    mediaQuery.addListener(updateScreenSize);
     return () => {
-      mediaQuery.removeListener(resetOpen);
+      mediaQuery.removeListener(updateScreenSize);
     };
   });
   const itemClass = isOpen ? styles.itemOpen : styles.item;
   const activeClass = isOpen ? styles.activeOpen : styles.active;
   const iconClass = isOpen ? styles.burgerIconOpen : styles.burgerIcon;
-  const clickLink = () => {
-    setIsOpen(false);
+  const clickLink = (e: MouseEvent) => {
+    if (isOpen) {
+      setIsOpen(false);
+    } else if (smallScreen) {
+      // On small screens only the current tab is visible, therefore clicking on
+      // it should open the menu instead of going to the same link you're
+      // already on.
+      e.preventDefault();
+      setIsOpen(true);
+    }
   };
   return (
     <header className={isOpen ? styles.headerOpen : styles.header}>
