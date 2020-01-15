@@ -24,7 +24,8 @@ export const commandCardWithParser = cx(
 
 export const commandPreview = css({
   display: "flex",
-  flexDirection: "column"
+  flexDirection: "column",
+  flexShrink: 0
 });
 
 export const copy = css({
@@ -93,7 +94,8 @@ export const commandPreviewCode = css({
   padding: "0.8rem",
   borderRadius: "2px",
   whiteSpace: "pre",
-  overflow: "auto",
+  overflowX: "scroll",
+  flexShrink: 0,
   "::before": {
     content: "'$'",
     marginRight: "0.8rem"
