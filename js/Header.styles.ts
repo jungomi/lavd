@@ -1,4 +1,5 @@
 import { css, cx } from "emotion";
+import { boxShadow } from "./colour/ColourPicker.styles";
 
 export const headerColour = "#353535";
 
@@ -10,7 +11,10 @@ export const header = css({
   background: headerColour,
   transition: "all 0.2s ease-out",
   boxSizing: "border-box",
-  padding: "0 1rem"
+  padding: "0 1rem",
+  // Needs to be on top for the shadow to show
+  zIndex: 100,
+  boxShadow
 });
 
 export const headerOpen = cx(

@@ -13,7 +13,7 @@ export const sidebar = css({
   transition: "all .5s cubic-bezier(0.65, 0.05, 0.36, 1)",
   background: bgColour,
   borderRight: "2px solid #e9e9e9",
-  zIndex: 100
+  zIndex: 50
 });
 
 export const sidebarHidden = cx(
@@ -49,7 +49,7 @@ const toggleOffset = "20rem";
 export const toggle = css({
   outline: "none",
   position: "absolute",
-  top: 0,
+  top: "2px",
   left: toggleOffset,
   transition: "all 0.5s cubic-bezier(0.65, 0.05, 0.36, 1)",
   cursor: "pointer",
