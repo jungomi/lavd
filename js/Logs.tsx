@@ -90,28 +90,26 @@ export const Log: React.FC<Log> = ({ lines }) => {
     logLines.push(currentLine);
   }
   return (
-    <div className={styles.log}>
-      <table className={styles.table}>
-        <thead>
-          <tr>
-            {showColumn.lineNr && <th className={styles.th}></th>}
-            {showColumn.timestamp && <th className={styles.th}>Timestamp</th>}
-            {showColumn.elapsed && <th className={styles.th}>Time Offset</th>}
-            {showColumn.tag && <th className={styles.th}>Tag</th>}
-            <th className={styles.th}>Message</th>
-          </tr>
-        </thead>
-        <tbody className={styles.tableContent}>
-          {logLines.map(line => (
-            <LogLine
-              {...line}
-              showColumn={showColumn}
-              key={`${line.lineNr}-${line.message}-${line.timestamp}-${line.tag}`}
-            />
-          ))}
-        </tbody>
-      </table>
-    </div>
+    <table>
+      <thead>
+        <tr>
+          {showColumn.lineNr && <th className={styles.th}></th>}
+          {showColumn.timestamp && <th className={styles.th}>Timestamp</th>}
+          {showColumn.elapsed && <th className={styles.th}>Time Offset</th>}
+          {showColumn.tag && <th className={styles.th}>Tag</th>}
+          <th className={styles.th}>Message</th>
+        </tr>
+      </thead>
+      <tbody className={styles.tableContent}>
+        {logLines.map(line => (
+          <LogLine
+            {...line}
+            showColumn={showColumn}
+            key={`${line.lineNr}-${line.message}-${line.timestamp}-${line.tag}`}
+          />
+        ))}
+      </tbody>
+    </table>
   );
 };
 

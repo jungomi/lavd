@@ -4,10 +4,6 @@ import { categoryCard } from "./Card.styles";
 
 const labelColour = "#616161";
 
-export const log = css({
-  width: "100%"
-});
-
 export const logCard = cx(
   categoryCard,
   css({
@@ -21,10 +17,6 @@ export const tableContent = css({
   fontFamily: "monospace",
   // Render white space as is and don't break
   whiteSpace: "pre"
-});
-
-export const table = css({
-  width: "100%"
 });
 
 export const th = css({
