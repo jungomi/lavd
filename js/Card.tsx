@@ -5,12 +5,10 @@ import * as styles from "./Card.styles";
 type CardProps = {
   name: string;
   colour: Colour;
-  category?: string;
   className?: string;
 };
 
 export const Card: React.FC<CardProps> = ({
-  category,
   name,
   colour,
   className = styles.card,
@@ -19,7 +17,6 @@ export const Card: React.FC<CardProps> = ({
   return (
     <div className={className}>
       <div className={styles.title}>
-        <span className={styles.category}>{category}</span>
         <span className={styles.name} style={{ color: colourString(colour) }}>
           {name}
         </span>
