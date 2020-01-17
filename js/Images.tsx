@@ -189,40 +189,43 @@ const ImageOverlay: React.FC<ImageOverlayProps> = ({
   };
   const hasSidebar = hasProbabilities || image.classes !== undefined;
   return (
-    <div className={styles.imageOverlay}>
-      <img
-        src={image.source}
-        alt={name}
-        className={styles.image}
-        draggable="false"
-        onLoad={e => {
-          // This is always a HTMLImageElement, obviously.
-          const imgElem = e.target as HTMLImageElement;
-          setSize(imgElem.width, imgElem.height);
-        }}
-      />
-      {boxes && (
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          className={styles.svg}
-          style={{ width, height }}
-          onMouseMove={e => updateTooltip(e.clientX, e.clientY)}
-          onMouseLeave={() => {
-            setTooltipBoxes([]);
-          }}
-          ref={svgRef}
-        >
-          {boxes.map(bbox => (
-            <BoundingBox
-              {...bbox}
-              classColours={classColours}
-              maxWidth={width}
-              maxHeight={height}
-              key={bboxKey(bbox)}
-            />
-          ))}
-        </svg>
-      )}
+    <>
+      <div className={styles.imageOverlayContainer}>
+        <div className={styles.imageOverlay}>
+          <img
+            src={image.source}
+            alt={name}
+            draggable="false"
+            onLoad={e => {
+              // This is always a HTMLImageElement, obviously.
+              const imgElem = e.target as HTMLImageElement;
+              setSize(imgElem.width, imgElem.height);
+            }}
+          />
+          {boxes && (
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox={`0 0 ${width} ${height}`}
+              className={styles.svg}
+              onMouseMove={e => updateTooltip(e.clientX, e.clientY)}
+              onMouseLeave={() => {
+                setTooltipBoxes([]);
+              }}
+              ref={svgRef}
+            >
+              {boxes.map(bbox => (
+                <BoundingBox
+                  {...bbox}
+                  classColours={classColours}
+                  maxWidth={width}
+                  maxHeight={height}
+                  key={bboxKey(bbox)}
+                />
+              ))}
+            </svg>
+          )}
+        </div>
+      </div>
       {hasSidebar && (
         <div className={styles.sidebar}>
           {image.classes && (
@@ -304,7 +307,7 @@ const ImageOverlay: React.FC<ImageOverlayProps> = ({
           )}
         </div>
       )}
-    </div>
+    </>
   );
 };
 
@@ -333,10 +336,7 @@ const ImageCard: React.FC<ImageCardProps> = ({ category, image }) => {
     setImageSize({ width, height });
   };
   return (
-    <CategoryCard
-      category={category}
-      style={{ maxWidth: imageSize.width, maxHeight: imageSize.height }}
-    >
+    <CategoryCard category={category} contentClass={styles.categoryContent}>
       <ImageOverlay
         image={image}
         name={category}

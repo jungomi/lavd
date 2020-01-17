@@ -16,13 +16,13 @@ export const category = css({
   marginBottom: "0.2rem"
 });
 
-export const name = css({
-  fontStyle: "italic"
+export const categoryContent = css({
+  display: "flex",
+  overflow: "hidden"
 });
 
-export const image = css({
-  // Prevents stretching of the image, i.e. keeps aspect ratio.
-  objectFit: "contain"
+export const name = css({
+  fontStyle: "italic"
 });
 
 export const sidebar = css({
@@ -57,9 +57,18 @@ export const imageCard = css({
   display: "flex"
 });
 
+export const imageOverlayContainer = css({
+  overflow: "scroll"
+});
+
 export const imageOverlay = css({
   display: "flex",
-  position: "relative"
+  position: "relative",
+  flexShrink: 0,
+  // Fit to the content, so the SVG overlay will also have the same size as the
+  // image, since it will take the full size of its container.
+  width: "fit-content",
+  height: "fit-content"
 });
 
 export const strokeWidth = 2;

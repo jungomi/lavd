@@ -23,11 +23,7 @@ export const Markdown: React.FC<Props> = ({ data, colours, names }) => {
       Object.keys(d.data).length && (
         <Card name={d.name} colour={d.colour} key={d.name}>
           {sortObject(d.data).map(({ key, value }) => (
-            <CategoryCard
-              category={key}
-              /* className={styles.markdownCard} */
-              key={key}
-            >
+            <CategoryCard category={key} key={key}>
               <div className="markdown-body">
                 <ReactMarkdown source={value.raw} escapeHtml={false} />
               </div>
