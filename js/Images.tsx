@@ -205,7 +205,7 @@ const ImageOverlay: React.FC<ImageOverlayProps> = ({
           {boxes && (
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              viewBox={`0 0 ${width} ${height}`}
+              viewBox={`0 0 ${width || 0} ${height || 0}`}
               className={styles.svg}
               onMouseMove={e => updateTooltip(e.clientX, e.clientY)}
               onMouseLeave={() => {
