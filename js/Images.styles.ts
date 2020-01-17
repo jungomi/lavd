@@ -1,17 +1,6 @@
 import { css } from "emotion";
-import { boxShadow } from "./colour/ColourPicker.styles";
 
 const labelColour = "#616161";
-
-export const imageCard = css({
-  display: "flex",
-  flexDirection: "column",
-  padding: "1rem",
-  marginRight: "1rem",
-  marginBottom: "1rem",
-  borderRadius: "4px",
-  boxShadow
-});
 
 export const title = css({
   display: "flex",
@@ -64,8 +53,13 @@ export const classEntry = css({
   fontWeight: 300
 });
 
-export const imageOverlay = css({
+export const imageCard = css({
   display: "flex"
+});
+
+export const imageOverlay = css({
+  display: "flex",
+  position: "relative"
 });
 
 export const strokeWidth = 2;

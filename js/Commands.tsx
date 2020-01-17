@@ -1,8 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Card } from "./Card";
-import { Colour, ColourMap, defaultColour } from "./colour/definition";
+import { Colour, ColourMap } from "./colour/definition";
 import * as styles from "./Commands.styles";
-import { DataMap, Optional } from "./data";
+import { DataMap, getDataKind, Optional } from "./data";
 import { Empty } from "./Empty";
 import { stringToFloat, stringToInt } from "./number";
 
@@ -710,20 +710,21 @@ const CommandCard: React.FC<CommandCardProps> = ({ name, command, colour }) => {
 type Props = {
   data: DataMap;
   colours: ColourMap;
+  names: Array<string>;
 };
 
-export const Commands: React.FC<Props> = ({ data, colours }) => {
-  const commands = [];
-  for (const [name, { command }] of data) {
-    if (command !== undefined) {
-      commands.push({ name, command });
-    }
-  }
-  const cards = commands.map(({ name, command }) => {
-    const colour = colours.get(name) || defaultColour;
-    return (
-      <CommandCard name={name} command={command} colour={colour} key={name} />
-    );
-  });
+export const Commands: React.FC<Props> = ({ data, colours, names }) => {
+  const kind = "command";
+  const cards = getDataKind(data, kind, names, colours).map(
+    d =>
+      d.data && (
+        <CommandCard
+          name={d.name}
+          command={d.data}
+          colour={d.colour}
+          key={d.name}
+        />
+      )
+  );
   return cards.length === 0 ? <Empty text="commands" /> : <>{cards}</>;
 };

@@ -6,25 +6,46 @@ const labelColour = "#616161";
 export const card = css({
   display: "flex",
   flexDirection: "column",
-  padding: "1rem",
-  marginRight: "1rem",
-  marginBottom: "1rem",
+  padding: "1.5rem",
+  minWidth: "20rem",
+  marginBottom: "1.5rem",
   borderRadius: "4px",
+  width: "100%",
   boxShadow
 });
 
-export const title = css({
+export const content = css({
+  display: "flex",
+  overflow: "hidden",
+  flexDirection: "column"
+});
+
+export const categoryContent = css({
+  overflow: "scroll"
+});
+
+export const categoryCard = css({
   display: "flex",
   flexDirection: "column",
-  flexShrink: 0,
-  marginBottom: "0.8rem"
+  marginBottom: "1rem",
+  overflow: "hidden",
+  maxHeight: "80vh"
+});
+
+export const title = css({
+  fontSize: "1.1rem",
+  marginBottom: "1.5rem"
+});
+
+export const categoryTitle = css({
+  paddingBottom: "0.8rem",
+  marginBottom: "0.8rem",
+  borderBottom: "1px solid #eaecef"
 });
 
 export const category = css({
-  fontSize: "1.1rem",
   fontWeight: 500,
-  color: labelColour,
-  marginBottom: "0.2rem"
+  color: labelColour
 });
 
 export const name = css({

@@ -1,7 +1,7 @@
 import React from "react";
-import { Card } from "./Card";
+import { Card, CategoryCard } from "./Card";
 import { ColourMap } from "./colour/definition";
-import { DataMap, nonEmptyCategoryData, sortedCategories } from "./data";
+import { DataMap, sortObject, getDataKind } from "./data";
 import { Empty } from "./Empty";
 import * as styles from "./Logs.styles";
 import { formatDate, parseDate, timeElapsed } from "./time";
@@ -118,23 +118,23 @@ export const Log: React.FC<Log> = ({ lines }) => {
 type Props = {
   data: DataMap;
   colours: ColourMap;
+  names: Array<string>;
 };
 
-export const Logs: React.FC<Props> = ({ data, colours }) => {
+export const Logs: React.FC<Props> = ({ data, colours, names }) => {
   const kind = "logs";
-  const categories = sortedCategories(data, kind);
-  const cards = categories.map(category =>
-    nonEmptyCategoryData(data, kind, category, colours).map(d => (
-      <Card
-        category={category}
-        name={d.name}
-        colour={d.colour}
-        className={styles.logCard}
-        key={`${category}-${d.name}`}
-      >
-        <Log lines={d.data.lines} />
-      </Card>
-    ))
+  const cards = getDataKind(data, kind, names, colours).map(
+    d =>
+      d.data &&
+      Object.keys(d.data).length && (
+        <Card name={d.name} colour={d.colour} key={d.name}>
+          {sortObject(d.data).map(({ key, value }) => (
+            <CategoryCard category={key} key={key}>
+              <Log lines={value.lines} />
+            </CategoryCard>
+          ))}
+        </Card>
+      )
   );
   return cards.length === 0 ? <Empty text={kind} /> : <>{cards}</>;
 };

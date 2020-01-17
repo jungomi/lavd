@@ -1,11 +1,11 @@
 import React from "react";
 import { ColourMap, colourString, toRgb } from "./colour/definition";
 import {
-  CategoryDataEntry,
   DataMap,
-  nonEmptyCategoryData,
   Optional,
-  sortedCategories
+  aggregateSortedCategories,
+  ScalarEntry,
+  nonEmptyScalars
 } from "./data";
 import { Empty } from "./Empty";
 import { LinePlot } from "./plot/LinePlot";
@@ -36,10 +36,7 @@ function padSeries(
   return [...padStart, ...series, ...padEnd];
 }
 
-function createPlot(
-  category: string,
-  categoryData: Array<CategoryDataEntry<"scalars">>
-) {
+function createPlot(category: string, categoryData: Array<ScalarEntry>) {
   const colours = [];
   const series = [];
   for (const d of categoryData) {
@@ -74,9 +71,9 @@ type Props = {
 
 export const Scalars: React.FC<Props> = ({ data, colours }) => {
   const kind = "scalars";
-  const categories = sortedCategories(data, kind);
+  const categories = aggregateSortedCategories(data, kind);
   const plots = categories.map(category =>
-    createPlot(category, nonEmptyCategoryData(data, kind, category, colours))
+    createPlot(category, nonEmptyScalars(data, category, colours))
   );
   return plots.length === 0 ? <Empty text={kind} /> : <>{plots}</>;
 };

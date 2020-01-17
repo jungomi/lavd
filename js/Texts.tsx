@@ -1,8 +1,8 @@
 import { diffChars } from "diff";
 import React from "react";
-import { Card } from "./Card";
+import { Card, CategoryCard } from "./Card";
 import { ColourMap } from "./colour/definition";
-import { DataMap, nonEmptyCategoryData, sortedCategories } from "./data";
+import { DataMap, sortObject, getDataKind } from "./data";
 import { Empty } from "./Empty";
 import * as styles from "./Texts.styles";
 
@@ -90,23 +90,23 @@ export const Text: React.FC<TextProps> = ({ actual, expected }) => {
 type Props = {
   data: DataMap;
   colours: ColourMap;
+  names: Array<string>;
 };
 
-export const Texts: React.FC<Props> = ({ data, colours }) => {
+export const Texts: React.FC<Props> = ({ data, colours, names }) => {
   const kind = "texts";
-  const categories = sortedCategories(data, kind);
-  const cards = categories.map(category =>
-    nonEmptyCategoryData(data, kind, category, colours).map(d => (
-      <Card
-        category={category}
-        name={d.name}
-        colour={d.colour}
-        className={styles.textCard}
-        key={`${category}-${d.name}`}
-      >
-        <Text actual={d.data.actual} expected={d.data.expected} />
-      </Card>
-    ))
+  const cards = getDataKind(data, kind, names, colours).map(
+    d =>
+      d.data &&
+      Object.keys(d.data).length && (
+        <Card name={d.name} colour={d.colour} key={d.name}>
+          {sortObject(d.data).map(({ key, value }) => (
+            <CategoryCard category={key} key={key}>
+              <Text actual={value.actual} expected={value.expected} />
+            </CategoryCard>
+          ))}
+        </Card>
+      )
   );
   return cards.length === 0 ? <Empty text={kind} /> : <>{cards}</>;
 };

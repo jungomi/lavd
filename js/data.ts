@@ -43,11 +43,67 @@ export interface CategoryData {
 //   | "markdown";
 //
 // But when using the keys it will stay in sync with the CategoryData.
-export type DataKind = keyof CategoryData;
+export type DataKind = keyof Data;
 
 export type DataMap = Map<string, Data>;
 
-export function sortedCategories(
+// It's sort of generic, but with a limitied number of types, the data kinds.
+// Therefore CategoryDataEntry<"scalars"> would be allowed, but
+// CategoryDataEntry<"something"> would not.
+export type DataOfKind<K extends DataKind> = {
+  // Use the type that belongs to the data kind K.
+  data: Data[K];
+  name: string;
+  colour: Colour;
+};
+
+export function getDataKind<K extends DataKind>(
+  data: DataMap | undefined,
+  kind: K,
+  names: Array<string>,
+  colours: ColourMap
+): Array<DataOfKind<K>> {
+  if (data === undefined) {
+    return [];
+  }
+  const dataOfKind = [];
+  for (const name of names) {
+    const dat = data.get(name);
+    const colour = colours.get(name);
+    if (dat === undefined || colour === undefined) {
+      continue;
+    }
+    const d = dat[kind];
+    if (d === undefined) {
+      continue;
+    }
+    dataOfKind.push({
+      name,
+      // The "as Data[K]" is to use the type that the kind belongs to, even
+      // though TypeScript should know this at this point, since just before
+      // that dat[kind] was done.
+      data: d as Data[K],
+      colour
+    });
+  }
+  return dataOfKind;
+}
+
+export function sortObject<V>(obj: {
+  [key: string]: V | undefined;
+}): Array<{ key: string; value: V }> {
+  const objs = [];
+  const sortedKeys = Object.keys(obj).sort();
+  for (const key of sortedKeys) {
+    const value = obj[key];
+    if (value !== undefined) {
+      objs.push({ key, value });
+    }
+  }
+  return objs;
+}
+
+export function aggregateSortedCategories(
   data: DataMap | undefined,
   kind: DataKind
 ): Array<string> {
@@ -67,42 +123,28 @@ export function sortedCategories(
   return Array.from(uniqueCategories).sort();
 }
 
-// It's sort of generic, but with a limitied number of types, the data kinds.
-// Therefore CategoryDataEntry<"scalars"> would be allowed, but
-// CategoryDataEntry<"something"> would not.
-export type CategoryDataEntry<K extends DataKind> = {
-  // Use the type that belongs to the data kind K.
-  data: CategoryData[K];
+export type ScalarEntry = {
+  data: Scalars;
   name: string;
   colour: Colour;
-  key: string;
 };
 
-export function nonEmptyCategoryData<K extends DataKind>(
+export function nonEmptyScalars(
   data: DataMap,
-  kind: K,
   category: string,
   colourMap: ColourMap
-): Array<CategoryDataEntry<K>> {
+): Array<ScalarEntry> {
   const categoryData = [];
-  for (const [name, dat] of data) {
-    const datOfKind = dat[kind];
-    if (datOfKind === undefined) {
+  for (const [name, { scalars }] of data) {
+    if (scalars === undefined) {
       continue;
     }
-    const d = datOfKind[category];
+    const d = scalars[category];
     const colour = colourMap.get(name);
     if (d === undefined || colour === undefined) {
       continue;
     }
-    categoryData.push({
-      // The "as CategoryData[K]" is to use the type that the kind belongs to,
-      // even though TypeScript should know this at this point.
-      data: d as CategoryData[K],
-      name: name,
-      colour: colour,
-      key: `${kind}-${category}-${name}`
-    });
+    categoryData.push({ data: d, name: name, colour: colour });
   }
   return categoryData;
 }

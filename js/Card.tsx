@@ -26,7 +26,29 @@ export const Card: React.FC<CardProps> = ({
           {name}
         </span>
       </div>
-      {children}
+      <div className={styles.content}>{children}</div>
+    </div>
+  );
+};
+
+type CategoryCardProps = {
+  category: string;
+  style?: CSSProperties;
+  className?: string;
+};
+
+export const CategoryCard: React.FC<CategoryCardProps> = ({
+  category,
+  style,
+  className = styles.categoryCard,
+  children
+}) => {
+  return (
+    <div className={className}>
+      <div className={styles.categoryTitle} style={style}>
+        <span className={styles.category}>{category}</span>
+      </div>
+      <div className={styles.categoryContent}>{children}</div>
     </div>
   );
 };

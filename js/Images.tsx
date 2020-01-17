@@ -1,5 +1,5 @@
 import React, { useRef, useState } from "react";
-import { Card } from "./Card";
+import { Card, CategoryCard } from "./Card";
 import { ColourPicker } from "./colour/ColourPicker";
 import {
   assignColours,
@@ -8,7 +8,7 @@ import {
   colourString,
   defaultColour
 } from "./colour/definition";
-import { DataMap, nonEmptyCategoryData, sortedCategories } from "./data";
+import { DataMap, sortObject, getDataKind } from "./data";
 import { Empty } from "./Empty";
 import * as styles from "./Images.styles";
 import { stringToFloat } from "./number";
@@ -315,17 +315,10 @@ type ImageSize = {
 
 type ImageCardProps = {
   category: string;
-  name: string;
   image: Image;
-  colour: Colour;
 };
 
-const ImageCard: React.FC<ImageCardProps> = ({
-  category,
-  name,
-  image,
-  colour
-}) => {
+const ImageCard: React.FC<ImageCardProps> = ({ category, image }) => {
   const classColourMap =
     image.classes === undefined ? new Map() : assignColours(image.classes);
   const [classColours, setClassColours] = useState(new Map(classColourMap));
@@ -340,10 +333,8 @@ const ImageCard: React.FC<ImageCardProps> = ({
     setImageSize({ width, height });
   };
   return (
-    <Card
+    <CategoryCard
       category={category}
-      name={name}
-      colour={colour}
       style={{ maxWidth: imageSize.width, maxHeight: imageSize.height }}
     >
       <ImageOverlay
@@ -355,28 +346,28 @@ const ImageCard: React.FC<ImageCardProps> = ({
         width={imageSize.width}
         height={imageSize.height}
       />
-    </Card>
+    </CategoryCard>
   );
 };
 
 type Props = {
   data: DataMap;
   colours: ColourMap;
+  names: Array<string>;
 };
 
-export const Images: React.FC<Props> = ({ data, colours }) => {
+export const Images: React.FC<Props> = ({ data, colours, names }) => {
   const kind = "images";
-  const categories = sortedCategories(data, kind);
-  const cards = categories.map(category =>
-    nonEmptyCategoryData(data, kind, category, colours).map(d => (
-      <ImageCard
-        category={category}
-        name={d.name}
-        image={d.data}
-        colour={d.colour}
-        key={`${category}-${d.name}`}
-      />
-    ))
+  const cards = getDataKind(data, kind, names, colours).map(
+    d =>
+      d.data &&
+      Object.keys(d.data).length && (
+        <Card name={d.name} colour={d.colour} key={d.name}>
+          {sortObject(d.data).map(({ key, value }) => (
+            <ImageCard image={value} category={key} key={key} />
+          ))}
+        </Card>
+      )
   );
   return cards.length === 0 ? <Empty text={kind} /> : <>{cards}</>;
 };

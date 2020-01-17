@@ -1,16 +1,15 @@
 import { css, cx } from "emotion";
 import { bgColour } from "./App.styles";
-import { imageCard } from "./Images.styles";
+import { categoryCard } from "./Card.styles";
 
 const labelColour = "#616161";
 
 export const log = css({
-  width: "100%",
-  overflow: "scroll"
+  width: "100%"
 });
 
 export const logCard = cx(
-  imageCard,
+  categoryCard,
   css({
     maxHeight: "80%",
     minWidth: "20rem",

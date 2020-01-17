@@ -17,6 +17,7 @@ import { DataMap } from "./data";
 type RouteProps = {
   data: DataMap;
   colours: ColourMap;
+  names: Array<string>;
 };
 
 type Routes = {
@@ -27,16 +28,20 @@ const routes: Routes = {
   "/scalars": () => ({ data, colours }) => (
     <Scalars data={data} colours={colours} />
   ),
-  "/images": () => ({ data, colours }) => (
-    <Images data={data} colours={colours} />
+  "/images": () => ({ data, colours, names }) => (
+    <Images data={data} colours={colours} names={names} />
   ),
-  "/text": () => ({ data, colours }) => <Texts data={data} colours={colours} />,
-  "/logs": () => ({ data, colours }) => <Logs data={data} colours={colours} />,
-  "/markdown": () => ({ data, colours }) => (
-    <Markdown data={data} colours={colours} />
+  "/text": () => ({ data, colours, names }) => (
+    <Texts data={data} colours={colours} names={names} />
   ),
-  "/commands": () => ({ data, colours }) => (
-    <Commands data={data} colours={colours} />
+  "/logs": () => ({ data, colours, names }) => (
+    <Logs data={data} colours={colours} names={names} />
+  ),
+  "/markdown": () => ({ data, colours, names }) => (
+    <Markdown data={data} colours={colours} names={names} />
+  ),
+  "/commands": () => ({ data, colours, names }) => (
+    <Commands data={data} colours={colours} names={names} />
   ),
   "/about": () => () => <span>About</span>
 };
@@ -46,7 +51,7 @@ export const App = () => {
   if (Content === null) {
     navigate("/scalars");
   }
-  const names = [...data.keys()];
+  const names = [...data.keys()].sort();
   const colourMap = assignColours(names);
   const [colours, setColours] = useState(new Map(colourMap));
   // A copy map of the Map is created such that React re-renders it, since
@@ -60,7 +65,7 @@ export const App = () => {
       <div className={styles.wrapper}>
         <Sidebar names={names} colours={colours} setColour={setNewColour} />
         <main className={styles.main}>
-          {Content && <Content data={data} colours={colours} />}
+          {Content && <Content data={data} colours={colours} names={names} />}
         </main>
       </div>
     </>
