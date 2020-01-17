@@ -182,9 +182,15 @@ const CommandPreview: React.FC<CommandPreviewProps> = ({
   }
   return (
     <div className={styles.commandPreview}>
+      <pre className={styles.commandPreviewCode}>
+        <code>
+          {bin && <span>{bin} </span>}
+          <>{argSpans}</>
+        </code>
+      </pre>
       {navigator.clipboard && (
         <div
-          className={styles.copy}
+          className={copied ? styles.copySuccess : styles.copy}
           onClick={e => {
             e.preventDefault();
             navigator.clipboard
@@ -194,15 +200,8 @@ const CommandPreview: React.FC<CommandPreviewProps> = ({
           }}
         >
           <div className={copied ? styles.copyIconSuccess : styles.copyIcon} />
-          {copied ? "Copied!" : "Copy"}
         </div>
       )}
-      <pre className={styles.commandPreviewCode}>
-        <code>
-          {bin && <span>{bin} </span>}
-          <>{argSpans}</>
-        </code>
-      </pre>
     </div>
   );
 };
@@ -665,6 +664,7 @@ const CommandCard: React.FC<CommandCardProps> = ({ name, command, colour }) => {
       className={
         command.parser ? styles.commandCardWithParser : styles.commandCard
       }
+      titleClass={styles.cardTitle}
     >
       {(command.bin || positional || optionsValues.size > 0) && (
         <CommandPreview

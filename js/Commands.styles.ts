@@ -24,14 +24,18 @@ export const commandCardWithParser = cx(
 
 export const commandPreview = css({
   display: "flex",
-  flexDirection: "column",
-  flexShrink: 0
+  alignItems: "center",
+  paddingTop: "1.5rem",
+  paddingRight: "0.4rem"
 });
 
 export const copy = css({
   display: "flex",
-  alignSelf: "flex-end",
-  marginBottom: "0.4rem",
+  position: "relative",
+  width: "1rem",
+  height: "1rem",
+  marginLeft: "0.4rem",
+  marginRight: "0.4rem",
   cursor: "pointer",
   boxShadow: "0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24)",
   padding: "0.6rem 0.5rem 0.4rem 0.6rem",
@@ -39,8 +43,28 @@ export const copy = css({
   userSelect: "none",
   ":hover": {
     background: "rgba(237, 237, 237, 0.50)"
+  },
+  "::before": {
+    content: "'Copied!'",
+    fontSize: "0.9rem",
+    position: "absolute",
+    top: "-1.3rem",
+    left: "-0.5rem",
+    pointerEvents: "none",
+    zIndex: 100,
+    transition: "opacity 0.2s ease-in-out",
+    opacity: 0
   }
 });
+
+export const copySuccess = cx(
+  copy,
+  css({
+    "::before": {
+      opacity: 1
+    }
+  })
+);
 
 export const copyIcon = css({
   width: "0.8rem",
@@ -48,7 +72,6 @@ export const copyIcon = css({
   border: "solid 1px black",
   borderRadius: "1px",
   position: "relative",
-  marginRight: "0.4rem",
   "::before": {
     content: "''",
     position: "absolute",
@@ -87,15 +110,19 @@ export const copyIconSuccess = cx(
   })
 );
 
+export const cardTitle = css({
+  fontSize: "1.1rem"
+});
+
 export const commandPreviewCode = css({
   display: "flex",
   fontFamily: "monospace",
   background: "#e5e5e56b",
+  width: "100%",
   padding: "0.8rem",
   borderRadius: "2px",
   whiteSpace: "pre",
   overflowX: "scroll",
-  flexShrink: 0,
   "::before": {
     content: "'$'",
     marginRight: "0.8rem"

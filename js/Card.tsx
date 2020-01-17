@@ -6,17 +6,19 @@ type CardProps = {
   name: string;
   colour: Colour;
   className?: string;
+  titleClass?: string;
 };
 
 export const Card: React.FC<CardProps> = ({
   name,
   colour,
   className = styles.card,
+  titleClass = styles.title,
   children
 }) => {
   return (
     <div className={className}>
-      <div className={styles.title}>
+      <div className={titleClass}>
         <span className={styles.name} style={{ color: colourString(colour) }}>
           {name}
         </span>
