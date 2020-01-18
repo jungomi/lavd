@@ -29,7 +29,7 @@ export const categoryCard = css({
   flexDirection: "column",
   marginBottom: "1rem",
   overflow: "hidden",
-  maxHeight: "80vh"
+  maxHeight: "66vh"
 });
 
 export const title = css({
