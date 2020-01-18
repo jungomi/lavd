@@ -27,29 +27,22 @@ export type Data = {
   command?: Optional<Command>;
 };
 
-export interface CategoryData {
-  scalars: Scalars;
-  images: Image;
-  texts: Text;
-  logs: Log;
-  markdown: MarkdownDocument;
-}
-
 // Bascially:
 //   | "scalars"
 //   | "images"
 //   | "texts"
 //   | "logs"
-//   | "markdown";
+//   | "markdown"
+//   | "command";
 //
-// But when using the keys it will stay in sync with the CategoryData.
+// But when using the keys it will stay in sync with the Data
 export type DataKind = keyof Data;
 
 export type DataMap = Map<string, Data>;
 
 // It's sort of generic, but with a limitied number of types, the data kinds.
-// Therefore CategoryDataEntry<"scalars"> would be allowed, but
-// CategoryDataEntry<"something"> would not.
+// Therefore DataOfKind<"scalars"> would be allowed, but
+// DataOfKind<"something"> would not.
 export type DataOfKind<K extends DataKind> = {
   // Use the type that belongs to the data kind K.
   data: Data[K];
