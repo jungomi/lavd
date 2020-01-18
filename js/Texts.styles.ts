@@ -14,11 +14,17 @@ export const textCard = cx(
 
 export const text = css({
   display: "flex",
-  justifyContent: "space-around",
   "@media only screen and (min-width: 896px)": {
     fontSize: "1.3rem"
   }
 });
+
+export const textWithDiff = cx(
+  text,
+  css({
+    justifyContent: "space-around"
+  })
+);
 
 export const column = css({
   display: "flex",
@@ -44,7 +50,7 @@ export const columnText = css({
   fontFamily: "monospace",
   display: "flex",
   flexWrap: "nowrap",
-  alignItems: "center",
+  justifyContent: "center",
   padding: "0.1em",
   overflow: "auto"
 });
@@ -63,6 +69,7 @@ export const columnTextActual = cx(
   columnText,
   css({
     overflow: "unset",
+    justifyContent: "unset",
     marginBottom: "0.2em"
   })
 );
@@ -70,7 +77,8 @@ export const columnTextActual = cx(
 export const columnTextExpected = cx(
   columnText,
   css({
-    overflow: "unset"
+    overflow: "unset",
+    justifyContent: "unset"
   })
 );
 

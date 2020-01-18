@@ -64,7 +64,7 @@ export const Text: React.FC<TextProps> = ({ actual, expected }) => {
       }
     }
     return (
-      <div className={styles.text}>
+      <div className={styles.textWithDiff}>
         <div className={styles.column}>
           <span className={styles.columnTitle}>Actual</span>
           <span className={styles.columnText}>{actual}</span>
