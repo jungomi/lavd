@@ -11,8 +11,8 @@ export const wrapper = css({
 export const main = css({
   display: "flex",
   position: "relative",
-  padding: "2.0rem",
-  marginBottom: "1rem",
+  padding: "1.5rem",
+  marginBottom: "1.5rem",
   overflow: "scroll",
   width: "100%",
   background: bgColour,

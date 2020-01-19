@@ -6,11 +6,11 @@ const labelColour = "#616161";
 export const card = css({
   display: "flex",
   flexDirection: "column",
-  padding: "1.5rem",
-  minWidth: "20rem",
-  marginBottom: "1.5rem",
+  padding: "1rem",
+  marginBottom: "1rem",
   borderRadius: "4px",
   width: "100%",
+  minWidth: "20rem",
   boxShadow
 });
 
@@ -34,7 +34,7 @@ export const categoryCard = css({
 
 export const title = css({
   fontSize: "1.1rem",
-  marginBottom: "1.5rem"
+  marginBottom: "1rem"
 });
 
 export const categoryTitle = css({
