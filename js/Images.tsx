@@ -138,9 +138,18 @@ const BoundingBox: React.FC<BoundingBoxProps> = ({
   );
 };
 
-function boxesInside(boxes: Array<Bbox>, x: number, y: number): Array<Bbox> {
+function boxesInside(
+  boxes: Array<Bbox>,
+  x: number,
+  y: number,
+  border: number = styles.strokeWidth
+): Array<Bbox> {
   return boxes.filter(
-    box => box.xStart <= x && box.xEnd >= x && box.yStart <= y && box.yEnd >= y
+    box =>
+      box.xStart - border <= x &&
+      box.xEnd + border >= x &&
+      box.yStart - border <= y &&
+      box.yEnd + border >= y
   );
 }
 
