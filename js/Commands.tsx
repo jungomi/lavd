@@ -629,7 +629,7 @@ const CommandCard: React.FC<CommandCardProps> = ({ name, command, colour }) => {
     value: false,
     description: false
   };
-  const parserOptions = [];
+  const parserOptions: Array<CurrentParserOption> = [];
   if (command.parser) {
     const sortedKeys = Object.keys(command.parser).sort();
     for (const key of sortedKeys) {
@@ -664,44 +664,49 @@ const CommandCard: React.FC<CommandCardProps> = ({ name, command, colour }) => {
       className={
         command.parser ? styles.commandCardWithParser : styles.commandCard
       }
-      titleClass={styles.cardTitle}
     >
-      {(command.bin || positional || optionsValues.size > 0) && (
-        <CommandPreview
-          bin={command.bin}
-          positional={positional}
-          options={optionsValues}
-          counts={commandOptions.counts}
-          defaults={commandOptions.defaults}
-        />
-      )}
-      {command.parser && (
-        <div className={styles.optionsList}>
-          <table className={styles.table}>
-            <thead>
-              <tr className={styles.tr}>
-                <th className={styles.th}>Name</th>
-                {showColumn.short && <th className={styles.th}>Short Name</th>}
-                {showColumn.value && <th className={styles.th}>Value</th>}
-                {showColumn.description && (
-                  <th className={styles.th}>Description</th>
-                )}
-              </tr>
-            </thead>
-            <tbody>
-              {parserOptions.map(opt => (
-                <ParserOptionLine
-                  {...opt}
-                  defaults={commandOptions.defaults}
-                  showColumn={showColumn}
-                  setValue={setNewOptionValue}
-                  count={opt.count}
-                  key={opt.name}
-                />
-              ))}
-            </tbody>
-          </table>
-        </div>
+      {() => (
+        <>
+          {(command.bin || positional || optionsValues.size > 0) && (
+            <CommandPreview
+              bin={command.bin}
+              positional={positional}
+              options={optionsValues}
+              counts={commandOptions.counts}
+              defaults={commandOptions.defaults}
+            />
+          )}
+          {command.parser && (
+            <div className={styles.optionsList}>
+              <table className={styles.table}>
+                <thead>
+                  <tr className={styles.tr}>
+                    <th className={styles.th}>Name</th>
+                    {showColumn.short && (
+                      <th className={styles.th}>Short Name</th>
+                    )}
+                    {showColumn.value && <th className={styles.th}>Value</th>}
+                    {showColumn.description && (
+                      <th className={styles.th}>Description</th>
+                    )}
+                  </tr>
+                </thead>
+                <tbody>
+                  {parserOptions.map(opt => (
+                    <ParserOptionLine
+                      {...opt}
+                      defaults={commandOptions.defaults}
+                      showColumn={showColumn}
+                      setValue={setNewOptionValue}
+                      count={opt.count}
+                      key={opt.name}
+                    />
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </>
       )}
     </Card>
   );

@@ -8,7 +8,13 @@ import {
   colourString,
   defaultColour
 } from "./colour/definition";
-import { DataMap, sortObject, getDataKind } from "./data";
+import {
+  DataMap,
+  getDataKind,
+  sortedCategorySteps,
+  sortedSteps,
+  sortObject
+} from "./data";
 import { Empty } from "./Empty";
 import * as styles from "./Images.styles";
 import { stringToFloat } from "./number";
@@ -138,28 +144,38 @@ function boxesInside(boxes: Array<Bbox>, x: number, y: number): Array<Bbox> {
   );
 }
 
-type ImageOverlayProps = {
-  image: Image;
-  name: string;
-  classColours: ColourMap;
-  setClassColour: (className: string, colour: Colour) => void;
-  setSize: (width: number, height: number) => void;
+type ImageSize = {
   width?: number;
   height?: number;
 };
 
-const ImageOverlay: React.FC<ImageOverlayProps> = ({
-  image,
-  name,
-  classColours,
-  setClassColour,
-  setSize,
-  width,
-  height
-}) => {
+type ImageOverlayProps = {
+  image: Image;
+  name: string;
+};
+
+const ImageOverlay: React.FC<ImageOverlayProps> = ({ image, name }) => {
   const svgRef = useRef<SVGSVGElement>(null);
   const [tooltipBoxes, setTooltipBoxes] = useState<Array<Bbox>>([]);
-  const [minProbability, setMinProbability] = useState(image.minProbability);
+  const [minProbability, setMinProbability] = useState(
+    image ? image.minProbability : undefined
+  );
+  const classColourMap =
+    image && image.classes ? assignColours(image.classes) : new Map();
+  const [classColours, setClassColours] = useState(new Map(classColourMap));
+  // A copy map of the Map is created such that React re-renders it, since
+  // mutating it won't change the reference and therefore won't trigger
+  // a re-render.
+  const setNewClassColour = (className: string, colour: Colour) => {
+    setClassColours(new Map(classColours.set(className, colour)));
+  };
+  const [imageSize, setImageSize] = useState<ImageSize>({});
+  const setSize = (width: number, height: number) => {
+    setImageSize({ width, height });
+  };
+  if (image === undefined) {
+    return null;
+  }
   const boxes: Array<Bbox> = [];
   // The probability threshold should only be visible when there are actually
   // bounding boxes that have specified a probability.
@@ -205,7 +221,7 @@ const ImageOverlay: React.FC<ImageOverlayProps> = ({
           {boxes && (
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              viewBox={`0 0 ${width || 0} ${height || 0}`}
+              viewBox={`0 0 ${imageSize.width || 0} ${imageSize.height || 0}`}
               className={styles.svg}
               onMouseMove={e => updateTooltip(e.clientX, e.clientY)}
               onMouseLeave={() => {
@@ -217,8 +233,8 @@ const ImageOverlay: React.FC<ImageOverlayProps> = ({
                 <BoundingBox
                   {...bbox}
                   classColours={classColours}
-                  maxWidth={width}
-                  maxHeight={height}
+                  maxWidth={imageSize.width}
+                  maxHeight={imageSize.height}
                   key={bboxKey(bbox)}
                 />
               ))}
@@ -232,7 +248,7 @@ const ImageOverlay: React.FC<ImageOverlayProps> = ({
             <ClassList
               classes={image.classes}
               classColours={classColours}
-              setClassColour={setClassColour}
+              setClassColour={setNewClassColour}
             />
           )}
           {hasProbabilities && (
@@ -311,45 +327,6 @@ const ImageOverlay: React.FC<ImageOverlayProps> = ({
   );
 };
 
-type ImageSize = {
-  width?: number;
-  height?: number;
-};
-
-type ImageCardProps = {
-  category: string;
-  image: Image;
-};
-
-const ImageCard: React.FC<ImageCardProps> = ({ category, image }) => {
-  const classColourMap =
-    image.classes === undefined ? new Map() : assignColours(image.classes);
-  const [classColours, setClassColours] = useState(new Map(classColourMap));
-  // A copy map of the Map is created such that React re-renders it, since
-  // mutating it won't change the reference and therefore won't trigger
-  // a re-render.
-  const setNewClassColour = (className: string, colour: Colour) => {
-    setClassColours(new Map(classColours.set(className, colour)));
-  };
-  const [imageSize, setImageSize] = useState<ImageSize>({});
-  const setSize = (width: number, height: number) => {
-    setImageSize({ width, height });
-  };
-  return (
-    <CategoryCard category={category} contentClass={styles.categoryContent}>
-      <ImageOverlay
-        image={image}
-        name={category}
-        classColours={classColours}
-        setClassColour={setNewClassColour}
-        setSize={setSize}
-        width={imageSize.width}
-        height={imageSize.height}
-      />
-    </CategoryCard>
-  );
-};
-
 type Props = {
   data: DataMap;
   colours: ColourMap;
@@ -358,14 +335,40 @@ type Props = {
 
 export const Images: React.FC<Props> = ({ data, colours, names }) => {
   const kind = "images";
-  const cards = getDataKind(data, kind, names, colours).map(
+  const dataOfKind = getDataKind(data, kind, names, colours);
+  const cards = dataOfKind.map(
     d =>
       d.data &&
       Object.keys(d.data).length && (
-        <Card name={d.name} colour={d.colour} key={d.name}>
-          {sortObject(d.data).map(({ key, value }) => (
-            <ImageCard image={value} category={key} key={key} />
-          ))}
+        <Card
+          name={d.name}
+          colour={d.colour}
+          steps={sortedSteps(d.data)}
+          key={d.name}
+        >
+          {selected =>
+            sortObject(d.data).map(({ key, value }) => (
+              <CategoryCard
+                category={key}
+                contentClass={styles.categoryContent}
+                steps={sortedCategorySteps(value)}
+                selectedStep={selected}
+                key={key}
+              >
+                {selectedCategory => {
+                  const selectedValue =
+                    selectedCategory && value.steps
+                      ? value.steps[selectedCategory]
+                      : value.global;
+                  return (
+                    selectedValue && (
+                      <ImageOverlay image={selectedValue} name={key} />
+                    )
+                  );
+                }}
+              </CategoryCard>
+            ))
+          }
         </Card>
       )
   );

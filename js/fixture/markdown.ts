@@ -6,7 +6,8 @@ export const markdown: DataMap = new Map([
     {
       markdown: {
         Summary: {
-          raw: `# combined-bert
+          global: {
+            raw: `# combined-bert
 
 - **Start**: 2019-11-15 13:35:52
 - **Git Commit**: e884f0c8d289c93f8f24ed7bd844895c28beb236
@@ -62,14 +63,17 @@ model_kind = bert
 opt_level = 1
 vocab = None
 \`\`\``
+          }
         },
         "a table": {
-          raw: `| Name     | Loss    | Perplexity |
+          global: {
+            raw: `| Name     | Loss    | Perplexity |
 |----------|---------|------------|
 | Train    | 1.76877 | 5.86366    |
 | Leipzig  | 1.90184 | 6.69819    |
 | LREC     | 1.93696 | 6.93762    |
 | Combined | 1.90828 | 6.74151    |`
+          }
         }
       }
     }
@@ -79,11 +83,13 @@ vocab = None
     {
       markdown: {
         Links: {
-          raw: `# With some Links
+          global: {
+            raw: `# With some Links
 
 Code is available on [GitHub](https://github.com) at [jungomi/lavd][github-lavd]
 
 [github-lavd]: https://github.com/jungomi/lavd`
+          }
         }
       }
     }

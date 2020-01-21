@@ -25,7 +25,6 @@ export const commandCardWithParser = cx(
 export const commandPreview = css({
   display: "flex",
   alignItems: "center",
-  paddingTop: "1.5rem",
   paddingRight: "0.4rem"
 });
 
@@ -109,10 +108,6 @@ export const copyIconSuccess = cx(
     }
   })
 );
-
-export const cardTitle = css({
-  fontSize: "1.1rem"
-});
 
 export const commandPreviewCode = css({
   display: "flex",

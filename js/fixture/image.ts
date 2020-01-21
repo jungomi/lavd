@@ -22,68 +22,94 @@ export const images: DataMap = new Map([
     {
       images: {
         Birds: {
-          source: birdImage,
-          classes,
-          bbox: [
-            {
-              xStart: 0,
-              xEnd: 250,
-              yStart: 0,
-              yEnd: 300,
-              className: "bird",
-              probability: 0.2
+          steps: {
+            1: {
+              source: birdImage,
+              classes,
+              bbox: [
+                {
+                  xStart: 0,
+                  xEnd: 250,
+                  yStart: 0,
+                  yEnd: 300,
+                  className: "bird",
+                  probability: 0.2
+                },
+                {
+                  xStart: 500,
+                  xEnd: 1024,
+                  yStart: 100,
+                  yEnd: 682,
+                  className: "orange",
+                  probability: 0.3
+                }
+              ]
             },
-            {
-              xStart: 500,
-              xEnd: 1024,
-              yStart: 100,
-              yEnd: 682,
-              className: "orange",
-              probability: 0.3
+            2: {
+              source: birdImage,
+              classes,
+              bbox: [
+                {
+                  xStart: 500,
+                  xEnd: 1024,
+                  yStart: 100,
+                  yEnd: 682,
+                  className: "bird",
+                  probability: 0.3
+                }
+              ]
             }
-          ]
+          }
         },
         "Birds Flipped": {
-          source: flippedImage,
-          classes,
-          bbox: [
-            {
-              xStart: 50,
-              xEnd: 300,
-              yStart: 50,
-              yEnd: 250,
-              className: "bird",
-              probability: 0.9
-            },
-            {
-              xStart: 100,
-              xEnd: 300,
-              yStart: 500,
-              yEnd: 650,
-              className: "orange",
-              probability: 0.3
+          steps: {
+            1: {
+              source: flippedImage,
+              classes,
+              bbox: [
+                {
+                  xStart: 50,
+                  xEnd: 300,
+                  yStart: 50,
+                  yEnd: 250,
+                  className: "bird",
+                  probability: 0.9
+                },
+                {
+                  xStart: 100,
+                  xEnd: 300,
+                  yStart: 500,
+                  yEnd: 650,
+                  className: "orange",
+                  probability: 0.3
+                }
+              ]
             }
-          ]
+          }
         },
         "Birds Greyscale": {
-          source: greyImage,
-          classes,
-          bbox: [
-            {
-              xStart: 50,
-              xEnd: 250,
-              yStart: 50,
-              yEnd: 300,
-              className: "bird"
-            },
-            {
-              xStart: 500,
-              xEnd: 650,
-              yStart: 100,
-              yEnd: 300,
-              className: "orange"
+          steps: {
+            1: {
+              source: greyImage,
+              classes,
+              bbox: [
+                {
+                  xStart: 50,
+                  xEnd: 250,
+                  yStart: 50,
+                  yEnd: 300,
+                  className: "bird"
+                },
+                {
+                  xStart: 500,
+                  xEnd: 650,
+                  yStart: 100,
+                  yEnd: 300,
+                  className: "orange"
+                }
+              ]
             }
-          ]
+          }
         }
       }
     }
@@ -93,26 +119,30 @@ export const images: DataMap = new Map([
     {
       images: {
         Birds: {
-          source: birdImage,
-          classes,
-          bbox: [
-            {
-              xStart: 150,
-              xEnd: 200,
-              yStart: 150,
-              yEnd: 250,
-              className: "bird",
-              probability: 0.2
-            },
-            {
-              xStart: 50,
-              xEnd: 500,
-              yStart: 200,
-              yEnd: 400,
-              className: "bird",
-              probability: 0.4
+          steps: {
+            1: {
+              source: birdImage,
+              classes,
+              bbox: [
+                {
+                  xStart: 150,
+                  xEnd: 200,
+                  yStart: 150,
+                  yEnd: 250,
+                  className: "bird",
+                  probability: 0.2
+                },
+                {
+                  xStart: 50,
+                  xEnd: 500,
+                  yStart: 200,
+                  yEnd: 400,
+                  className: "bird",
+                  probability: 0.4
+                }
+              ]
             }
-          ]
+          }
         }
       }
     }
@@ -122,7 +152,11 @@ export const images: DataMap = new Map([
     {
       images: {
         Birds: {
-          source: flippedImage
+          steps: {
+            1: {
+              source: flippedImage
+            }
+          }
         }
       }
     }

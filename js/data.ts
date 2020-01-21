@@ -8,22 +8,25 @@ import { ColourMap, Colour } from "./colour/definition";
 
 export type Optional<T> = T | undefined;
 
+export type DataOfCategory<T> = {
+  global?: Optional<T>;
+  steps?: {
+    [step: number]: Optional<T>;
+  };
+};
+
+export type DataList<T> = {
+  [name: string]: Optional<DataOfCategory<T>>;
+};
+
 export type Data = {
   scalars?: {
     [name: string]: Optional<Scalars>;
   };
-  images?: {
-    [name: string]: Optional<Image>;
-  };
-  texts?: {
-    [name: string]: Optional<Text>;
-  };
-  logs?: {
-    [name: string]: Optional<Log>;
-  };
-  markdown?: {
-    [name: string]: Optional<MarkdownDocument>;
-  };
+  images?: DataList<Image>;
+  texts?: DataList<Text>;
+  logs?: DataList<Log>;
+  markdown?: DataList<MarkdownDocument>;
   command?: Optional<Command>;
 };
 
@@ -82,9 +85,36 @@ export function getDataKind<K extends DataKind>(
   return dataOfKind;
 }
 
-export function sortObject<V>(obj: {
-  [key: string]: V | undefined;
-}): Array<{ key: string; value: V }> {
+export function sortedSteps<T>(dataList: DataList<T>): Array<number> {
+  const uniqueSteps: Set<number> = new Set();
+  for (const data of Object.values(dataList)) {
+    if (data === undefined || data.steps === undefined) {
+      continue;
+    }
+    for (const step of Object.keys(data.steps)) {
+      uniqueSteps.add(Number.parseInt(step));
+    }
+  }
+  return Array.from(uniqueSteps).sort();
+}
+
+export function sortedCategorySteps<T>(data: DataOfCategory<T>): Array<number> {
+  const uniqueSteps: Set<number> = new Set();
+  if (data === undefined || data.steps === undefined) {
+    return [];
+  }
+  for (const step of Object.keys(data.steps)) {
+    uniqueSteps.add(Number.parseInt(step));
+  }
+  return Array.from(uniqueSteps).sort();
+}
+
+export function sortObject<V>(
+  obj: Optional<{ [key: string]: Optional<V> }>
+): Array<{ key: string; value: V }> {
+  if (obj === undefined) {
+    return [];
+  }
   const objs = [];
   const sortedKeys = Object.keys(obj).sort();
   for (const key of sortedKeys) {

@@ -1,7 +1,13 @@
 import React from "react";
 import { Card, CategoryCard } from "./Card";
 import { ColourMap } from "./colour/definition";
-import { DataMap, sortObject, getDataKind } from "./data";
+import {
+  DataMap,
+  sortObject,
+  getDataKind,
+  sortedSteps,
+  sortedCategorySteps
+} from "./data";
 import { Empty } from "./Empty";
 import * as styles from "./Logs.styles";
 import { formatDate, parseDate, timeElapsed } from "./time";
@@ -121,16 +127,35 @@ type Props = {
 
 export const Logs: React.FC<Props> = ({ data, colours, names }) => {
   const kind = "logs";
-  const cards = getDataKind(data, kind, names, colours).map(
+  const dataOfKind = getDataKind(data, kind, names, colours);
+  const cards = dataOfKind.map(
     d =>
       d.data &&
       Object.keys(d.data).length && (
-        <Card name={d.name} colour={d.colour} key={d.name}>
-          {sortObject(d.data).map(({ key, value }) => (
-            <CategoryCard category={key} key={key}>
-              <Log lines={value.lines} />
-            </CategoryCard>
-          ))}
+        <Card
+          name={d.name}
+          colour={d.colour}
+          steps={sortedSteps(d.data)}
+          key={d.name}
+        >
+          {selected =>
+            sortObject(d.data).map(({ key, value }) => (
+              <CategoryCard
+                category={key}
+                steps={sortedCategorySteps(value)}
+                selectedStep={selected}
+                key={key}
+              >
+                {selectedCategory => {
+                  const selectedValue =
+                    selectedCategory && value.steps
+                      ? value.steps[selectedCategory]
+                      : value.global;
+                  return selectedValue && <Log lines={selectedValue.lines} />;
+                }}
+              </CategoryCard>
+            ))
+          }
         </Card>
       )
   );
