@@ -19,13 +19,6 @@ export const text = css({
   }
 });
 
-export const textWithDiff = cx(
-  text,
-  css({
-    justifyContent: "space-around"
-  })
-);
-
 export const column = css({
   display: "flex",
   flexDirection: "column",
@@ -33,7 +26,7 @@ export const column = css({
   marginRight: "0.3em",
   // Needed to show trailing white space, otherwise they are not rendered.
   whiteSpace: "pre-wrap",
-  maxWidth: "33%",
+  width: "33%",
   overflow: "hidden"
 });
 
@@ -62,7 +55,8 @@ export const columnDiff = css({
   // Show trailing spaces but don't wrap.
   whiteSpace: "pre",
   overflowX: "scroll",
-  overflowY: "hidden"
+  overflowY: "hidden",
+  alignItems: "center"
 });
 
 export const columnTextActual = cx(
