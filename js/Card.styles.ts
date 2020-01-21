@@ -58,7 +58,8 @@ export const name = css({
 export const arrowLeftDisabled = css({
   fill: "#cccccc",
   height: "1em",
-  width: "1em"
+  width: "1em",
+  cursor: "default"
 });
 
 export const arrowLeft = css({
@@ -87,7 +88,8 @@ export const categorySteps = css({
   display: "flex",
   fontSize: "0.9rem",
   alignItems: "center",
-  marginBottom: "0.8rem"
+  marginBottom: "1.2rem",
+  justifyContent: "center"
 });
 
 export const step = css({

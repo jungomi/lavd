@@ -88,7 +88,7 @@ const StepSelection: React.FC<StepSelectionProps> = ({
       </span>
       {before.map((s, i) => (
         <span
-          className={s === "…" ? styles.stepEllipsis : styles.step}
+          className={s === "…" || s === "" ? styles.stepEllipsis : styles.step}
           onClick={() => {
             const newValue = stringToInt(s);
             setNewSelected(newValue, true);
@@ -112,7 +112,7 @@ const StepSelection: React.FC<StepSelectionProps> = ({
       />
       {after.map((s, i) => (
         <span
-          className={s === "…" ? styles.stepEllipsis : styles.step}
+          className={s === "…" || s === "" ? styles.stepEllipsis : styles.step}
           onClick={() => {
             const newValue = stringToInt(s);
             setNewSelected(newValue, true);
