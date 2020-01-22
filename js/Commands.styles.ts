@@ -117,7 +117,7 @@ export const commandPreviewCode = css({
   padding: "0.8rem",
   borderRadius: "2px",
   whiteSpace: "pre",
-  overflowX: "scroll",
+  overflowX: "auto",
   "::before": {
     content: "'$'",
     marginRight: "0.8rem"
