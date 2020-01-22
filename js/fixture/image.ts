@@ -141,6 +141,28 @@ export const images: DataMap = new Map([
                   probability: 0.4
                 }
               ]
+            },
+            2: {
+              source: birdImage,
+              classes,
+              bbox: [
+                {
+                  xStart: 150,
+                  xEnd: 200,
+                  yStart: 150,
+                  yEnd: 250,
+                  className: "bird",
+                  probability: 0.2
+                },
+                {
+                  xStart: 50,
+                  xEnd: 500,
+                  yStart: 200,
+                  yEnd: 400,
+                  className: "orange",
+                  probability: 0.333
+                }
+              ]
             }
           }
         }

@@ -146,7 +146,6 @@ export const tooltipBox = css({
   background: "rgba(0, 0, 0, 0.65)",
   border: "2px solid #666666",
   borderRadius: "6px",
-  width: "fit-content",
   marginBottom: "0.2em",
   marginRight: "0.2em"
 });
