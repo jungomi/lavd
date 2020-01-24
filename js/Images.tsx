@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { Card, CategoryCard } from "./Card";
 import { ColourPicker } from "./colour/ColourPicker";
 import {
@@ -18,6 +18,7 @@ import {
 import { Empty } from "./Empty";
 import * as styles from "./Images.styles";
 import { stringToFloat } from "./number";
+import { OverlayContext } from "./Overlay";
 
 const ExpandIcon: React.FC = () => (
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 352.054 352.054">
@@ -178,6 +179,8 @@ const ImageOverlay: React.FC<ImageOverlayProps> = ({
   fullscreen,
   showOverlay
 }) => {
+  const overlay = useContext(OverlayContext);
+  const imgRef = useRef<HTMLDivElement>(null);
   const svgRef = useRef<SVGSVGElement>(null);
   const [tooltipBoxes, setTooltipBoxes] = useState<Array<Bbox>>([]);
   const [minProbability, setMinProbability] = useState(
@@ -196,6 +199,23 @@ const ImageOverlay: React.FC<ImageOverlayProps> = ({
   const setSize = (width: number, height: number) => {
     setImageSize({ width, height });
   };
+  useEffect(() => {
+    const outsideClick = (e: MouseEvent) => {
+      if (
+        fullscreen &&
+        e.button === 0 &&
+        imgRef.current &&
+        !imgRef.current.contains(e.target as Node)
+      ) {
+        overlay.hide();
+      }
+    };
+    window.addEventListener("click", outsideClick);
+    // Clean up when the component is destroyed
+    return () => {
+      window.removeEventListener("click", outsideClick);
+    };
+  });
   if (image === undefined) {
     return null;
   }
@@ -249,6 +269,7 @@ const ImageOverlay: React.FC<ImageOverlayProps> = ({
                 ? styles.imageContainerFullscreen
                 : styles.imageContainer
             }
+            ref={imgRef}
           >
             <img
               src={image.source}
