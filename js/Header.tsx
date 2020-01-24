@@ -1,4 +1,4 @@
-import { A, usePath } from "hookrouter";
+import { A, useInterceptor, usePath } from "hookrouter";
 import React, { useEffect, useState } from "react";
 import * as styles from "./Header.styles";
 
@@ -37,6 +37,12 @@ export const Header = () => {
     return () => {
       mediaQuery.removeListener(updateScreenSize);
     };
+  });
+  // The interceptor gets called everytime the route changes. When it happens,
+  // the menu is automatically closed.
+  useInterceptor((_, nextPath) => {
+    setIsOpen(false);
+    return nextPath;
   });
   const itemClass = isOpen ? styles.itemOpen : styles.item;
   const activeClass = isOpen ? styles.activeOpen : styles.active;
