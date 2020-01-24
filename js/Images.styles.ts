@@ -82,7 +82,8 @@ export const imageContainer = css({
   // Fit to the content, so the SVG overlay will also have the same size as the
   // image, since it will take the full size of its container.
   width: "fit-content",
-  height: "fit-content"
+  height: "fit-content",
+  userSelect: "none"
 });
 
 export const imageContainerFullscreen = cx(
