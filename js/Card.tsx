@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Colour, colourString } from "./colour/definition";
 import * as styles from "./Card.styles";
 import { stringToInt } from "./number";
+import { OverlayContext } from "./Overlay";
 
 function padStepsStart(steps: Array<number>): Array<string> {
   let result: Array<string> = steps.map(s => s.toString());
@@ -180,7 +181,9 @@ type CategoryCardProps = {
   selectedStep?: number;
   contentClass?: string;
   children?: (
-    selected: number | undefined
+    selected: number | undefined,
+    isOverlay?: boolean,
+    showOverlay?: () => void
   ) => JSX.Element | Array<JSX.Element> | undefined;
 };
 
@@ -191,6 +194,7 @@ export const CategoryCard: React.FC<CategoryCardProps> = ({
   contentClass = styles.categoryContent,
   children
 }) => {
+  const overlay = useContext(OverlayContext);
   const initialStep =
     steps && steps.length
       ? selectedStep && steps.includes(selectedStep)
@@ -203,6 +207,16 @@ export const CategoryCard: React.FC<CategoryCardProps> = ({
       setSelected(selectedStep);
     }
   }, [steps, selectedStep]);
+  let showOverlay = undefined;
+  if (children) {
+    showOverlay = () => {
+      overlay.show(
+        <div className={styles.categoryContentOverlay}>
+          {children(selected, true)}
+        </div>
+      );
+    };
+  }
 
   return (
     <div className={styles.categoryCard}>
@@ -217,7 +231,11 @@ export const CategoryCard: React.FC<CategoryCardProps> = ({
           className={styles.categorySteps}
         />
       )}
-      <div className={contentClass}>{children && children(selected)}</div>
+      {children && (
+        <div className={contentClass}>
+          {children(selected, false, showOverlay)}
+        </div>
+      )}
     </div>
   );
 };

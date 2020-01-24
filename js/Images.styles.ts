@@ -1,4 +1,4 @@
-import { css } from "emotion";
+import { css, cx } from "emotion";
 
 const labelColour = "#616161";
 
@@ -58,10 +58,24 @@ export const imageCard = css({
 });
 
 export const imageOverlayContainer = css({
-  overflow: "scroll"
+  display: "flex",
+  position: "relative",
+  overflow: "hidden"
+});
+
+export const imageOverlayContainerFullscreen = css({
+  margin: "0 auto"
 });
 
 export const imageOverlay = css({
+  overflow: "scroll",
+  // Workaround for Firefox to prevent scrollbars from piercing through the
+  // fullscreen overlay. For some reason the scrollbars of the elements under
+  // the actual overlay are always shown, but that somehow prevents it.
+  opacity: 0.999
+});
+
+export const imageContainer = css({
   display: "flex",
   position: "relative",
   flexShrink: 0,
@@ -69,6 +83,28 @@ export const imageOverlay = css({
   // image, since it will take the full size of its container.
   width: "fit-content",
   height: "fit-content"
+});
+
+export const imageContainerFullscreen = cx(
+  imageContainer,
+  css({
+    margin: "2rem"
+  })
+);
+
+export const expand = css({
+  width: "1.5rem",
+  height: "1.5rem",
+  position: "absolute",
+  zIndex: 10,
+  top: 0,
+  right: "0.5rem",
+  padding: "0.5rem",
+  cursor: "pointer",
+  fill: "#555555",
+  ":hover": {
+    fill: "#404040"
+  }
 });
 
 export const strokeWidth = 2;
@@ -122,7 +158,8 @@ export const tooltipTitle = css({
 
 export const tooltipLabel = css({
   marginRight: "0.4em",
-  fontWeight: 600
+  fontWeight: 600,
+  whiteSpace: "nowrap"
 });
 
 export const tooltipValue = css({
@@ -130,13 +167,32 @@ export const tooltipValue = css({
   color: "rgba(247, 247, 247, 0.890)"
 });
 
+export const tooltipContainer = css({
+  position: "relative",
+  zIndex: 2
+});
+
 export const tooltipBoxList = css({
   position: "absolute",
   display: "flex",
   flexWrap: "wrap",
   flexDirection: "column-reverse",
-  height: "100%"
+  height: "100%",
+  marginLeft: "0.8rem"
 });
+
+export const tooltipBoxListFullscreen = cx(
+  tooltipBoxList,
+  css({
+    position: "fixed",
+    flexWrap: "wrap-reverse",
+    bottom: 0,
+    right: 0,
+    boxSizing: "border-box",
+    padding: "1rem",
+    pointerEvents: "none"
+  })
+);
 
 export const tooltipBox = css({
   display: "flex",
@@ -144,11 +200,18 @@ export const tooltipBox = css({
   padding: "0.6rem",
   color: "#ffffff",
   background: "rgba(0, 0, 0, 0.65)",
-  border: "2px solid #666666",
+  border: "2px solid rgba(100, 100, 100, 0.3)",
   borderRadius: "6px",
   marginBottom: "0.2em",
   marginRight: "0.2em"
 });
+
+export const tooltipBoxFullscreen = cx(
+  tooltipBox,
+  css({
+    background: "#141414"
+  })
+);
 
 export const tooltipBoxEntry = css({
   display: "flex",

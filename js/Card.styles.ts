@@ -24,6 +24,15 @@ export const categoryContent = css({
   overflow: "scroll"
 });
 
+export const categoryContentOverlay = cx(
+  categoryContent,
+  css({
+    display: "flex",
+    height: "100%",
+    overflow: "scroll"
+  })
+);
+
 export const categoryCard = css({
   display: "flex",
   flexDirection: "column",

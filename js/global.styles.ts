@@ -41,6 +41,9 @@ export const scrollbar = `
 *::-webkit-scrollbar-thumb:active {
   background-color: ${scrollbarConfig.colour.active};
 }
+*::-webkit-scrollbar-corner {
+  background-color: ${scrollbarConfig.colour.bg};
+}
 `;
 
 // Apex charts are not that well integrated into React, therefore the styling

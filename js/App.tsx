@@ -1,4 +1,4 @@
-import { navigate, useRoutes } from "hookrouter";
+import { navigate, useRoutes, useInterceptor } from "hookrouter";
 import React, { useState } from "react";
 import * as styles from "./App.styles";
 import { assignColours, Colour, ColourMap } from "./colour/definition";
@@ -10,6 +10,7 @@ import { Sidebar } from "./Sidebar";
 import { Texts } from "./Texts";
 import { Markdown } from "./Markdown";
 import { Commands } from "./Commands";
+import { Overlay, OverlayContext } from "./Overlay";
 
 import { data } from "./fixture";
 import { DataMap } from "./data";
@@ -46,6 +47,8 @@ const routes: Routes = {
   "/about": () => () => <span>About</span>
 };
 
+type Element = JSX.Element | Array<JSX.Element> | undefined;
+
 export const App = () => {
   const Content = useRoutes(routes);
   if (Content === null) {
@@ -59,8 +62,20 @@ export const App = () => {
   const setNewColour = (name: string, colour: Colour) => {
     setColours(new Map(colours.set(name, colour)));
   };
+  const [overlay, setOverlay] = useState<Element>(undefined);
+  const overlayContext = {
+    show: (elem: Element) => setOverlay(elem),
+    hide: () => setOverlay(undefined)
+  };
+  // The interceptor gets called everytime the route changes. When it happens,
+  // the overlay is automatically closed.
+  useInterceptor((_, nextPath) => {
+    overlayContext.hide();
+    return nextPath;
+  });
   return (
-    <>
+    <OverlayContext.Provider value={overlayContext}>
+      {overlay && <Overlay>{overlay}</Overlay>}
       <Header />
       <div className={styles.wrapper}>
         <Sidebar names={names} colours={colours} setColour={setNewColour} />
@@ -68,6 +83,6 @@ export const App = () => {
           {Content && <Content data={data} colours={colours} names={names} />}
         </main>
       </div>
-    </>
+    </OverlayContext.Provider>
   );
 };

@@ -19,6 +19,12 @@ import { Empty } from "./Empty";
 import * as styles from "./Images.styles";
 import { stringToFloat } from "./number";
 
+const ExpandIcon: React.FC = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 352.054 352.054">
+    <path d="M144.206 186.634L30 300.84v-62.781H0v113.995h113.995v-30H51.212l114.207-114.207zM238.059 0v30h62.781L186.633 144.208l21.213 21.212L322.054 51.213v62.782h30V0z" />
+  </svg>
+);
+
 export type Bbox = {
   xStart: number;
   yStart: number;
@@ -142,14 +148,15 @@ function boxesInside(
   boxes: Array<Bbox>,
   x: number,
   y: number,
-  border: number = styles.strokeWidth
+  border: number = styles.strokeWidth,
+  scaleFactor: number = 1.0
 ): Array<Bbox> {
   return boxes.filter(
     box =>
-      box.xStart - border <= x &&
-      box.xEnd + border >= x &&
-      box.yStart - border <= y &&
-      box.yEnd + border >= y
+      scaleFactor * (box.xStart - border) <= x &&
+      scaleFactor * (box.xEnd + border) >= x &&
+      scaleFactor * (box.yStart - border) <= y &&
+      scaleFactor * (box.yEnd + border) >= y
   );
 }
 
@@ -161,9 +168,16 @@ type ImageSize = {
 type ImageOverlayProps = {
   image: Image;
   name: string;
+  fullscreen?: boolean;
+  showOverlay?: () => void;
 };
 
-const ImageOverlay: React.FC<ImageOverlayProps> = ({ image, name }) => {
+const ImageOverlay: React.FC<ImageOverlayProps> = ({
+  image,
+  name,
+  fullscreen,
+  showOverlay
+}) => {
   const svgRef = useRef<SVGSVGElement>(null);
   const [tooltipBoxes, setTooltipBoxes] = useState<Array<Bbox>>([]);
   const [minProbability, setMinProbability] = useState(
@@ -212,45 +226,124 @@ const ImageOverlay: React.FC<ImageOverlayProps> = ({ image, name }) => {
       setTooltipBoxes(boxesInside(boxes, x, y));
     }
   };
-  const hasSidebar = hasProbabilities || image.classes !== undefined;
+  const hasSidebar =
+    !fullscreen && (hasProbabilities || image.classes !== undefined);
   return (
     <>
-      <div className={styles.imageOverlayContainer}>
-        <div className={styles.imageOverlay}>
-          <img
-            src={image.source}
-            alt={name}
-            draggable="false"
-            onLoad={e => {
-              // This is always a HTMLImageElement, obviously.
-              const imgElem = e.target as HTMLImageElement;
-              setSize(imgElem.width, imgElem.height);
-            }}
-          />
-          {boxes && (
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox={`0 0 ${imageSize.width || 0} ${imageSize.height || 0}`}
-              className={styles.svg}
-              onMouseMove={e => updateTooltip(e.clientX, e.clientY)}
-              onMouseLeave={() => {
-                setTooltipBoxes([]);
+      <div
+        className={
+          fullscreen
+            ? styles.imageOverlayContainerFullscreen
+            : styles.imageOverlayContainer
+        }
+      >
+        {!fullscreen && showOverlay !== undefined && (
+          <div className={styles.expand} onClick={() => showOverlay()}>
+            <ExpandIcon />
+          </div>
+        )}
+        <div className={fullscreen ? undefined : styles.imageOverlay}>
+          <div
+            className={
+              fullscreen
+                ? styles.imageContainerFullscreen
+                : styles.imageContainer
+            }
+          >
+            <img
+              src={image.source}
+              alt={name}
+              draggable="false"
+              onLoad={e => {
+                // This is always a HTMLImageElement, obviously.
+                const imgElem = e.target as HTMLImageElement;
+                setSize(imgElem.width, imgElem.height);
               }}
-              ref={svgRef}
-            >
-              {boxes.map(bbox => (
-                <BoundingBox
-                  {...bbox}
-                  classColours={classColours}
-                  maxWidth={imageSize.width}
-                  maxHeight={imageSize.height}
-                  key={bboxKey(bbox)}
-                />
-              ))}
-            </svg>
-          )}
+            />
+            {boxes && (
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox={`0 0 ${imageSize.width || 0} ${imageSize.height || 0}`}
+                className={styles.svg}
+                onMouseMove={e => updateTooltip(e.clientX, e.clientY)}
+                onMouseLeave={() => {
+                  setTooltipBoxes([]);
+                }}
+                ref={svgRef}
+              >
+                {boxes.map(bbox => (
+                  <BoundingBox
+                    {...bbox}
+                    classColours={classColours}
+                    maxWidth={imageSize.width}
+                    maxHeight={imageSize.height}
+                    key={bboxKey(bbox)}
+                  />
+                ))}
+              </svg>
+            )}
+          </div>
         </div>
       </div>
+      {tooltipBoxes.length > 0 && (
+        <div className={fullscreen ? undefined : styles.tooltipContainer}>
+          <div
+            className={
+              fullscreen
+                ? styles.tooltipBoxListFullscreen
+                : styles.tooltipBoxList
+            }
+          >
+            {tooltipBoxes.map(bbox => {
+              const classColour = classColours.get(bbox.className);
+              return (
+                <div
+                  className={
+                    fullscreen ? styles.tooltipBoxFullscreen : styles.tooltipBox
+                  }
+                  key={`${bboxKey(bbox)}-tooltip`}
+                >
+                  <div className={styles.tooltipBoxEntry}>
+                    <span className={styles.tooltipLabel}>Class:</span>
+                    <span
+                      className={styles.tooltipValue}
+                      style={{
+                        color: classColour && colourString(classColour)
+                      }}
+                    >
+                      {bbox.className}
+                    </span>
+                  </div>
+                  <div className={styles.tooltipBoxEntry}>
+                    <span className={styles.tooltipLabel}>x-start:</span>
+                    <span className={styles.tooltipValue}>{bbox.xStart}</span>
+                  </div>
+                  <div className={styles.tooltipBoxEntry}>
+                    <span className={styles.tooltipLabel}>x-end:</span>
+                    <span className={styles.tooltipValue}>{bbox.xEnd}</span>
+                  </div>
+                  <div className={styles.tooltipBoxEntry}>
+                    <span className={styles.tooltipLabel}>y-start:</span>
+                    <span className={styles.tooltipValue}>{bbox.yStart}</span>
+                  </div>
+                  <div className={styles.tooltipBoxEntry}>
+                    <span className={styles.tooltipLabel}>y-end:</span>
+                    <span className={styles.tooltipValue}>{bbox.yEnd}</span>
+                  </div>
+                  {bbox.probability !== undefined && (
+                    <div className={styles.tooltipBoxEntry}>
+                      <span className={styles.tooltipLabel}>Probability:</span>
+                      <span className={styles.tooltipValue}>
+                        {bbox.probability}
+                      </span>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
       {hasSidebar && (
         <div className={styles.sidebar}>
           {image.classes && (
@@ -277,57 +370,6 @@ const ImageOverlay: React.FC<ImageOverlayProps> = ({ image, name }) => {
                   setMinProbability(prob);
                 }}
               />
-            </div>
-          )}
-          {tooltipBoxes.length > 0 && (
-            <div className={styles.tooltipBoxList}>
-              {tooltipBoxes.map(bbox => {
-                const classColour = classColours.get(bbox.className);
-                return (
-                  <div
-                    className={styles.tooltipBox}
-                    key={`${bboxKey(bbox)}-tooltip`}
-                  >
-                    <div className={styles.tooltipBoxEntry}>
-                      <span className={styles.tooltipLabel}>Class:</span>
-                      <span
-                        className={styles.tooltipValue}
-                        style={{
-                          color: classColour && colourString(classColour)
-                        }}
-                      >
-                        {bbox.className}
-                      </span>
-                    </div>
-                    <div className={styles.tooltipBoxEntry}>
-                      <span className={styles.tooltipLabel}>x-start:</span>
-                      <span className={styles.tooltipValue}>{bbox.xStart}</span>
-                    </div>
-                    <div className={styles.tooltipBoxEntry}>
-                      <span className={styles.tooltipLabel}>x-end:</span>
-                      <span className={styles.tooltipValue}>{bbox.xEnd}</span>
-                    </div>
-                    <div className={styles.tooltipBoxEntry}>
-                      <span className={styles.tooltipLabel}>y-start:</span>
-                      <span className={styles.tooltipValue}>{bbox.yStart}</span>
-                    </div>
-                    <div className={styles.tooltipBoxEntry}>
-                      <span className={styles.tooltipLabel}>y-end:</span>
-                      <span className={styles.tooltipValue}>{bbox.yEnd}</span>
-                    </div>
-                    {bbox.probability !== undefined && (
-                      <div className={styles.tooltipBoxEntry}>
-                        <span className={styles.tooltipLabel}>
-                          Probability:
-                        </span>
-                        <span className={styles.tooltipValue}>
-                          {bbox.probability}
-                        </span>
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
             </div>
           )}
         </div>
@@ -364,14 +406,19 @@ export const Images: React.FC<Props> = ({ data, colours, names }) => {
                 selectedStep={selected}
                 key={key}
               >
-                {selectedCategory => {
+                {(selectedCategory, isOverlay, showOverlay) => {
                   const selectedValue =
                     selectedCategory && value.steps
                       ? value.steps[selectedCategory]
                       : value.global;
                   return (
                     selectedValue && (
-                      <ImageOverlay image={selectedValue} name={key} />
+                      <ImageOverlay
+                        image={selectedValue}
+                        name={key}
+                        fullscreen={isOverlay}
+                        showOverlay={showOverlay}
+                      />
                     )
                   );
                 }}
