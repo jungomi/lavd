@@ -75,7 +75,7 @@ export const App = () => {
   });
   return (
     <OverlayContext.Provider value={overlayContext}>
-      {overlay && <Overlay>{overlay}</Overlay>}
+      <Overlay>{overlay}</Overlay>
       <Header />
       <div className={styles.wrapper}>
         <Sidebar names={names} colours={colours} setColour={setNewColour} />

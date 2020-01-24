@@ -8,20 +8,20 @@ export const OverlayContext = createContext({
 
 export const Overlay: React.FC = ({ children }) => {
   const overlay = useContext(OverlayContext);
-  const pressEscape = (e: KeyboardEvent) => {
-    if (e.key === "Escape") {
-      overlay.hide();
-    }
-  };
   useEffect(() => {
+    const pressEscape = (e: KeyboardEvent) => {
+      if (children && e.key === "Escape") {
+        overlay.hide();
+      }
+    };
     window.addEventListener("keydown", pressEscape);
     // Clean up when the component is destroyed
     return () => {
       window.removeEventListener("keydown", pressEscape);
     };
-  });
+  }, [overlay, children]);
   return (
-    <div className={styles.overlay}>
+    <div className={children ? styles.overlay : styles.overlayHidden}>
       <div className={styles.close}>
         <span
           className={styles.closeIcon}

@@ -7,8 +7,20 @@ export const overlay = css({
   position: "absolute",
   zIndex: 200,
   background: "rgba(0, 0, 0, 0.97)",
-  overflow: "hidden"
+  overflow: "hidden",
+  opacity: 1,
+  transition: "opacity 0.3s ease"
 });
+
+export const overlayHidden = cx(
+  overlay,
+  css({
+    height: 0,
+    width: 0,
+    opacity: 0,
+    transition: "opacity 0.3s ease, width 0s 0.3s, height 0s 0.3s"
+  })
+);
 
 export const close = css({
   display: "flex",
