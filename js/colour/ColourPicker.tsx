@@ -14,6 +14,7 @@ const maxY = styles.fieldHeight - styles.pointerSize / 4;
 type Props = {
   colour: Colour;
   onSelect: (newColour: Colour) => void;
+  style?: React.CSSProperties;
 };
 
 const movingStates = {
@@ -23,7 +24,7 @@ const movingStates = {
   alpha: { field: false, hue: false, alpha: true }
 };
 
-export const ColourPicker: React.FC<Props> = ({ colour, onSelect }) => {
+export const ColourPicker: React.FC<Props> = ({ colour, onSelect, style }) => {
   const [currentColour, setCurrentColour] = useState(toHsv(colour).value);
   const [isMoving, setMoving] = useState(movingStates.off);
   const popupRef = useRef<HTMLDivElement>(null);
@@ -120,7 +121,7 @@ export const ColourPicker: React.FC<Props> = ({ colour, onSelect }) => {
   });
 
   return (
-    <div className={styles.popup} ref={popupRef}>
+    <div className={styles.popup} style={style} ref={popupRef}>
       <div
         className={styles.colourField}
         style={{ background: bgColour }}

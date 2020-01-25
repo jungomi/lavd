@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { ColourPicker } from "./colour/ColourPicker";
+import { fieldHeight } from "./colour/ColourPicker.styles";
 import {
   Colour,
   ColourMap,
@@ -26,6 +27,11 @@ export const VisibilityIcon: React.FC<{ visible?: boolean }> = ({
   </svg>
 );
 
+type ShownColourpicker = {
+  name: string;
+  offset: number;
+};
+
 type Props = {
   names: Names;
   setNames: (names: Names) => void;
@@ -39,8 +45,9 @@ export const Sidebar: React.FC<Props> = ({
   colours,
   setColour
 }) => {
+  const listRef = useRef<HTMLDivElement>(null);
   const [shownColourPicker, setShownColourPicker] = useState<
-    string | undefined
+    ShownColourpicker | undefined
   >(undefined);
   const mediaQuery = window.matchMedia("(min-width: 896px)");
   const [shown, setShown] = useState(mediaQuery.matches);
@@ -54,6 +61,14 @@ export const Sidebar: React.FC<Props> = ({
     };
   });
 
+  const showColourPicker = (name: string, clientY: number) => {
+    if (listRef.current !== null) {
+      const { top, height } = listRef.current.getBoundingClientRect();
+      const y = clientY - top + 24;
+      const offset = Math.min(y, height - 2 * fieldHeight);
+      setShownColourPicker({ name, offset });
+    }
+  };
   const hideAll = () => {
     setNames({
       active: [],
@@ -86,21 +101,12 @@ export const Sidebar: React.FC<Props> = ({
         <span
           className={styles.colour}
           style={{ background: colourString(colour) }}
-          onClick={() => setShownColourPicker(name)}
+          onClick={e => showColourPicker(name, e.clientY)}
         />
         <span className={styles.entryName}>{name}</span>
         <span className={styles.visibility} onClick={() => hideName(name)}>
           <VisibilityIcon visible={true} />
         </span>
-        {shownColourPicker === name && (
-          <ColourPicker
-            colour={colour}
-            onSelect={colour => {
-              setShownColourPicker(undefined);
-              setColour(name, colour);
-            }}
-          />
-        )}
       </div>
     );
   });
@@ -111,21 +117,12 @@ export const Sidebar: React.FC<Props> = ({
         <span
           className={styles.colour}
           style={{ background: colourString(colour) }}
-          onClick={() => setShownColourPicker(name)}
+          onClick={e => showColourPicker(name, e.clientY)}
         />
         <span className={styles.entryName}>{name}</span>
         <span className={styles.visibility} onClick={() => showName(name)}>
           <VisibilityIcon visible={false} />
         </span>
-        {shownColourPicker === name && (
-          <ColourPicker
-            colour={colour}
-            onSelect={colour => {
-              setShownColourPicker(undefined);
-              setColour(name, colour);
-            }}
-          />
-        )}
       </div>
     );
   });
@@ -133,6 +130,16 @@ export const Sidebar: React.FC<Props> = ({
 
   const nameLists = (
     <>
+      {shownColourPicker && (
+        <ColourPicker
+          colour={colours.get(shownColourPicker.name) || defaultColour}
+          onSelect={colour => {
+            setShownColourPicker(undefined);
+            setColour(shownColourPicker.name, colour);
+          }}
+          style={{ top: shownColourPicker.offset }}
+        />
+      )}
       <div className={styles.activeNameList}>
         <span className={styles.visibilityAll} onClick={() => hideAll()}>
           <VisibilityIcon visible={true} />
@@ -167,7 +174,10 @@ export const Sidebar: React.FC<Props> = ({
       >
         <path d="M11.727 26.71l9.977-9.999a1.012 1.012 0 000-1.429l-9.97-9.991c-.634-.66-1.748-.162-1.723.734v19.943c-.023.893 1.083 1.377 1.716.742zm7.84-10.713l-7.55 7.566V8.431l7.55 7.566z" />
       </svg>
-      <div className={shown ? styles.nameListContainer : styles.nameListHidden}>
+      <div
+        className={shown ? styles.nameListContainer : styles.nameListHidden}
+        ref={listRef}
+      >
         {hasData ? nameLists : <SmallEmpty text="data" />}
       </div>
     </div>

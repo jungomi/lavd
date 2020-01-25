@@ -3,7 +3,6 @@ import { bgColour } from "./App.styles";
 
 export const sidebar = css({
   display: "flex",
-  height: "100%",
   width: "18rem",
   position: "relative",
   padding: "1.0rem",
