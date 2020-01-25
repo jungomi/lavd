@@ -6,16 +6,39 @@ import {
   colourString,
   defaultColour
 } from "./colour/definition";
-import { SmallEmpty } from "./Empty";
+import { EmptyDash, SmallEmpty } from "./Empty";
 import * as styles from "./Sidebar.styles";
 
+export type Names = { active: Array<string>; inactive: Array<string> };
+
+export const VisibilityIcon: React.FC<{ visible?: boolean }> = ({
+  visible
+}) => (
+  <svg
+    className={
+      visible ? styles.visibilityIconShown : styles.visibilityIconHidden
+    }
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 24 24"
+  >
+    <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z" />
+    <path d="M12 7c2.76 0 5 2.24 5 5 0 .65-.13 1.26-.36 1.83l2.92 2.92c1.51-1.26 2.7-2.89 3.43-4.75-1.73-4.39-6-7.5-11-7.5-1.4 0-2.74.25-3.98.7l2.16 2.16C10.74 7.13 11.35 7 12 7zM2 4.27l2.28 2.28.46.46A11.804 11.804 0 001 12c1.73 4.39 6 7.5 11 7.5 1.55 0 3.03-.3 4.38-.84l.42.42L19.73 22 21 20.73 3.27 3 2 4.27zM7.53 9.8l1.55 1.55c-.05.21-.08.43-.08.65 0 1.66 1.34 3 3 3 .22 0 .44-.03.65-.08l1.55 1.55c-.67.33-1.41.53-2.2.53-2.76 0-5-2.24-5-5 0-.79.2-1.53.53-2.2zm4.31-.78l3.15 3.15.02-.16c0-1.66-1.34-3-3-3l-.17.01z" />
+  </svg>
+);
+
 type Props = {
-  names: Array<string>;
+  names: Names;
+  setNames: (names: Names) => void;
   colours: ColourMap;
   setColour: (name: string, colour: Colour) => void;
 };
 
-export const Sidebar: React.FC<Props> = ({ names, colours, setColour }) => {
+export const Sidebar: React.FC<Props> = ({
+  names,
+  setNames,
+  colours,
+  setColour
+}) => {
   const [shownColourPicker, setShownColourPicker] = useState<
     string | undefined
   >(undefined);
@@ -31,7 +54,32 @@ export const Sidebar: React.FC<Props> = ({ names, colours, setColour }) => {
     };
   });
 
-  const nameList = names.map(name => {
+  const hideAll = () => {
+    setNames({
+      active: [],
+      inactive: [...names.active, ...names.inactive].sort()
+    });
+  };
+  const showAll = () => {
+    setNames({
+      active: [...names.active, ...names.inactive].sort(),
+      inactive: []
+    });
+  };
+  const hideName = (name: string) => {
+    setNames({
+      active: names.active.filter(n => n !== name),
+      inactive: [...names.inactive, name].sort()
+    });
+  };
+  const showName = (name: string) => {
+    setNames({
+      active: [...names.active, name].sort(),
+      inactive: names.inactive.filter(n => n !== name)
+    });
+  };
+
+  const activeNameList = names.active.map(name => {
     const colour: Colour = colours.get(name) || defaultColour;
     return (
       <div key={name} className={styles.entry}>
@@ -40,7 +88,10 @@ export const Sidebar: React.FC<Props> = ({ names, colours, setColour }) => {
           style={{ background: colourString(colour) }}
           onClick={() => setShownColourPicker(name)}
         />
-        <span>{name}</span>
+        <span className={styles.entryName}>{name}</span>
+        <span className={styles.visibility} onClick={() => hideName(name)}>
+          <VisibilityIcon visible={true} />
+        </span>
         {shownColourPicker === name && (
           <ColourPicker
             colour={colour}
@@ -53,7 +104,59 @@ export const Sidebar: React.FC<Props> = ({ names, colours, setColour }) => {
       </div>
     );
   });
+  const inactiveNameList = names.inactive.map(name => {
+    const colour: Colour = colours.get(name) || defaultColour;
+    return (
+      <div key={name} className={styles.hiddenEntry}>
+        <span
+          className={styles.colour}
+          style={{ background: colourString(colour) }}
+          onClick={() => setShownColourPicker(name)}
+        />
+        <span className={styles.entryName}>{name}</span>
+        <span className={styles.visibility} onClick={() => showName(name)}>
+          <VisibilityIcon visible={false} />
+        </span>
+        {shownColourPicker === name && (
+          <ColourPicker
+            colour={colour}
+            onSelect={colour => {
+              setShownColourPicker(undefined);
+              setColour(name, colour);
+            }}
+          />
+        )}
+      </div>
+    );
+  });
+  const hasData = activeNameList.length > 0 || inactiveNameList.length > 0;
 
+  const nameLists = (
+    <>
+      <div className={styles.activeNameList}>
+        <span className={styles.visibilityAll} onClick={() => hideAll()}>
+          <VisibilityIcon visible={true} />
+        </span>
+        <span className={styles.title}>Active</span>
+        {activeNameList.length > 0 ? (
+          <div className={styles.nameList}>{activeNameList}</div>
+        ) : (
+          <EmptyDash />
+        )}
+      </div>
+      <div className={styles.inactiveNameList}>
+        <span className={styles.visibilityAll} onClick={() => showAll()}>
+          <VisibilityIcon visible={false} />
+        </span>
+        <span className={styles.title}>Inactive</span>
+        {inactiveNameList.length > 0 ? (
+          <div className={styles.nameList}>{inactiveNameList}</div>
+        ) : (
+          <EmptyDash />
+        )}
+      </div>
+    </>
+  );
   return (
     <div className={shown ? styles.sidebar : styles.sidebarHidden}>
       <svg
@@ -64,8 +167,8 @@ export const Sidebar: React.FC<Props> = ({ names, colours, setColour }) => {
       >
         <path d="M11.727 26.71l9.977-9.999a1.012 1.012 0 000-1.429l-9.97-9.991c-.634-.66-1.748-.162-1.723.734v19.943c-.023.893 1.083 1.377 1.716.742zm7.84-10.713l-7.55 7.566V8.431l7.55 7.566z" />
       </svg>
-      <div className={shown ? styles.nameList : styles.nameListHidden}>
-        {nameList.length === 0 ? <SmallEmpty text="data" /> : nameList}
+      <div className={shown ? styles.nameListContainer : styles.nameListHidden}>
+        {hasData ? nameLists : <SmallEmpty text="data" />}
       </div>
     </div>
   );

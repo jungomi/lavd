@@ -3,6 +3,7 @@ import { Colour, colourString } from "./colour/definition";
 import * as styles from "./Card.styles";
 import { stringToInt } from "./number";
 import { OverlayContext } from "./Overlay";
+import { VisibilityIcon } from "./Sidebar";
 
 function padStepsStart(steps: Array<number>): Array<string> {
   let result: Array<string> = steps.map(s => s.toString());
@@ -139,6 +140,7 @@ const StepSelection: React.FC<StepSelectionProps> = ({
 
 type CardProps = {
   name: string;
+  hideName: (name: string) => void;
   colour: Colour;
   steps?: Array<number>;
   className?: string;
@@ -147,6 +149,7 @@ type CardProps = {
 
 export const Card: React.FC<CardProps> = ({
   name,
+  hideName,
   colour,
   steps,
   className = styles.card,
@@ -159,6 +162,9 @@ export const Card: React.FC<CardProps> = ({
   return (
     <div className={className}>
       <div className={styles.title}>
+        <span className={styles.visibility} onClick={() => hideName(name)}>
+          <VisibilityIcon visible={true} />
+        </span>
         <span className={styles.name} style={{ color: colourString(colour) }}>
           {name}
         </span>

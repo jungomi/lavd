@@ -19,9 +19,15 @@ type Props = {
   data: DataMap;
   colours: ColourMap;
   names: Array<string>;
+  hideName: (name: string) => void;
 };
 
-export const Markdown: React.FC<Props> = ({ data, colours, names }) => {
+export const Markdown: React.FC<Props> = ({
+  data,
+  colours,
+  names,
+  hideName
+}) => {
   const kind = "markdown";
   const dataOfKind = getDataKind(data, kind, names, colours);
   const cards = dataOfKind.map(
@@ -30,6 +36,7 @@ export const Markdown: React.FC<Props> = ({ data, colours, names }) => {
       Object.keys(d.data).length && (
         <Card
           name={d.name}
+          hideName={hideName}
           colour={d.colour}
           steps={sortedSteps(d.data)}
           key={d.name}

@@ -34,6 +34,26 @@ export const entry = css({
   margin: "0.2rem 0"
 });
 
+export const hiddenEntry = cx(
+  entry,
+  css({
+    color: "#929292"
+  })
+);
+
+export const entryName = css({
+  flexGrow: 1,
+  marginTop: "0.1rem"
+});
+
+export const title = css({
+  display: "flex",
+  justifyContent: "center",
+  fontWeight: 500,
+  color: "#616161",
+  marginBottom: "0.5rem"
+});
+
 export const colour = css({
   width: "1.0rem",
   height: "1.0rem",
@@ -68,7 +88,8 @@ export const toggleHidden = cx(
   })
 );
 
-export const nameList = css({
+export const nameListContainer = css({
+  height: "100%",
   // The visibility is delayed for 0.3s to avoid clamping the text into small
   // spaces.
   transition: "visibility 0s 0.3s"
@@ -77,3 +98,80 @@ export const nameList = css({
 export const nameListHidden = css({
   visibility: "hidden"
 });
+
+export const activeNameList = css({
+  display: "flex",
+  position: "relative",
+  flexDirection: "column",
+  height: "50%",
+  overflow: "hidden"
+});
+
+export const inactiveNameList = cx(
+  activeNameList,
+  css({
+    marginTop: "1.5rem"
+  })
+);
+
+export const nameList = css({
+  display: "flex",
+  flexDirection: "column",
+  overflow: "auto"
+});
+
+export const visibility = css({
+  width: "1rem",
+  height: "1rem",
+  marginTop: "0.1rem",
+  flexShrink: 0,
+  cursor: "pointer"
+});
+
+export const visibilityAll = cx(
+  visibility,
+  css({
+    position: "absolute",
+    top: 0,
+    right: 0,
+    marginTop: 0
+  })
+);
+
+export const visibilityIcon = css({
+  fill: "#8c8c8c"
+});
+
+export const visibilityIconShown = cx(
+  visibilityIcon,
+  css({
+    "& > path:nth-child(2)": {
+      visibility: "hidden"
+    },
+    ":hover": {
+      "& > path:nth-child(1)": {
+        visibility: "hidden"
+      },
+      "& > path:nth-child(2)": {
+        visibility: "visible"
+      }
+    }
+  })
+);
+
+export const visibilityIconHidden = cx(
+  visibilityIcon,
+  css({
+    "& > path:nth-child(1)": {
+      visibility: "hidden"
+    },
+    ":hover": {
+      "& > path:nth-child(2)": {
+        visibility: "hidden"
+      },
+      "& > path:nth-child(1)": {
+        visibility: "visible"
+      }
+    }
+  })
+);

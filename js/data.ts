@@ -155,15 +155,17 @@ export type ScalarEntry = {
 export function nonEmptyScalars(
   data: DataMap,
   category: string,
-  colourMap: ColourMap
+  names: Array<string>,
+  colours: ColourMap
 ): Array<ScalarEntry> {
   const categoryData = [];
-  for (const [name, { scalars }] of data) {
-    if (scalars === undefined) {
+  for (const name of names) {
+    const dat = data.get(name);
+    if (dat === undefined || dat.scalars === undefined) {
       continue;
     }
-    const d = scalars[category];
-    const colour = colourMap.get(name);
+    const d = dat.scalars[category];
+    const colour = colours.get(name);
     if (d === undefined || colour === undefined) {
       continue;
     }

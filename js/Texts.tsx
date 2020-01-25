@@ -99,9 +99,10 @@ type Props = {
   data: DataMap;
   colours: ColourMap;
   names: Array<string>;
+  hideName: (name: string) => void;
 };
 
-export const Texts: React.FC<Props> = ({ data, colours, names }) => {
+export const Texts: React.FC<Props> = ({ data, colours, names, hideName }) => {
   const kind = "texts";
   const dataOfKind = getDataKind(data, kind, names, colours);
   const cards = dataOfKind.map(
@@ -110,6 +111,7 @@ export const Texts: React.FC<Props> = ({ data, colours, names }) => {
       Object.keys(d.data).length && (
         <Card
           name={d.name}
+          hideName={hideName}
           colour={d.colour}
           steps={sortedSteps(d.data)}
           key={d.name}

@@ -612,9 +612,15 @@ type CommandCardProps = {
   name: string;
   command: Command;
   colour: Colour;
+  hideName: (name: string) => void;
 };
 
-const CommandCard: React.FC<CommandCardProps> = ({ name, command, colour }) => {
+const CommandCard: React.FC<CommandCardProps> = ({
+  name,
+  command,
+  colour,
+  hideName
+}) => {
   const commandOptions = initialCommandOptions(command);
   const [optionsValues, setOptionsValues] = useState(commandOptions.values);
   // A copy map of the Map is created such that React re-renders it, since
@@ -660,6 +666,7 @@ const CommandCard: React.FC<CommandCardProps> = ({ name, command, colour }) => {
   return (
     <Card
       name={name}
+      hideName={hideName}
       colour={colour}
       className={
         command.parser ? styles.commandCardWithParser : styles.commandCard
@@ -716,15 +723,22 @@ type Props = {
   data: DataMap;
   colours: ColourMap;
   names: Array<string>;
+  hideName: (name: string) => void;
 };
 
-export const Commands: React.FC<Props> = ({ data, colours, names }) => {
+export const Commands: React.FC<Props> = ({
+  data,
+  colours,
+  names,
+  hideName
+}) => {
   const kind = "command";
   const cards = getDataKind(data, kind, names, colours).map(
     d =>
       d.data && (
         <CommandCard
           name={d.name}
+          hideName={hideName}
           command={d.data}
           colour={d.colour}
           key={d.name}

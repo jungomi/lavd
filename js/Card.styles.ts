@@ -43,6 +43,7 @@ export const categoryCard = css({
 
 export const title = css({
   display: "flex",
+  position: "relative",
   flexDirection: "column",
   alignItems: "center",
   fontSize: "1.1rem",
@@ -148,4 +149,14 @@ export const input = css({
     // been incorporated into the text colour, so that would double dip.
     opacity: 1
   }
+});
+
+export const visibility = css({
+  position: "absolute",
+  width: "1.2rem",
+  height: "1.2rem",
+  flexShrink: 0,
+  top: 0,
+  right: 0,
+  cursor: "pointer"
 });

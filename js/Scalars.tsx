@@ -67,13 +67,14 @@ function createPlot(category: string, categoryData: Array<ScalarEntry>) {
 type Props = {
   data: DataMap;
   colours: ColourMap;
+  names: Array<string>;
 };
 
-export const Scalars: React.FC<Props> = ({ data, colours }) => {
+export const Scalars: React.FC<Props> = ({ data, colours, names }) => {
   const kind = "scalars";
   const categories = aggregateSortedCategories(data, kind);
   const plots = categories.map(category =>
-    createPlot(category, nonEmptyScalars(data, category, colours))
+    createPlot(category, nonEmptyScalars(data, category, names, colours))
   );
   return plots.length === 0 ? <Empty text={kind} /> : <>{plots}</>;
 };
