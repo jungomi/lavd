@@ -72,7 +72,7 @@ type Props = {
 
 export const Scalars: React.FC<Props> = ({ data, colours, names }) => {
   const kind = "scalars";
-  const categories = aggregateSortedCategories(data, kind);
+  const categories = aggregateSortedCategories(data, kind, names);
   const plots = categories.map(category =>
     createPlot(category, nonEmptyScalars(data, category, names, colours))
   );

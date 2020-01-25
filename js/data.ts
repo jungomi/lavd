@@ -128,14 +128,19 @@ export function sortObject<V>(
 
 export function aggregateSortedCategories(
   data: DataMap | undefined,
-  kind: DataKind
+  kind: DataKind,
+  names: Array<string>
 ): Array<string> {
   if (data === undefined) {
     return [];
   }
   const uniqueCategories: Set<string> = new Set();
-  for (const d of data.values()) {
-    const datOfKind = d[kind];
+  for (const name of names) {
+    const dat = data.get(name);
+    if (dat === undefined) {
+      continue;
+    }
+    const datOfKind = dat[kind];
     if (datOfKind === undefined) {
       continue;
     }
