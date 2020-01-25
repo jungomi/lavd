@@ -94,8 +94,8 @@ export const imageContainerFullscreen = cx(
 );
 
 export const expand = css({
-  width: "1.5rem",
-  height: "1.5rem",
+  width: "1.3rem",
+  height: "1.3rem",
   position: "absolute",
   zIndex: 10,
   top: 0,
