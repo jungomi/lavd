@@ -1,7 +1,7 @@
 import { navigate, useRoutes, useInterceptor } from "hookrouter";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import * as styles from "./App.styles";
-import { assignColours, Colour, ColourMap } from "./colour/definition";
+import { Colour, ColourMap } from "./colour/definition";
 import { Header } from "./Header";
 import { Images } from "./Images";
 import { Logs } from "./Logs";
@@ -11,6 +11,12 @@ import { Texts } from "./Texts";
 import { Markdown } from "./Markdown";
 import { Commands } from "./Commands";
 import { Overlay, OverlayContext } from "./Overlay";
+import {
+  retrieveNames,
+  retrieveColours,
+  storeNames,
+  storeColours
+} from "./storage";
 
 import { data } from "./fixture";
 import { DataMap } from "./data";
@@ -55,10 +61,10 @@ export const App = () => {
   if (Content === null) {
     navigate("/scalars");
   }
-  const allNames = [...data.keys()].sort();
-  const [names, setNames] = useState<Names>({ active: allNames, inactive: [] });
-  const colourMap = assignColours(allNames);
-  const [colours, setColours] = useState(new Map(colourMap));
+  const [names, setNames] = useState<Names>(
+    retrieveNames([...data.keys()].sort())
+  );
+  const [colours, setColours] = useState(retrieveColours(names));
   // A copy map of the Map is created such that React re-renders it, since
   // mutating it change the reference and therefore not trigger a re-render.
   const setNewColour = (name: string, colour: Colour) => {
@@ -69,6 +75,10 @@ export const App = () => {
     show: (elem: Element) => setOverlay(elem),
     hide: () => setOverlay(undefined)
   };
+  useEffect(() => {
+    storeNames(names);
+    storeColours(colours);
+  }, [names, colours]);
   // The interceptor gets called everytime the route changes. When it happens,
   // the overlay is automatically closed.
   useInterceptor((_, nextPath) => {
