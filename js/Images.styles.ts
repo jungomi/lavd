@@ -191,6 +191,7 @@ export const tooltipBoxListFullscreen = cx(
     right: 0,
     boxSizing: "border-box",
     padding: "1rem",
+    height: "unset",
     pointerEvents: "none"
   })
 );
