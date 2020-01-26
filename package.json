@@ -8,11 +8,13 @@
   "private": true,
   "scripts": {
     "start": "parcel index.html",
-    "build": "parcel build index.html --public-url /",
+    "build": "parcel build index.html --public-url / --out-dir py/lavd/static",
     "lint": "eslint js/ --ext .js,.ts,.tsx ",
     "type-check": "tsc --noEmit",
     "fix": "eslint js/ --ext .js,.ts,.tsx --fix",
-    "clean": "rimraf dist/"
+    "build-python": "python -m pep517.build .",
+    "build-package": "yarn run clean && yarn run build && yarn run build-python",
+    "clean": "rimraf build dist py/lavd/static py/lavd/version.py"
   },
   "devDependencies": {
     "@emotion/core": "^10.0.27",

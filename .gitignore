@@ -3,6 +3,8 @@
 /build
 /target
 **/*.rs.bk
+/py/lavd/static
+/py/lavd/version.py
 
 ### Node ###
 # Logs
