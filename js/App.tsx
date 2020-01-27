@@ -17,8 +17,8 @@ import {
   storeNames,
   storeColours
 } from "./storage";
+import { fetchData } from "./api";
 
-import { data } from "./fixture";
 import { DataMap } from "./data";
 
 type RouteProps = {
@@ -57,6 +57,7 @@ const routes: Routes = {
 type Element = JSX.Element | Array<JSX.Element> | undefined;
 
 export const App = () => {
+  const [data, setData] = useState<DataMap>(new Map());
   const Content: React.FC<RouteProps> = useRoutes(routes);
   if (Content === null) {
     navigate("/scalars");
@@ -79,6 +80,14 @@ export const App = () => {
     storeNames(names);
     storeColours(colours);
   }, [names, colours]);
+  useEffect(() => {
+    fetchData().then(d => {
+      setData(d);
+      const newNames = retrieveNames([...d.keys()].sort());
+      setNames(newNames);
+      setColours(retrieveColours(newNames));
+    });
+  }, []);
   // The interceptor gets called everytime the route changes. When it happens,
   // the overlay is automatically closed.
   useInterceptor((_, nextPath) => {

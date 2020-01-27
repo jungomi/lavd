@@ -16,6 +16,11 @@
     "build-package": "yarn run clean && yarn run build && yarn run build-python",
     "clean": "rimraf build dist py/lavd/static py/lavd/version.py"
   },
+  "browserslist": [
+    "last 2 chrome version",
+    "last 2 firefox version",
+    "last 2 safari version"
+  ],
   "devDependencies": {
     "@emotion/core": "^10.0.27",
     "@types/diff": "^4.0.2",
