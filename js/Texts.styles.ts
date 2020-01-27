@@ -44,8 +44,7 @@ export const columnText = css({
   display: "flex",
   flexWrap: "nowrap",
   justifyContent: "center",
-  padding: "0.1em",
-  overflow: "auto"
+  padding: "0.1em"
 });
 
 export const columnDiff = css({
