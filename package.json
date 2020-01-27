@@ -9,6 +9,7 @@
   "scripts": {
     "start": "parcel index.html",
     "build": "parcel build index.html --public-url / --out-dir py/lavd/static",
+    "watch": "parcel watch index.html --public-url / --out-dir py/lavd/static",
     "lint": "eslint js/ --ext .js,.ts,.tsx ",
     "type-check": "tsc --noEmit",
     "fix": "eslint js/ --ext .js,.ts,.tsx --fix",
