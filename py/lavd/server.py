@@ -1,9 +1,11 @@
 import argparse
 import os
+from typing import Dict
 
 import tornado.ioloop
 import tornado.web
 
+from .fs import gather_data
 from .version import __version__
 
 default_port = 4343
@@ -26,10 +28,30 @@ class FrontendFileHandler(tornado.web.StaticFileHandler):
         return abspath
 
 
-def run(log_dir: str, port: int = default_port, debug: bool = False):
-    app = tornado.web.Application(
-        [
-            (r"/data/(.*)", tornado.web.StaticFileHandler, {"path": log_dir},),
+class ApiHandler(tornado.web.RequestHandler):
+    """
+    Handler for the API to request the data
+    """
+
+    def initialize(self, app):
+        self.app = app
+
+    def get(self, url: str):
+        self.write(self.app.data)
+
+
+class Application(tornado.web.Application):
+    """
+    Main tornado application
+    """
+
+    def __init__(self, log_dir: str, debug: bool = False):
+        self.log_dir = log_dir
+        self.debug = debug
+        self.data = self.load_data()
+        handlers: tornado.routing._RuleList = [
+            (r"/api/(.*)", ApiHandler, {"app": self}),
+            (r"/data/(.*)", tornado.web.StaticFileHandler, {"path": log_dir}),
             # Those are the static files shipped with the package, i.e. the frontend
             (
                 r"/(.*)",
@@ -37,11 +59,17 @@ def run(log_dir: str, port: int = default_port, debug: bool = False):
                 {
                     "path": os.path.join(package_dir, "static",),
                     "default_filename": "index.html",
-                },
+                }
             ),
-        ],
-        debug=debug,
-    )
+        ]
+        super(Application, self).__init__(handlers, debug=debug)
+
+    def load_data(self) -> Dict[str, Dict]:
+        return gather_data(self.log_dir)
+
+
+def run(log_dir: str, port: int = default_port, debug: bool = False):
+    app = Application(log_dir, debug=debug)
     app.listen(port)
     print("Running on http://localhost:{}".format(port))
     tornado.ioloop.IOLoop.current().start()
