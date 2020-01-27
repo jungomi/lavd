@@ -409,47 +409,49 @@ type Props = {
 export const Images: React.FC<Props> = ({ data, colours, names, hideName }) => {
   const kind = "images";
   const dataOfKind = getDataKind(data, kind, names, colours);
-  const cards = dataOfKind.map(
-    d =>
-      d.data &&
-      Object.keys(d.data).length && (
-        <Card
-          name={d.name}
-          hideName={hideName}
-          colour={d.colour}
-          steps={sortedSteps(d.data)}
-          key={d.name}
-        >
-          {selected =>
-            sortObject(d.data).map(({ key, value }) => (
-              <CategoryCard
-                category={key}
-                contentClass={styles.categoryContent}
-                steps={sortedCategorySteps(value)}
-                selectedStep={selected}
-                key={key}
-              >
-                {(selectedCategory, isOverlay, showOverlay) => {
-                  const selectedValue =
-                    selectedCategory && value.steps
-                      ? value.steps[selectedCategory]
-                      : value.global;
-                  return (
-                    selectedValue && (
-                      <ImageOverlay
-                        image={selectedValue}
-                        name={key}
-                        fullscreen={isOverlay}
-                        showOverlay={showOverlay}
-                      />
-                    )
-                  );
-                }}
-              </CategoryCard>
-            ))
-          }
-        </Card>
-      )
-  );
+  const cards = dataOfKind
+    .map(
+      d =>
+        d.data &&
+        Object.keys(d.data).length > 0 && (
+          <Card
+            name={d.name}
+            hideName={hideName}
+            colour={d.colour}
+            steps={sortedSteps(d.data)}
+            key={d.name}
+          >
+            {selected =>
+              sortObject(d.data).map(({ key, value }) => (
+                <CategoryCard
+                  category={key}
+                  contentClass={styles.categoryContent}
+                  steps={sortedCategorySteps(value)}
+                  selectedStep={selected}
+                  key={key}
+                >
+                  {(selectedCategory, isOverlay, showOverlay) => {
+                    const selectedValue =
+                      selectedCategory && value.steps
+                        ? value.steps[selectedCategory]
+                        : value.global;
+                    return (
+                      selectedValue && (
+                        <ImageOverlay
+                          image={selectedValue}
+                          name={key}
+                          fullscreen={isOverlay}
+                          showOverlay={showOverlay}
+                        />
+                      )
+                    );
+                  }}
+                </CategoryCard>
+              ))
+            }
+          </Card>
+        )
+    )
+    .filter(c => c);
   return cards.length === 0 ? <Empty text={kind} /> : <>{cards}</>;
 };

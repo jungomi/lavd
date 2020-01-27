@@ -168,7 +168,7 @@ export const Card: React.FC<CardProps> = ({
         <span className={styles.name} style={{ color: colourString(colour) }}>
           {name}
         </span>
-        {selected !== undefined && steps && steps.length && (
+        {selected !== undefined && steps && steps.length > 0 && (
           <StepSelection
             steps={steps}
             selected={selected}
@@ -229,7 +229,7 @@ export const CategoryCard: React.FC<CategoryCardProps> = ({
       <div className={styles.categoryTitle}>
         <span className={styles.category}>{category}</span>
       </div>
-      {selected !== undefined && steps && steps.length && (
+      {selected !== undefined && steps && steps.length > 0 && (
         <StepSelection
           steps={steps}
           selected={selected}
