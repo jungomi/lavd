@@ -1,3 +1,4 @@
+import csv
 import json
 import mimetypes
 import os
@@ -15,6 +16,20 @@ def load_json(path: str) -> Dict:
 def read_text_file(path: str) -> str:
     with open(path, "r", encoding="utf-8") as fd:
         return fd.read()
+
+
+def read_log_file(path: str) -> Dict[str, List[Dict]]:
+    lines = []
+    with open(path, "r", encoding="utf-8") as fd:
+        reader = csv.reader(fd, delimiter="\t", quoting=csv.QUOTE_NONE, quotechar="")
+        for line in reader:
+            if len(line) == 1:
+                lines.append({"message": line[0]})
+            elif len(line) == 2:
+                lines.append({"message": line[1], "timestamp": line[0]})
+            else:
+                lines.append({"message": line[2], "timestamp": line[0], "tag": line[1]})
+    return {"lines": lines}
 
 
 def list_experiments(path: str) -> List[str]:
@@ -74,9 +89,7 @@ def gather_files(
                 elif file_category == "text":
                     files[name]["texts"] = {"actual": read_text_file(full_path)}
                 elif file_category == "log":
-                    files[name]["logs"] = {
-                        "lines": read_text_file(full_path).splitlines()
-                    }
+                    files[name]["logs"] = read_log_file(full_path)
                 elif file_category == "markdown":
                     files[name]["markdown"] = {"raw": read_text_file(full_path)}
     return files
