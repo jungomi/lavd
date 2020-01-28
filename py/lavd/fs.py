@@ -85,7 +85,11 @@ def gather_files(
                     elif "texts" in json_data:
                         files[name]["texts"] = json_data["texts"]
                 elif file_category == "image":
-                    files[name]["images"] = os.path.relpath(full_path, root)
+                    files[name]["images"] = {
+                        "source": os.path.join(
+                            "/data/", os.path.relpath(full_path, root)
+                        )
+                    }
                 elif file_category == "text":
                     files[name]["texts"] = {"actual": read_text_file(full_path)}
                 elif file_category == "log":
