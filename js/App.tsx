@@ -58,6 +58,7 @@ type Element = JSX.Element | Array<JSX.Element> | undefined;
 
 export const App = () => {
   const [data, setData] = useState<DataMap>(new Map());
+  const [hasFetched, setHasFetched] = useState(false);
   const Content: React.FC<RouteProps> = useRoutes(routes);
   if (Content === null) {
     navigate("/scalars");
@@ -77,15 +78,18 @@ export const App = () => {
     hide: () => setOverlay(undefined)
   };
   useEffect(() => {
-    storeNames(names);
-    storeColours(colours);
-  }, [names, colours]);
+    if (hasFetched) {
+      storeNames(names);
+      storeColours(colours);
+    }
+  }, [hasFetched, names, colours]);
   useEffect(() => {
     fetchData().then(d => {
       setData(d);
       const newNames = retrieveNames([...d.keys()].sort());
       setNames(newNames);
       setColours(retrieveColours(newNames));
+      setHasFetched(true);
     });
   }, []);
   // The interceptor gets called everytime the route changes. When it happens,
