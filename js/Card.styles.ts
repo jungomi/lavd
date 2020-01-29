@@ -2,6 +2,8 @@ import { css, cx } from "emotion";
 import { boxShadow } from "./colour/ColourPicker.styles";
 
 const labelColour = "#616161";
+const iconColour = "#cecece";
+const iconHoverColour = "#929292";
 
 export const card = css({
   display: "flex",
@@ -36,7 +38,7 @@ export const categoryContentOverlay = cx(
 export const categoryCard = css({
   display: "flex",
   flexDirection: "column",
-  marginBottom: "1rem",
+  marginBottom: "0.2rem",
   overflow: "hidden",
   maxHeight: "66vh"
 });
@@ -51,14 +53,48 @@ export const title = css({
 });
 
 export const categoryTitle = css({
-  paddingBottom: "0.8rem",
+  position: "relative",
+  padding: "0.8rem",
   marginBottom: "0.8rem",
-  borderBottom: "1px solid #eaecef"
+  borderBottom: "1px solid #eaecef",
+  cursor: "pointer",
+  "::before": {
+    content: "''",
+    position: "absolute",
+    top: "1rem",
+    flexShrink: 0,
+    height: "0.4rem",
+    width: "0.4rem",
+    color: iconColour,
+    borderStyle: "solid",
+    // All mouse events are passed through the element below it.
+    pointerEvents: "none",
+    borderWidth: "0 2px 2px 0",
+    transform: "rotate(45deg)",
+    transition: "transform 0.2s ease-in-out"
+  },
+  ":hover": {
+    background: "rgba(0, 0, 0, 0.02)",
+    "::before": {
+      color: iconHoverColour
+    }
+  }
 });
+
+export const categoryTitleCollapsed = cx(
+  categoryTitle,
+  css({
+    "::before": {
+      // Rotate to make it point down
+      transform: "rotate(-45deg)"
+    }
+  })
+);
 
 export const category = css({
   fontWeight: 500,
-  color: labelColour
+  color: labelColour,
+  marginLeft: "1.4rem"
 });
 
 export const name = css({
@@ -157,6 +193,6 @@ export const visibility = css({
   height: "1.2rem",
   flexShrink: 0,
   top: 0,
-  right: 0,
+  right: "0.4rem",
   cursor: "pointer"
 });

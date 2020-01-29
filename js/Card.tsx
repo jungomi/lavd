@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useContext } from "react";
-import { Colour, colourString } from "./colour/definition";
+import React, { useContext, useEffect, useState } from "react";
 import * as styles from "./Card.styles";
+import { Colour, colourString } from "./colour/definition";
 import { stringToInt } from "./number";
 import { OverlayContext } from "./Overlay";
 import { VisibilityIcon } from "./Sidebar";
@@ -200,6 +200,7 @@ export const CategoryCard: React.FC<CategoryCardProps> = ({
   contentClass = styles.categoryContent,
   children
 }) => {
+  const [collapsed, setCollapsed] = useState(true);
   const overlay = useContext(OverlayContext);
   const initialStep =
     steps && steps.length
@@ -213,6 +214,7 @@ export const CategoryCard: React.FC<CategoryCardProps> = ({
       setSelected(selectedStep);
     }
   }, [steps, selectedStep]);
+  const toggleCollapsed = () => setCollapsed(!collapsed);
   let showOverlay = undefined;
   if (children) {
     showOverlay = () => {
@@ -226,21 +228,30 @@ export const CategoryCard: React.FC<CategoryCardProps> = ({
 
   return (
     <div className={styles.categoryCard}>
-      <div className={styles.categoryTitle}>
+      <div
+        className={
+          collapsed ? styles.categoryTitleCollapsed : styles.categoryTitle
+        }
+        onClick={() => toggleCollapsed()}
+      >
         <span className={styles.category}>{category}</span>
       </div>
-      {selected !== undefined && steps && steps.length > 0 && (
-        <StepSelection
-          steps={steps}
-          selected={selected}
-          setSelected={setSelected}
-          className={styles.categorySteps}
-        />
-      )}
-      {children && (
-        <div className={contentClass}>
-          {children(selected, false, showOverlay)}
-        </div>
+      {!collapsed && (
+        <>
+          {selected !== undefined && steps && steps.length > 0 && (
+            <StepSelection
+              steps={steps}
+              selected={selected}
+              setSelected={setSelected}
+              className={styles.categorySteps}
+            />
+          )}
+          {children && (
+            <div className={contentClass}>
+              {children(selected, false, showOverlay)}
+            </div>
+          )}
+        </>
       )}
     </div>
   );
