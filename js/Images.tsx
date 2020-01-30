@@ -190,11 +190,10 @@ const ImageOverlay: React.FC<ImageOverlayProps> = ({
   const imgRef = useRef<HTMLDivElement>(null);
   const svgRef = useRef<SVGSVGElement>(null);
   const [tooltipBoxes, setTooltipBoxes] = useState<Array<Bbox>>([]);
-  const [minProbability, setMinProbability] = useState(
-    image ? image.minProbability : undefined
-  );
-  const classColourMap =
-    image && image.classes ? assignColours(image.classes) : new Map();
+  const [minProbability, setMinProbability] = useState(image.minProbability);
+  const classColourMap = image.classes
+    ? assignColours(image.classes)
+    : new Map();
   const [classColours, setClassColours] = useState(new Map(classColourMap));
   // A copy map of the Map is created such that React re-renders it, since
   // mutating it won't change the reference and therefore won't trigger
@@ -226,9 +225,6 @@ const ImageOverlay: React.FC<ImageOverlayProps> = ({
       window.removeEventListener("click", outsideClick);
     };
   });
-  if (image === undefined) {
-    return null;
-  }
   const boxes: Array<Bbox> = [];
   // The probability threshold should only be visible when there are actually
   // bounding boxes that have specified a probability.
