@@ -127,7 +127,7 @@ export const Texts: React.FC<Props> = ({ data, colours, names, hideName }) => {
                 >
                   {selectedCategory => {
                     const selectedValue =
-                      selectedCategory && value.steps
+                      selectedCategory !== undefined && value.steps
                         ? value.steps[selectedCategory]
                         : value.global;
                     return (

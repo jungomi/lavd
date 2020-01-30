@@ -52,7 +52,7 @@ export const Markdown: React.FC<Props> = ({
                 >
                   {selectedCategory => {
                     const selectedValue =
-                      selectedCategory && value.steps
+                      selectedCategory !== undefined && value.steps
                         ? value.steps[selectedCategory]
                         : value.global;
                     return (

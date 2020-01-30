@@ -151,7 +151,7 @@ export const Logs: React.FC<Props> = ({ data, colours, names, hideName }) => {
                 >
                   {selectedCategory => {
                     const selectedValue =
-                      selectedCategory && value.steps
+                      selectedCategory !== undefined && value.steps
                         ? value.steps[selectedCategory]
                         : value.global;
                     return selectedValue && <Log lines={selectedValue.lines} />;
