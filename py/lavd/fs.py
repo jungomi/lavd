@@ -1,8 +1,12 @@
+import base64
 import csv
+import io
 import json
 import mimetypes
 import os
 from typing import Dict, List, Optional
+
+from PIL import Image
 
 
 def load_json(path: str) -> Dict:
@@ -30,6 +34,24 @@ def read_log_file(path: str) -> Dict[str, List[Dict]]:
             else:
                 lines.append({"message": line[2], "timestamp": line[0], "tag": line[1]})
     return {"lines": lines}
+
+
+def prepare_image(abs_path: str, root: str = "", thumbnail_size: int = 40) -> Dict:
+    image = Image.open(abs_path)
+    width, height = image.size
+    # Creates a thumbnail with the specified max size, but keeping the aspect ratio.
+    image.thumbnail((thumbnail_size, thumbnail_size))
+    with io.BytesIO() as buffer:
+        image.save(buffer, "jpeg")
+        thumbnail = base64.b64encode(buffer.getvalue()).decode()
+    return {
+        "source": os.path.join("/data/", os.path.relpath(abs_path, root)),
+        "thumbnail": {
+            "base64": "data:image/jpeg;base64,{}".format(thumbnail),
+            "width": width,
+            "height": height,
+        },
+    }
 
 
 def list_experiments(path: str) -> List[str]:
@@ -85,11 +107,7 @@ def gather_files(
                     elif "texts" in json_data:
                         files[name]["texts"] = json_data["texts"]
                 elif file_category == "image":
-                    files[name]["images"] = {
-                        "source": os.path.join(
-                            "/data/", os.path.relpath(full_path, root)
-                        )
-                    }
+                    files[name]["images"] = prepare_image(full_path, root=root)
                 elif file_category == "text":
                     files[name]["texts"] = {"actual": read_text_file(full_path)}
                 elif file_category == "log":

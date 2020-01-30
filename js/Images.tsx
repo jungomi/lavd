@@ -48,8 +48,15 @@ function bboxKey(bbox: Bbox): string {
   return values.join("-");
 }
 
+type Thumbnail = {
+  base64: string;
+  width: number;
+  height: number;
+};
+
 export type Image = {
   source: string;
+  thumbnail?: Thumbnail;
   classes?: Array<string>;
   bbox?: Array<Bbox>;
   minProbability?: number;
@@ -195,6 +202,9 @@ const ImageOverlay: React.FC<ImageOverlayProps> = ({
   const setNewClassColour = (className: string, colour: Colour) => {
     setClassColours(new Map(classColours.set(className, colour)));
   };
+  const [showThumbnail, setShowThumbnail] = useState(
+    image.thumbnail !== undefined
+  );
   const [imageSize, setImageSize] = useState<ImageSize>({});
   const setSize = (width: number, height: number) => {
     setImageSize({ width, height });
@@ -271,16 +281,38 @@ const ImageOverlay: React.FC<ImageOverlayProps> = ({
             }
             ref={imgRef}
           >
-            <img
-              src={image.source}
-              alt={name}
-              draggable="false"
-              onLoad={e => {
-                // This is always a HTMLImageElement, obviously.
-                const imgElem = e.target as HTMLImageElement;
-                setSize(imgElem.width, imgElem.height);
-              }}
-            />
+            <div
+              style={
+                showThumbnail && image.thumbnail
+                  ? {
+                      width: image.thumbnail.width,
+                      height: image.thumbnail.height
+                    }
+                  : undefined
+              }
+            >
+              {image.thumbnail && (
+                <img
+                  src={image.thumbnail.base64}
+                  className={
+                    showThumbnail ? styles.thumbnail : styles.thumbnailHidden
+                  }
+                  alt={`thumbnail-${name}`}
+                  draggable="false"
+                />
+              )}
+              <img
+                src={image.source}
+                alt={name}
+                draggable="false"
+                onLoad={e => {
+                  // This is always a HTMLImageElement, obviously.
+                  const imgElem = e.target as HTMLImageElement;
+                  setSize(imgElem.width, imgElem.height);
+                  setShowThumbnail(false);
+                }}
+              />
+            </div>
             {boxes && (
               <svg
                 xmlns="http://www.w3.org/2000/svg"

@@ -220,3 +220,22 @@ export const tooltipBoxEntry = css({
   justifyContent: "space-between",
   fontSize: "0.8rem"
 });
+
+export const thumbnail = css({
+  position: "absolute",
+  width: "100%",
+  height: "100%",
+  filter: "blur(10px)",
+  transition:
+    "opacity 0.2s ease-in-out, filter 0.1s ease-in-out, width 0s 0.2s, height 0s 0.2s"
+});
+
+export const thumbnailHidden = cx(
+  thumbnail,
+  css({
+    width: 0,
+    height: 0,
+    opacity: 0,
+    filter: "unset"
+  })
+);

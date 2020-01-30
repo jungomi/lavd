@@ -20,7 +20,7 @@ root_dir = os.path.dirname(os.path.abspath(__file__))
 version = read_version("package.json")
 readme = read_file("README.md")
 
-requirements = ["torch", "tornado"]
+requirements = ["Pillow", "torch", "tornado"]
 
 
 try:
