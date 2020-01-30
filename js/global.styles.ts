@@ -16,7 +16,8 @@ const scrollbarConfig = {
     hover: "rgba(0, 0, 0, 0.3)",
     active: "rgba(0, 0, 0, 0.5)"
   },
-  size: "0.5rem"
+  size: "0.5rem",
+  thumb: { minSize: "1.4rem" }
 };
 
 export const scrollbar = `
@@ -29,20 +30,22 @@ export const scrollbar = `
   width: ${scrollbarConfig.size};
 }
 *::-webkit-scrollbar-track {
-  background-color: ${scrollbarConfig.colour.bg};
+  background: ${scrollbarConfig.colour.bg};
 }
 *::-webkit-scrollbar-thumb {
-  background-color: ${scrollbarConfig.colour.fg};
+  background: ${scrollbarConfig.colour.fg};
   border-radius: 4px;
+  min-height: ${scrollbarConfig.thumb.minSize};
+  min-width: ${scrollbarConfig.thumb.minSize};
 }
 *::-webkit-scrollbar-thumb:hover {
-  background-color: ${scrollbarConfig.colour.hover};
+  background: ${scrollbarConfig.colour.hover};
 }
 *::-webkit-scrollbar-thumb:active {
-  background-color: ${scrollbarConfig.colour.active};
+  background: ${scrollbarConfig.colour.active};
 }
 *::-webkit-scrollbar-corner {
-  background-color: ${scrollbarConfig.colour.bg};
+  background: ${scrollbarConfig.colour.bg};
 }
 `;
 
