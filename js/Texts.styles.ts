@@ -24,8 +24,6 @@ export const column = css({
   flexDirection: "column",
   marginLeft: "0.3em",
   marginRight: "0.3em",
-  // Needed to show trailing white space, otherwise they are not rendered.
-  whiteSpace: "pre-wrap",
   width: "33%",
   overflow: "hidden"
 });
@@ -44,7 +42,9 @@ export const columnText = css({
   display: "flex",
   flexWrap: "nowrap",
   justifyContent: "center",
-  padding: "0.1em"
+  padding: "0.1em",
+  // Needed to show trailing white space, otherwise they are not rendered.
+  whiteSpace: "pre-wrap"
 });
 
 export const columnDiff = css({
@@ -63,7 +63,8 @@ export const columnTextActual = cx(
   css({
     overflow: "unset",
     justifyContent: "unset",
-    marginBottom: "0.2em"
+    marginBottom: "0.2em",
+    whiteSpace: "unset"
   })
 );
 
@@ -71,7 +72,8 @@ export const columnTextExpected = cx(
   columnText,
   css({
     overflow: "unset",
-    justifyContent: "unset"
+    justifyContent: "unset",
+    whiteSpace: "unset"
   })
 );
 
@@ -93,3 +95,7 @@ export const diffRemoved = cx(
     background: "#ffb6ba"
   })
 );
+
+export const diffContainer = css({
+  margin: "auto"
+});
