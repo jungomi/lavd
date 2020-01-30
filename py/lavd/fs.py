@@ -12,7 +12,11 @@ from PIL import Image
 def load_json(path: str) -> Dict:
     try:
         with open(path, "r", encoding="utf-8") as fd:
-            return json.load(fd)
+            json_data = json.load(fd)
+            if isinstance(json_data, dict):
+                return json_data
+            else:
+                return {}
     except json.JSONDecodeError:
         return {}
 
