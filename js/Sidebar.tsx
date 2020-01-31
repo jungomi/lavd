@@ -141,10 +141,10 @@ export const Sidebar: React.FC<Props> = ({
         />
       )}
       <div className={styles.activeNameList}>
+        <span className={styles.title}>Active</span>
         <span className={styles.visibilityAll} onClick={() => hideAll()}>
           <VisibilityIcon visible={true} />
         </span>
-        <span className={styles.title}>Active</span>
         {activeNameList.length > 0 ? (
           <div className={styles.nameList}>{activeNameList}</div>
         ) : (
@@ -152,10 +152,10 @@ export const Sidebar: React.FC<Props> = ({
         )}
       </div>
       <div className={styles.inactiveNameList}>
+        <span className={styles.title}>Inactive</span>
         <span className={styles.visibilityAll} onClick={() => showAll()}>
           <VisibilityIcon visible={false} />
         </span>
-        <span className={styles.title}>Inactive</span>
         {inactiveNameList.length > 0 ? (
           <div className={styles.nameList}>{inactiveNameList}</div>
         ) : (

@@ -10,12 +10,18 @@ export const wrapper = css({
 
 export const main = css({
   display: "flex",
+  flexDirection: "column",
   position: "relative",
   padding: "1.5rem",
-  marginBottom: "1.5rem",
   overflow: "scroll",
   width: "100%",
-  background: bgColour,
-  flexWrap: "wrap",
-  alignContent: "flex-start"
+  background: bgColour
+});
+
+export const content = css({
+  display: "flex",
+  flexDirection: "column",
+  position: "relative",
+  marginBottom: "1.5rem",
+  marginRight: "1.5rem"
 });

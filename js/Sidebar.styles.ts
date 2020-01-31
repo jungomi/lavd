@@ -5,7 +5,7 @@ export const sidebar = css({
   display: "flex",
   width: "18rem",
   position: "relative",
-  padding: "1.0rem",
+  padding: "1rem 0",
   flexDirection: "column",
   flexShrink: 0,
   // The transition is `In Out - Cubic` in Chrome dev tools.
@@ -29,8 +29,9 @@ export const entry = css({
   position: "relative",
   display: "flex",
   alignItems: "flex-start",
+  flexShrink: 0,
   fontWeight: 300,
-  margin: "0.2rem 0"
+  margin: "0.2rem"
 });
 
 export const hiddenEntry = cx(
@@ -42,7 +43,7 @@ export const hiddenEntry = cx(
 
 export const entryName = css({
   flexGrow: 1,
-  marginTop: "0.1rem"
+  margin: "0.1rem 0.6rem 0 0.6rem"
 });
 
 export const title = css({
@@ -56,14 +57,13 @@ export const title = css({
 export const colour = css({
   width: "1.0rem",
   height: "1.0rem",
-  marginRight: "0.6rem",
   flexShrink: 0,
   borderRadius: "50%",
   border: "1px solid #dadada",
   cursor: "pointer"
 });
 
-const toggleOffset = "20rem";
+const toggleOffset = "18rem";
 
 export const toggle = css({
   outline: "none",
@@ -88,6 +88,8 @@ export const toggleHidden = cx(
 );
 
 export const nameListContainer = css({
+  display: "flex",
+  flexDirection: "column",
   height: "100%",
   // The visibility is delayed for 0.3s to avoid clamping the text into small
   // spaces.
@@ -98,7 +100,7 @@ export const nameListHidden = css({
   visibility: "hidden"
 });
 
-export const activeNameList = css({
+export const inactiveNameList = css({
   display: "flex",
   position: "relative",
   flexDirection: "column",
@@ -106,17 +108,19 @@ export const activeNameList = css({
   overflow: "hidden"
 });
 
-export const inactiveNameList = cx(
-  activeNameList,
+export const activeNameList = cx(
+  inactiveNameList,
   css({
-    marginTop: "1.5rem"
+    marginBottom: "1rem"
   })
 );
 
 export const nameList = css({
   display: "flex",
   flexDirection: "column",
-  overflow: "auto"
+  overflow: "scroll",
+  height: "100%",
+  marginLeft: "0.7rem"
 });
 
 export const visibility = css({
@@ -132,8 +136,14 @@ export const visibilityAll = cx(
   css({
     position: "absolute",
     top: 0,
-    right: 0,
-    marginTop: 0
+    right: "0.7rem",
+    marginTop: 0,
+    // Firefox is slightly different with the scrollbar.
+    // Also, it doesn't seem to reserve space for the scrollbar in responsive
+    // mode.
+    "@-moz-document url-prefix()": {
+      right: "0.6rem"
+    }
   })
 );
 

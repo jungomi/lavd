@@ -1,14 +1,17 @@
+import { css } from "emotion";
 import React from "react";
 import { ColourMap, colourString, toRgb } from "./colour/definition";
 import {
-  DataMap,
-  Optional,
   aggregateSortedCategories,
-  ScalarEntry,
-  nonEmptyScalars
+  DataMap,
+  nonEmptyScalars,
+  Optional,
+  ScalarEntry
 } from "./data";
 import { Empty } from "./Empty";
 import { LinePlot } from "./plot/LinePlot";
+
+const plotsClass = css({ display: "flex", flexWrap: "wrap" });
 
 export type Scalars = {
   start: number;
@@ -76,5 +79,9 @@ export const Scalars: React.FC<Props> = ({ data, colours, names }) => {
   const plots = categories.map(category =>
     createPlot(category, nonEmptyScalars(data, category, names, colours))
   );
-  return plots.length === 0 ? <Empty text={kind} /> : <>{plots}</>;
+  return plots.length === 0 ? (
+    <Empty text={kind} />
+  ) : (
+    <div className={plotsClass}>{plots}</div>
+  );
 };

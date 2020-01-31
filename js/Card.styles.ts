@@ -23,6 +23,7 @@ export const content = css({
 });
 
 export const categoryContent = css({
+  padding: "0 0.8rem",
   overflow: "scroll"
 });
 

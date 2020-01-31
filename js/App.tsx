@@ -114,12 +114,14 @@ export const App = () => {
         />
         <main className={styles.main}>
           {Content && (
-            <Content
-              data={data}
-              colours={colours}
-              names={names.active}
-              hideName={hideName}
-            />
+            <div className={styles.content}>
+              <Content
+                data={data}
+                colours={colours}
+                names={names.active}
+                hideName={hideName}
+              />
+            </div>
           )}
         </main>
       </div>

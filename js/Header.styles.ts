@@ -7,6 +7,7 @@ export const header = css({
   position: "relative",
   width: "100%",
   height: "3rem",
+  flexShrink: 0,
   overflow: "auto",
   background: headerColour,
   transition: "all 0.2s ease-out",
@@ -21,7 +22,8 @@ export const headerOpen = cx(
   header,
   css({
     "@media only screen and (max-width: 896px)": {
-      height: "100%"
+      height: "100%",
+      flexShrink: 0
     }
   })
 );
