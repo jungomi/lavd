@@ -218,11 +218,7 @@ export const CategoryCard: React.FC<CategoryCardProps> = ({
   let showOverlay = undefined;
   if (children) {
     showOverlay = () => {
-      overlay.show(
-        <div className={styles.categoryContentOverlay}>
-          {children(selected, true)}
-        </div>
-      );
+      overlay.show(children(selected, true));
     };
   }
 

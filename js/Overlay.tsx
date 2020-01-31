@@ -1,4 +1,5 @@
-import React, { createContext, useContext, useEffect } from "react";
+import React, { createContext, useContext, useEffect, useRef } from "react";
+import { useDragScroll } from "./hook/drag";
 import * as styles from "./Overlay.styles";
 
 export const OverlayContext = createContext({
@@ -8,6 +9,8 @@ export const OverlayContext = createContext({
 
 export const Overlay: React.FC = ({ children }) => {
   const overlay = useContext(OverlayContext);
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const { startDrag } = useDragScroll(scrollRef);
   useEffect(() => {
     const pressEscape = (e: KeyboardEvent) => {
       if (children && e.key === "Escape") {
@@ -28,7 +31,9 @@ export const Overlay: React.FC = ({ children }) => {
           onClick={() => overlay.hide()}
         ></span>
       </div>
-      {children}
+      <div className={styles.content} onMouseDown={startDrag} ref={scrollRef}>
+        {children}
+      </div>
     </div>
   );
 };

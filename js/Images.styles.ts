@@ -72,7 +72,11 @@ export const imageOverlay = css({
   // Workaround for Firefox to prevent scrollbars from piercing through the
   // fullscreen overlay. For some reason the scrollbars of the elements under
   // the actual overlay are always shown, but that somehow prevents it.
-  opacity: 0.999
+  opacity: 0.999,
+  cursor: "grab",
+  ":active": {
+    cursor: "grabbing"
+  }
 });
 
 export const imageContainer = css({

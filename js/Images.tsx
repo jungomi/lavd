@@ -16,6 +16,7 @@ import {
   sortObject
 } from "./data";
 import { Empty } from "./Empty";
+import { useDragScroll } from "./hook/drag";
 import * as styles from "./Images.styles";
 import { stringToFloat } from "./number";
 import { OverlayContext } from "./Overlay";
@@ -189,6 +190,8 @@ const ImageOverlay: React.FC<ImageOverlayProps> = ({
   const overlay = useContext(OverlayContext);
   const imgRef = useRef<HTMLDivElement>(null);
   const svgRef = useRef<SVGSVGElement>(null);
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const { startDrag } = useDragScroll(scrollRef);
   const [tooltipBoxes, setTooltipBoxes] = useState<Array<Bbox>>([]);
   const [minProbability, setMinProbability] = useState(image.minProbability);
   const classColourMap = image.classes
@@ -268,7 +271,11 @@ const ImageOverlay: React.FC<ImageOverlayProps> = ({
             <ExpandIcon />
           </div>
         )}
-        <div className={fullscreen ? undefined : styles.imageOverlay}>
+        <div
+          className={fullscreen ? undefined : styles.imageOverlay}
+          onMouseDown={startDrag}
+          ref={scrollRef}
+        >
           <div
             className={
               fullscreen

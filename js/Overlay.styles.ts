@@ -38,3 +38,13 @@ export const closeIcon = cx(
     transform: "rotate(45deg)"
   })
 );
+
+export const content = css({
+  display: "flex",
+  height: "100%",
+  overflow: "scroll",
+  cursor: "grab",
+  ":active": {
+    cursor: "grabbing"
+  }
+});
