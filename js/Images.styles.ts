@@ -67,17 +67,22 @@ export const imageOverlayContainerFullscreen = css({
   margin: "0 auto"
 });
 
-export const imageOverlay = css({
-  overflow: "scroll",
-  // Workaround for Firefox to prevent scrollbars from piercing through the
-  // fullscreen overlay. For some reason the scrollbars of the elements under
-  // the actual overlay are always shown, but that somehow prevents it.
-  opacity: 0.999,
-  cursor: "grab",
+export const imageOverlayFullscreen = css({
   ":active": {
     cursor: "grabbing"
   }
 });
+
+export const imageOverlay = cx(
+  imageOverlayFullscreen,
+  css({
+    overflow: "scroll",
+    // Workaround for Firefox to prevent scrollbars from piercing through the
+    // fullscreen overlay. For some reason the scrollbars of the elements under
+    // the actual overlay are always shown, but that somehow prevents it.
+    opacity: 0.999
+  })
+);
 
 export const imageContainer = css({
   display: "flex",

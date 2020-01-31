@@ -179,13 +179,15 @@ type ImageOverlayProps = {
   name: string;
   fullscreen?: boolean;
   showOverlay?: () => void;
+  dragOverlay?: (e: React.MouseEvent) => void;
 };
 
 const ImageOverlay: React.FC<ImageOverlayProps> = ({
   image,
   name,
   fullscreen,
-  showOverlay
+  showOverlay,
+  dragOverlay
 }) => {
   const overlay = useContext(OverlayContext);
   const imgRef = useRef<HTMLDivElement>(null);
@@ -272,8 +274,10 @@ const ImageOverlay: React.FC<ImageOverlayProps> = ({
           </div>
         )}
         <div
-          className={fullscreen ? undefined : styles.imageOverlay}
-          onMouseDown={startDrag}
+          className={
+            fullscreen ? styles.imageOverlayFullscreen : styles.imageOverlay
+          }
+          onMouseDown={fullscreen && dragOverlay ? dragOverlay : startDrag}
           ref={scrollRef}
         >
           <div
@@ -465,7 +469,10 @@ export const Images: React.FC<Props> = ({ data, colours, names, hideName }) => {
                   selectedStep={selected}
                   key={key}
                 >
-                  {(selectedCategory, isOverlay, showOverlay) => {
+                  {(
+                    selectedCategory,
+                    { isOverlay, showOverlay, startDrag }
+                  ) => {
                     const selectedValue =
                       selectedCategory !== undefined && value.steps
                         ? value.steps[selectedCategory]
@@ -477,6 +484,7 @@ export const Images: React.FC<Props> = ({ data, colours, names, hideName }) => {
                           name={key}
                           fullscreen={isOverlay}
                           showOverlay={showOverlay}
+                          dragOverlay={startDrag}
                         />
                       )
                     );

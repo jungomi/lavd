@@ -188,8 +188,11 @@ type CategoryCardProps = {
   contentClass?: string;
   children?: (
     selected: number | undefined,
-    isOverlay?: boolean,
-    showOverlay?: () => void
+    overlay: {
+      isOverlay?: boolean;
+      showOverlay?: () => void;
+      startDrag?: (e: React.MouseEvent) => void;
+    }
   ) => JSX.Element | Array<JSX.Element> | undefined;
 };
 
@@ -218,7 +221,9 @@ export const CategoryCard: React.FC<CategoryCardProps> = ({
   let showOverlay = undefined;
   if (children) {
     showOverlay = () => {
-      overlay.show(children(selected, true));
+      overlay.show(startDrag =>
+        children(selected, { isOverlay: true, startDrag })
+      );
     };
   }
 
@@ -244,7 +249,7 @@ export const CategoryCard: React.FC<CategoryCardProps> = ({
           )}
           {children && (
             <div className={contentClass}>
-              {children(selected, false, showOverlay)}
+              {children(selected, { isOverlay: false, showOverlay })}
             </div>
           )}
         </>

@@ -2,12 +2,19 @@ import React, { createContext, useContext, useEffect, useRef } from "react";
 import { useDragScroll } from "./hook/drag";
 import * as styles from "./Overlay.styles";
 
+export type Element = JSX.Element | Array<JSX.Element> | undefined;
+export type OverlayFn = (fn: (e: React.MouseEvent) => void) => Element;
+
 export const OverlayContext = createContext({
-  show: (_: JSX.Element | Array<JSX.Element> | undefined) => {},
+  show: (_: OverlayFn) => {},
   hide: () => {}
 });
 
-export const Overlay: React.FC = ({ children }) => {
+type Props = {
+  children?: OverlayFn;
+};
+
+export const Overlay: React.FC<Props> = ({ children }) => {
   const overlay = useContext(OverlayContext);
   const scrollRef = useRef<HTMLDivElement>(null);
   const { startDrag } = useDragScroll(scrollRef);
@@ -31,8 +38,8 @@ export const Overlay: React.FC = ({ children }) => {
           onClick={() => overlay.hide()}
         ></span>
       </div>
-      <div className={styles.content} onMouseDown={startDrag} ref={scrollRef}>
-        {children}
+      <div className={styles.content} ref={scrollRef}>
+        {children && children(startDrag)}
       </div>
     </div>
   );

@@ -42,9 +42,5 @@ export const closeIcon = cx(
 export const content = css({
   display: "flex",
   height: "100%",
-  overflow: "scroll",
-  cursor: "grab",
-  ":active": {
-    cursor: "grabbing"
-  }
+  overflow: "scroll"
 });

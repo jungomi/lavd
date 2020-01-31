@@ -1,25 +1,24 @@
-import { navigate, useRoutes, useInterceptor } from "hookrouter";
-import React, { useState, useEffect } from "react";
+import { navigate, useInterceptor, useRoutes } from "hookrouter";
+import React, { useEffect, useState } from "react";
+import { fetchData } from "./api";
 import * as styles from "./App.styles";
 import { Colour, ColourMap } from "./colour/definition";
+import { Commands } from "./Commands";
+import { DataMap } from "./data";
 import { Header } from "./Header";
 import { Images } from "./Images";
 import { Logs } from "./Logs";
+import { Markdown } from "./Markdown";
+import { Overlay, OverlayContext, OverlayFn } from "./Overlay";
 import { Scalars } from "./Scalars";
 import { Names, Sidebar } from "./Sidebar";
-import { Texts } from "./Texts";
-import { Markdown } from "./Markdown";
-import { Commands } from "./Commands";
-import { Overlay, OverlayContext } from "./Overlay";
 import {
-  retrieveNames,
   retrieveColours,
-  storeNames,
-  storeColours
+  retrieveNames,
+  storeColours,
+  storeNames
 } from "./storage";
-import { fetchData } from "./api";
-
-import { DataMap } from "./data";
+import { Texts } from "./Texts";
 
 type RouteProps = {
   data: DataMap;
@@ -54,8 +53,6 @@ const routes: Routes = {
   "/about": () => () => <span>About</span>
 };
 
-type Element = JSX.Element | Array<JSX.Element> | undefined;
-
 export const App = () => {
   const [data, setData] = useState<DataMap>(new Map());
   const [hasFetched, setHasFetched] = useState(false);
@@ -72,10 +69,10 @@ export const App = () => {
   const setNewColour = (name: string, colour: Colour) => {
     setColours(new Map(colours.set(name, colour)));
   };
-  const [overlay, setOverlay] = useState<Element>(undefined);
+  const [overlay, setOverlay] = useState<{ fn?: OverlayFn }>({});
   const overlayContext = {
-    show: (elem: Element) => setOverlay(elem),
-    hide: () => setOverlay(undefined)
+    show: (fn: OverlayFn) => setOverlay({ fn }),
+    hide: () => setOverlay({})
   };
   useEffect(() => {
     if (hasFetched) {
@@ -106,7 +103,7 @@ export const App = () => {
   };
   return (
     <OverlayContext.Provider value={overlayContext}>
-      <Overlay>{overlay}</Overlay>
+      <Overlay>{overlay.fn}</Overlay>
       <Header />
       <div className={styles.wrapper}>
         <Sidebar
