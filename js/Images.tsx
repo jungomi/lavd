@@ -194,6 +194,7 @@ const ImageOverlay: React.FC<ImageOverlayProps> = ({
   const svgRef = useRef<SVGSVGElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const { startDrag } = useDragScroll(scrollRef);
+  const [preventClose, setPreventClose] = useState(false);
   const [tooltipBoxes, setTooltipBoxes] = useState<Array<Bbox>>([]);
   const [minProbability, setMinProbability] = useState(image.minProbability);
   const classColourMap = image.classes
@@ -215,7 +216,9 @@ const ImageOverlay: React.FC<ImageOverlayProps> = ({
   };
   useEffect(() => {
     const outsideClick = (e: MouseEvent) => {
-      if (
+      if (preventClose) {
+        setPreventClose(false);
+      } else if (
         fullscreen &&
         e.button === 0 &&
         imgRef.current &&
@@ -277,7 +280,14 @@ const ImageOverlay: React.FC<ImageOverlayProps> = ({
           className={
             fullscreen ? styles.imageOverlayFullscreen : styles.imageOverlay
           }
-          onMouseDown={fullscreen && dragOverlay ? dragOverlay : startDrag}
+          onMouseDown={e => {
+            if (fullscreen && dragOverlay) {
+              setPreventClose(true);
+              dragOverlay(e);
+            } else {
+              startDrag(e);
+            }
+          }}
           ref={scrollRef}
         >
           <div
