@@ -4,6 +4,7 @@ export const bgColour = "#f8fafc";
 
 export const wrapper = css({
   display: "flex",
+  flexShrink: 0,
   height: "100%",
   position: "relative"
 });
