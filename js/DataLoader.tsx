@@ -1,13 +1,12 @@
-import { css } from "emotion";
 import React, { useEffect, useState } from "react";
 import { fetchUrl } from "./api";
 import { LazyData, Optional } from "./data";
+import * as styles from "./DataLoader.styles";
 import { Spinner } from "./Spinner";
 
-const spinnerClass = css({
-  display: "flex",
-  marginLeft: "1.2rem"
-});
+const Failed: React.FC = () => (
+  <div className={styles.failed}>Failed to load</div>
+);
 
 type Props<T> = {
   data: Optional<T | LazyData>;
@@ -26,19 +25,38 @@ export function DataLoader<T>({ data, children }: Props<T>) {
     api ? undefined : (rest as T)
   );
   useEffect(() => {
+    let cancelled = false;
+    const controller = new AbortController();
     if (toFetch) {
-      fetchUrl<T>(toFetch).then(d => {
-        setLoadedData(d);
-        setToFetch(undefined);
-      });
+      fetchUrl<T>(toFetch, controller)
+        .then(d => {
+          if (!cancelled) {
+            setLoadedData(d);
+            setToFetch(undefined);
+          }
+        })
+        .catch(() => {
+          if (!cancelled) {
+            setLoadedData(undefined);
+            setToFetch(undefined);
+          }
+        });
     }
-  }, [toFetch]);
+    return () => {
+      cancelled = true;
+      controller.abort();
+    };
+  });
   if (loadedData === undefined) {
-    return (
-      <div className={spinnerClass}>
-        <Spinner />
-      </div>
-    );
+    if (toFetch === undefined) {
+      return <Failed />;
+    } else {
+      return (
+        <div className={styles.spinner}>
+          <Spinner />
+        </div>
+      );
+    }
   } else {
     return children ? children(loadedData) : null;
   }
