@@ -10,3 +10,15 @@ export async function fetchData(): Promise<DataMap> {
     return new Map();
   }
 }
+
+// The generic T is only here to distinguish what kind of data is requested.
+// It's always determined by the component that calls it, but all of them just
+// have a URL pointing to the end point.
+export async function fetchUrl<T>(url: string): Promise<T | undefined> {
+  try {
+    const response = await fetch(url);
+    return response.json();
+  } catch (e) {
+    return undefined;
+  }
+}

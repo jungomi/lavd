@@ -8,10 +8,16 @@ import { ColourMap, Colour } from "./colour/definition";
 
 export type Optional<T> = T | undefined;
 
+export type LazyData = {
+  api: {
+    url: string;
+  };
+};
+
 export type DataOfCategory<T> = {
-  global?: Optional<T>;
+  global?: Optional<T | LazyData>;
   steps?: {
-    [step: number]: Optional<T>;
+    [step: number]: Optional<T | LazyData>;
   };
 };
 

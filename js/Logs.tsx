@@ -3,11 +3,12 @@ import { Card, CategoryCard } from "./Card";
 import { ColourMap } from "./colour/definition";
 import {
   DataMap,
-  sortObject,
   getDataKind,
+  sortedCategorySteps,
   sortedSteps,
-  sortedCategorySteps
+  sortObject
 } from "./data";
+import { DataLoader } from "./DataLoader";
 import { Empty } from "./Empty";
 import * as styles from "./Logs.styles";
 import { formatDate, parseDate, timeElapsed } from "./time";
@@ -154,7 +155,13 @@ export const Logs: React.FC<Props> = ({ data, colours, names, hideName }) => {
                       selectedCategory !== undefined && value.steps
                         ? value.steps[selectedCategory]
                         : value.global;
-                    return selectedValue && <Log lines={selectedValue.lines} />;
+                    return (
+                      selectedValue && (
+                        <DataLoader data={selectedValue}>
+                          {loadedData => <Log lines={loadedData.lines} />}
+                        </DataLoader>
+                      )
+                    );
                   }}
                 </CategoryCard>
               ))

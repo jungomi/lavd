@@ -4,9 +4,13 @@ import io
 import json
 import mimetypes
 import os
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Union
 
 from PIL import Image
+from .data import Data
+
+MAX_TEXT_LEN = 1024
+MAX_LINES = 100
 
 
 def load_json(path: str) -> Dict:
@@ -84,10 +88,14 @@ def categorise_file(path: str) -> Optional[str]:
 
 
 def gather_files(
-    abs_path: str, root: str = "", ignore_dirs: List[str] = []
-) -> Dict[str, Dict]:
+    data: Data,
+    abs_path: str,
+    step: Union[str, int],
+    name: str,
+    root: str = "",
+    ignore_dirs: List[str] = [],
+):
     assert os.path.isabs(abs_path), "abs_path needs to be an absolute path"
-    files: Dict[str, Dict] = {}
     for dir, dir_names, file_names in os.walk(abs_path, topdown=True):
         rel_path = os.path.relpath(dir, abs_path)
         if rel_path == ".":
@@ -100,73 +108,92 @@ def gather_files(
             file_category = categorise_file(file_name)
             if file_category is not None:
                 base_name, _ = os.path.splitext(file_name)
-                name = os.path.join(rel_path, base_name)
+                category = os.path.join(rel_path, base_name)
                 full_path = os.path.join(dir, file_name)
-                if name not in files:
-                    files[name] = {}
                 if file_category == "json":
                     json_data = load_json(full_path)
                     if "scalars" in json_data:
-                        files[name]["scalars"] = json_data["scalars"]
-                    elif "texts" in json_data:
-                        files[name]["texts"] = json_data["texts"]
+                        data.set("scalars", name, step, category, json_data["scalars"])
+                    if "texts" in json_data:
+                        text = json_data["texts"]
+                        text_len = len(text.get("actual", "")) + len(
+                            text.get("expeted", "")
+                        )
+                        data.set(
+                            "texts",
+                            name,
+                            step,
+                            category,
+                            text,
+                            truncate=text_len > MAX_TEXT_LEN,
+                        )
                 elif file_category == "image":
-                    files[name]["images"] = prepare_image(full_path, root=root)
+                    data.set(
+                        "images",
+                        name,
+                        step,
+                        category,
+                        prepare_image(full_path, root=root),
+                    )
                 elif file_category == "text":
-                    files[name]["texts"] = {"actual": read_text_file(full_path)}
+                    text = read_text_file(full_path)
+                    data.set(
+                        "texts",
+                        name,
+                        step,
+                        category,
+                        {"actual": text},
+                        truncate=len(text) > MAX_TEXT_LEN,
+                    )
                 elif file_category == "log":
-                    files[name]["logs"] = read_log_file(full_path)
+                    logs = read_log_file(full_path)
+                    data.set(
+                        "logs",
+                        name,
+                        step,
+                        category,
+                        logs,
+                        truncate=len(logs["lines"]) > MAX_LINES,
+                    )
                 elif file_category == "markdown":
-                    files[name]["markdown"] = {"raw": read_text_file(full_path)}
-    return files
+                    markdown = read_text_file(full_path)
+                    data.set(
+                        "markdown",
+                        name,
+                        step,
+                        category,
+                        {"raw": markdown},
+                        truncate=len(markdown) > MAX_TEXT_LEN,
+                    )
 
 
-def gather_experiment(abs_path: str, root: str = "") -> Dict[str, Dict[str, Dict]]:
+def gather_experiment(data: Data, abs_path: str, name: str, root: str = ""):
     assert os.path.isabs(abs_path), "abs_path needs to be an absolute path"
-    data: Dict[str, Dict[str, Dict]] = {
-        "scalars": {},
-        "images": {},
-        "texts": {},
-        "logs": {},
-        "markdown": {},
-    }
-    data_types = list(data.keys())
     _, dir_names, file_names = next(os.walk(abs_path))
     if "command.json" in file_names:
-        data["command"] = load_json(os.path.join(abs_path, "command.json"))
+        data.set_command(name, load_json(os.path.join(abs_path, "command.json")))
     # isdigit is only true for non-negative integers, so exactly what the steps can be.
     step_dirs = [d for d in dir_names if d.isdigit()]
     for step_dir in step_dirs:
-        step = int(step_dir)
-        files = gather_files(os.path.join(abs_path, step_dir), root=root)
-        for name, values in files.items():
-            for data_type in data_types:
-                data_of_type = values.get(data_type)
-                if data_of_type is not None:
-                    if name not in data[data_type]:
-                        data[data_type][name] = {}
-                    if "steps" not in data[data_type][name]:
-                        data[data_type][name]["steps"] = {}
-                    data[data_type][name]["steps"][step] = data_of_type
-    files = gather_files(abs_path, root=root, ignore_dirs=step_dirs)
-    for name, values in files.items():
-        for data_type in data_types:
-            data_of_type = values.get(data_type)
-            if data_of_type is not None:
-                if name not in data[data_type]:
-                    data[data_type][name] = {}
-                data[data_type][name]["global"] = data_of_type
-    return data
+        gather_files(
+            data,
+            os.path.join(abs_path, step_dir),
+            step=int(step_dir),
+            name=name,
+            root=root,
+        )
+    gather_files(
+        data, abs_path, step="global", root=root, name=name, ignore_dirs=step_dirs
+    )
 
 
-def gather_data(path: str) -> Dict[str, Dict[str, Dict]]:
-    data: Dict[str, Dict[str, Dict]] = {}
+def gather_data(path: str) -> Data:
+    data = Data()
     abs_path = os.path.abspath(path)
     experiment_names = list_experiments(abs_path)
     for experiment_name in experiment_names:
-        data[experiment_name] = {}
+        # The experiment name is always added, to also include empty experiments.
+        data.add_name(experiment_name)
         experiment_path = os.path.join(abs_path, experiment_name)
-        experiment_data = gather_experiment(experiment_path, root=abs_path)
-        for data_type, value in experiment_data.items():
-            data[experiment_name][data_type] = value
+        gather_experiment(data, experiment_path, name=experiment_name, root=abs_path)
     return data

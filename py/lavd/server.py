@@ -1,12 +1,12 @@
 import argparse
 import os
-from typing import Dict
 
 import tornado.ioloop
 import tornado.web
 
 from .fs import gather_data
 from .version import __version__
+from .data import Data
 
 default_port = 4343
 package_dir = os.path.dirname(os.path.abspath(__file__))
@@ -37,7 +37,21 @@ class ApiHandler(tornado.web.RequestHandler):
         self.app = app
 
     def get(self, url: str):
-        self.write(self.app.data)
+        if url == "all":
+            self.write(self.app.data.truncated)
+        else:
+            parts = url.split("/", 3)
+            if len(parts) == 4:
+                kind, name, step, category = parts
+                if step == "global":
+                    data = self.app.data.get(kind, name, step, category)
+                elif step.isdigit():
+                    data = self.app.data.get(kind, name, int(step), category)
+
+                if data is not None:
+                    self.write(data)
+                    return
+            raise tornado.web.HTTPError(404)
 
 
 class Application(tornado.web.Application):
@@ -59,12 +73,12 @@ class Application(tornado.web.Application):
                 {
                     "path": os.path.join(package_dir, "static",),
                     "default_filename": "index.html",
-                }
+                },
             ),
         ]
         super(Application, self).__init__(handlers, debug=debug)
 
-    def load_data(self) -> Dict[str, Dict]:
+    def load_data(self) -> Data:
         return gather_data(self.log_dir)
 
 

@@ -15,6 +15,7 @@ import {
   sortedSteps,
   sortObject
 } from "./data";
+import { DataLoader } from "./DataLoader";
 import { Empty } from "./Empty";
 import { useDragScroll } from "./hook/drag";
 import * as styles from "./Images.styles";
@@ -489,13 +490,17 @@ export const Images: React.FC<Props> = ({ data, colours, names, hideName }) => {
                         : value.global;
                     return (
                       selectedValue && (
-                        <ImageOverlay
-                          image={selectedValue}
-                          name={key}
-                          fullscreen={isOverlay}
-                          showOverlay={showOverlay}
-                          dragOverlay={startDrag}
-                        />
+                        <DataLoader data={selectedValue}>
+                          {loadedData => (
+                            <ImageOverlay
+                              image={loadedData}
+                              name={key}
+                              fullscreen={isOverlay}
+                              showOverlay={showOverlay}
+                              dragOverlay={startDrag}
+                            />
+                          )}
+                        </DataLoader>
                       )
                     );
                   }}

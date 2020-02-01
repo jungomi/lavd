@@ -9,6 +9,7 @@ import {
   sortedSteps,
   sortObject
 } from "./data";
+import { DataLoader } from "./DataLoader";
 import { Empty } from "./Empty";
 import * as styles from "./Texts.styles";
 
@@ -132,10 +133,14 @@ export const Texts: React.FC<Props> = ({ data, colours, names, hideName }) => {
                         : value.global;
                     return (
                       selectedValue && (
-                        <Text
-                          actual={selectedValue.actual}
-                          expected={selectedValue.expected}
-                        />
+                        <DataLoader data={selectedValue}>
+                          {loadedData => (
+                            <Text
+                              actual={loadedData.actual}
+                              expected={loadedData.expected}
+                            />
+                          )}
+                        </DataLoader>
                       )
                     );
                   }}

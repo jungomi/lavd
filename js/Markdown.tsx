@@ -9,6 +9,7 @@ import {
   sortedSteps,
   sortObject
 } from "./data";
+import { DataLoader } from "./DataLoader";
 import { Empty } from "./Empty";
 
 export type MarkdownDocument = {
@@ -57,12 +58,16 @@ export const Markdown: React.FC<Props> = ({
                         : value.global;
                     return (
                       selectedValue && (
-                        <div className="markdown-body">
-                          <ReactMarkdown
-                            source={selectedValue.raw}
-                            escapeHtml={false}
-                          />
-                        </div>
+                        <DataLoader data={selectedValue}>
+                          {loadedData => (
+                            <div className="markdown-body">
+                              <ReactMarkdown
+                                source={loadedData.raw}
+                                escapeHtml={false}
+                              />
+                            </div>
+                          )}
+                        </DataLoader>
                       )
                     );
                   }}
