@@ -50,6 +50,7 @@ export const categoryTitle = css({
   marginBottom: "0.8rem",
   borderBottom: "1px solid #eaecef",
   cursor: "pointer",
+  userSelect: "none",
   "::before": {
     content: "''",
     position: "absolute",
