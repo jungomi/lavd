@@ -25,6 +25,11 @@ export function DataLoader<T>({ data, children }: Props<T>) {
     api ? undefined : (rest as T)
   );
   useEffect(() => {
+    const { api, ...rest } = { api: undefined, ...data };
+    setToFetch(api ? api.url : undefined);
+    setLoadedData(api ? undefined : (rest as T));
+  }, [data]);
+  useEffect(() => {
     let cancelled = false;
     const controller = new AbortController();
     if (toFetch) {
