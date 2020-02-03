@@ -22,6 +22,7 @@ export const main = css({
 export const content = css({
   display: "flex",
   flexDirection: "column",
+  flexShrink: 0,
   position: "relative",
   marginBottom: "1.5rem",
   marginRight: "1.5rem"

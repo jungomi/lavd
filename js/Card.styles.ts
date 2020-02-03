@@ -8,6 +8,7 @@ const iconHoverColour = "#929292";
 export const card = css({
   display: "flex",
   flexDirection: "column",
+  flexShrink: 0,
   padding: "1rem",
   marginBottom: "1rem",
   borderRadius: "4px",
@@ -29,6 +30,7 @@ export const categoryContent = css({
 
 export const categoryCard = css({
   display: "flex",
+  flexShrink: 0,
   flexDirection: "column",
   marginBottom: "0.2rem",
   overflow: "hidden",
