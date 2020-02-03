@@ -158,6 +158,12 @@ export const Card: React.FC<CardProps> = ({
   const initialStep =
     steps && steps.length ? steps[steps.length - 1] : undefined;
   const [selected, setSelected] = useState(initialStep);
+  useEffect(() => {
+    // When the steps change, there is a potential the the current selection is
+    // no longer valid, so reset to the default value if that is the case.
+    const newStep = steps && steps.length ? steps[steps.length - 1] : undefined;
+    setSelected(newStep);
+  }, [steps]);
 
   return (
     <div className={className}>
@@ -217,6 +223,14 @@ export const CategoryCard: React.FC<CategoryCardProps> = ({
       setSelected(selectedStep);
     }
   }, [steps, selectedStep]);
+  useEffect(() => {
+    // When the steps change, there is a potential the the current selection is
+    // no longer valid, so reset to the default value if that is the case.
+    if (selected !== undefined && steps && !steps.includes(selected)) {
+      const newSelected = steps.length ? steps[steps.length - 1] : undefined;
+      setSelected(newSelected);
+    }
+  }, [steps, selected]);
   const toggleCollapsed = () => setCollapsed(!collapsed);
   let showOverlay = undefined;
   if (children) {
