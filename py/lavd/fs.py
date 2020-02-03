@@ -7,6 +7,10 @@ import os
 from typing import Dict, List, Optional, Union
 
 from PIL import Image
+from tornado import locks
+from watchdog import events
+from watchdog.observers import Observer
+
 from .data import Data
 
 MAX_TEXT_LEN = 1024
@@ -87,6 +91,56 @@ def categorise_file(path: str) -> Optional[str]:
         return None
 
 
+def insert_file(
+    data: Data,
+    abs_path: str,
+    name: str,
+    step: Union[str, int],
+    category: str,
+    file_category: Optional[str],
+    root: str = "",
+):
+    if file_category == "json":
+        json_data = load_json(abs_path)
+        if "scalars" in json_data:
+            data.set("scalars", name, step, category, json_data["scalars"])
+        if "texts" in json_data:
+            text = json_data["texts"]
+            text_len = len(text.get("actual", "")) + len(text.get("expeted", ""))
+            data.set(
+                "texts", name, step, category, text, truncate=text_len > MAX_TEXT_LEN,
+            )
+    elif file_category == "image":
+        data.set(
+            "images", name, step, category, prepare_image(abs_path, root=root),
+        )
+    elif file_category == "text":
+        text = read_text_file(abs_path)
+        data.set(
+            "texts",
+            name,
+            step,
+            category,
+            {"actual": text},
+            truncate=len(text) > MAX_TEXT_LEN,
+        )
+    elif file_category == "log":
+        logs = read_log_file(abs_path)
+        data.set(
+            "logs", name, step, category, logs, truncate=len(logs["lines"]) > MAX_LINES,
+        )
+    elif file_category == "markdown":
+        markdown = read_text_file(abs_path)
+        data.set(
+            "markdown",
+            name,
+            step,
+            category,
+            {"raw": markdown},
+            truncate=len(markdown) > MAX_TEXT_LEN,
+        )
+
+
 def gather_files(
     data: Data,
     abs_path: str,
@@ -110,61 +164,9 @@ def gather_files(
                 base_name, _ = os.path.splitext(file_name)
                 category = os.path.join(rel_path, base_name)
                 full_path = os.path.join(dir, file_name)
-                if file_category == "json":
-                    json_data = load_json(full_path)
-                    if "scalars" in json_data:
-                        data.set("scalars", name, step, category, json_data["scalars"])
-                    if "texts" in json_data:
-                        text = json_data["texts"]
-                        text_len = len(text.get("actual", "")) + len(
-                            text.get("expeted", "")
-                        )
-                        data.set(
-                            "texts",
-                            name,
-                            step,
-                            category,
-                            text,
-                            truncate=text_len > MAX_TEXT_LEN,
-                        )
-                elif file_category == "image":
-                    data.set(
-                        "images",
-                        name,
-                        step,
-                        category,
-                        prepare_image(full_path, root=root),
-                    )
-                elif file_category == "text":
-                    text = read_text_file(full_path)
-                    data.set(
-                        "texts",
-                        name,
-                        step,
-                        category,
-                        {"actual": text},
-                        truncate=len(text) > MAX_TEXT_LEN,
-                    )
-                elif file_category == "log":
-                    logs = read_log_file(full_path)
-                    data.set(
-                        "logs",
-                        name,
-                        step,
-                        category,
-                        logs,
-                        truncate=len(logs["lines"]) > MAX_LINES,
-                    )
-                elif file_category == "markdown":
-                    markdown = read_text_file(full_path)
-                    data.set(
-                        "markdown",
-                        name,
-                        step,
-                        category,
-                        {"raw": markdown},
-                        truncate=len(markdown) > MAX_TEXT_LEN,
-                    )
+                insert_file(
+                    data, full_path, name, step, category, file_category, root=root
+                )
 
 
 def gather_experiment(data: Data, abs_path: str, name: str, root: str = ""):
@@ -197,3 +199,210 @@ def gather_data(path: str) -> Data:
         experiment_path = os.path.join(abs_path, experiment_name)
         gather_experiment(data, experiment_path, name=experiment_name, root=abs_path)
     return data
+
+
+class FileWatcherHandler(events.FileSystemEventHandler):
+    """Handler for file events"""
+
+    def __init__(self, log_dir: str, data: Data, update_lock: locks.Condition):
+        super(FileWatcherHandler, self).__init__()
+        self.data = data
+        self.log_dir = log_dir
+        self.update_lock = update_lock
+
+    def update_file(self, abs_path: str):
+        rel_path = os.path.relpath(abs_path, self.log_dir)
+        parts = rel_path.split("/", 2)
+        # Files depending on their paths
+        # filename (ignored)
+        # name, file (global of name)
+        # name, i, */file (step i of name)
+        # name, dir, */file (global but nested of name)
+        if len(parts) == 2:
+            name, file_name = parts
+            if file_name == "command.json":
+                self.data.set_command(name, load_json(abs_path))
+            else:
+                base_name, _ = os.path.splitext(file_name)
+                file_category = categorise_file(file_name)
+                insert_file(
+                    self.data,
+                    abs_path,
+                    name,
+                    "global",
+                    base_name,
+                    file_category,
+                    root=self.log_dir,
+                )
+            self.update_lock.notify_all()
+        elif len(parts) == 3:
+            name, first_dir, file_name = parts
+            if first_dir.isdigit():
+                step: Union[int, str] = int(first_dir)
+            else:
+                step = "global"
+                # The file is a nested on if it isn't part of a step, therefore the
+                # file path is actually: dir/*/file
+                file_name = os.path.join(first_dir, file_name)
+            base_name, _ = os.path.splitext(file_name)
+            file_category = categorise_file(file_name)
+            insert_file(
+                self.data,
+                abs_path,
+                name,
+                step,
+                base_name,
+                file_category,
+                root=self.log_dir,
+            )
+            self.update_lock.notify_all()
+
+    def remove_file(self, abs_path: str, is_dir: bool = False):
+        rel_path = os.path.relpath(abs_path, self.log_dir)
+        if is_dir:
+            parts = rel_path.split("/", 2)
+            if rel_path == ".":
+                # Resetting the data, since the whole directory is removed.
+                self.data.remove()
+                self.update_lock.notify_all()
+                return
+            # Directories depending on their paths
+            # name
+            # name, i (step i of name)
+            # name, category (global of name)
+            # name, i, category (category step i of name)
+            # name, dir, category (global but nested of name)
+            if len(parts) == 1:
+                self.data.remove(parts[0])
+            elif len(parts) == 2:
+                name, first_dir = parts
+                if first_dir.isdigit():
+                    self.data.remove(name, step=int(first_dir), is_dir=True)
+                else:
+                    self.data.remove(
+                        name, step="global", category=first_dir, is_dir=True
+                    )
+            elif len(parts) == 3:
+                name, first_dir, category = parts
+                if first_dir.isdigit():
+                    self.data.remove(
+                        name, step=int(first_dir), category=category, is_dir=True
+                    )
+                else:
+                    self.data.remove(
+                        name,
+                        step="global",
+                        category=os.path.join(first_dir, category),
+                        is_dir=True,
+                    )
+            self.update_lock.notify_all()
+
+        else:
+            file_category = categorise_file(rel_path)
+            # The extension needs to be removed, since the categories do not include the
+            # extension
+            rel_path_no_ext, _ = os.path.splitext(rel_path)
+            parts = rel_path_no_ext.split("/", 2)
+            kind = None
+            if file_category == "image":
+                kind = "images"
+            elif file_category == "text":
+                kind = "texts"
+            elif file_category == "log":
+                kind = "logs"
+            elif file_category == "markdown":
+                kind = "markdown"
+            # Files depending on their paths
+            # filename (ignored)
+            # name, file (global of name)
+            # name, i, */file (step i of name)
+            # name, dir, */file (global but nested of name)
+            if len(parts) == 2:
+                name, file_name = parts
+                self.data.remove(name, step="global", category=file_name, kind=kind)
+                self.update_lock.notify_all()
+            elif len(parts) == 3:
+                name, first_dir, file_name = parts
+                if first_dir.isdigit():
+                    self.data.remove(
+                        name, step=int(first_dir), category=file_name, kind=kind
+                    )
+                else:
+                    self.data.remove(
+                        name,
+                        step="global",
+                        category=os.path.join(first_dir, file_name),
+                        kind=kind,
+                    )
+                self.update_lock.notify_all()
+
+    def on_created(self, event: Union[events.DirCreatedEvent, events.FileCreatedEvent]):
+        full_path = event.src_path
+        if isinstance(event, events.DirCreatedEvent):
+            rel_path = os.path.relpath(full_path, self.log_dir)
+            parts = rel_path.split("/", 1)
+            # Creating directory only adds the experiment if it didn't exist, but once
+            # it exists there are no further changes
+            self.data.add_name(parts[0])
+            self.update_lock.notify_all()
+        elif isinstance(event, events.FileCreatedEvent):
+            self.update_file(full_path)
+
+    def on_modified(
+        self, event: Union[events.DirModifiedEvent, events.FileModifiedEvent]
+    ):
+        # Only modified files are relevant, modifications to the directories don't
+        # change the data, the relevant changes are either on_moved or on_deleted.
+        if isinstance(event, events.FileModifiedEvent):
+            self.update_file(event.src_path)
+
+    def on_deleted(self, event: Union[events.DirDeletedEvent, events.FileDeletedEvent]):
+        if isinstance(event, events.DirDeletedEvent):
+            self.remove_file(event.src_path, is_dir=True)
+        elif isinstance(event, events.FileDeletedEvent):
+            self.remove_file(event.src_path, is_dir=False)
+
+    def on_moved(self, event: Union[events.DirMovedEvent, events.FileMovedEvent]):
+        old_path = event.src_path
+        new_path = event.dest_path
+        if isinstance(event, events.DirMovedEvent):
+            old_rel_path = os.path.relpath(old_path, self.log_dir)
+            old_parts = old_rel_path.split("/", 1)
+            # Moving a directory is only relevant to the experiment names, all others
+            # have no effect unless there are files moved inside the directory, which
+            # all fire a separate event.
+            if len(old_parts) == 1:
+                self.remove_file(old_path, is_dir=True)
+            # If the destinatino is also an experiment, it needs to be created.
+            new_rel_path = os.path.relpath(new_path, self.log_dir)
+            new_parts = new_rel_path.split("/", 1)
+            if len(new_parts) == 1:
+                self.data.add_name(new_parts[0])
+                self.update_lock.notify_all()
+        elif isinstance(event, events.FileMovedEvent):
+            # Files are always updated
+            self.remove_file(old_path)
+            self.update_file(new_path)
+
+
+class FileWatcher(object):
+    """FileWatcher that watches the file system for changes in the logged data"""
+
+    def __init__(self, log_dir: str, data: Data, update_lock: locks.Condition):
+        super(FileWatcher, self).__init__()
+        self.data = data
+        self.log_dir = os.path.abspath(log_dir)
+        self.update_lock = update_lock
+        self.observer = Observer()
+        self.observer.schedule(
+            FileWatcherHandler(self.log_dir, self.data, self.update_lock),
+            self.log_dir,
+            recursive=True,
+        )
+        self.observer.start()
+
+    def stop(self):
+        self.observer.stop()
+
+    def __del__(self):
+        self.stop()

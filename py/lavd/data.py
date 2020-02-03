@@ -1,5 +1,5 @@
 import os
-from typing import Any, Dict, Optional, Union
+from typing import Any, Dict, Optional, Set, Union
 
 
 def get_or_insert_dict(d: Dict, key: Any) -> Dict:
@@ -10,6 +10,24 @@ def get_or_insert_dict(d: Dict, key: Any) -> Dict:
 
 
 class Data(object):
+    """
+    Holds the data from the log directory
+
+    Data {
+        [name: str]: {
+            [kind: Kind]: {
+                [category: str]: {
+                    global: Item,
+                    steps: {
+                        [step: int]: Item
+                    }
+                }
+            }
+        }
+    }
+    with Kind = "scalars" | "images" | "texts" | "logs" | "markdown" | "command"
+    """
+
     def __init__(self):
         super(Data, self).__init__()
         self.full = {}
@@ -84,6 +102,63 @@ class Data(object):
         name_truncated = get_or_insert_dict(self.truncated, name)
         name_data["command"] = value
         name_truncated["command"] = value
+
+    # Removes the specified data
+    # Only the cases that are reflected in the file structure are covered.
+    # Assumes that full and truncated are in sync.
+    def remove(
+        self,
+        name: Optional[str] = None,
+        step: Optional[Union[str, int]] = None,
+        category: Optional[str] = None,
+        kind: Optional[str] = None,
+        is_dir: bool = False,
+    ):
+        if name is None:
+            self.full = {}
+            self.truncated = {}
+            return
+        if step is None:
+            self.full.pop(name, None)
+            self.truncated.pop(name, None)
+            return
+        name_full = self.full.get(name)
+        name_truncated = self.truncated.get(name)
+        if name_full is None:
+            return
+        for kind_key in name_full:
+            if kind is not None and kind != kind_key:
+                continue
+            kind_full = name_full.get(kind_key)
+            kind_truncated = name_truncated.get(kind_key)
+            empty_categories: Set[str] = set()
+            for category_key in kind_full:
+                if category is not None:
+                    if is_dir and category_key.startswith(category):
+                        continue
+                    elif category != category_key:
+                        continue
+                category_full = kind_full.get(category_key)
+                category_truncated = kind_truncated.get(category_key)
+                if isinstance(step, int):
+                    step_full = category_full.get("steps")
+                    step_truncated = category_truncated.get("steps")
+                    if step_full is not None:
+                        step_full.pop(step, None)
+                        step_truncated.pop(step, None)
+                        if len(step_full) == 0:
+                            category_full.pop("steps", None)
+                            category_truncated.pop("steps", None)
+                elif step == "global":
+                    category_full.pop("global", None)
+                    category_truncated.pop("global", None)
+                # Clean up empty category
+                # Can't do that while looping over the keys
+                if len(category_full) == 0:
+                    empty_categories.add(category_key)
+            for category_key in empty_categories:
+                kind_full.pop(category_key, None)
+                kind_truncated.pop(category_key, None)
 
     def __repr__(self):
         return repr(self.full)

@@ -1,31 +1,51 @@
 import argparse
+import asyncio
+import json
 import os
 
 import tornado.ioloop
 import tornado.web
+from tornado import locks
+from tornado.iostream import StreamClosedError
 
-from .fs import gather_data
-from .version import __version__
 from .data import Data
+from .fs import FileWatcher, gather_data
+from .version import __version__
 
 default_port = 4343
 package_dir = os.path.dirname(os.path.abspath(__file__))
 
 
-class FrontendFileHandler(tornado.web.StaticFileHandler):
+class Application(tornado.web.Application):
     """
-    Handler to serve the frontend
-
-    It's like a static file handler, except that when the file doesn't exist, index.html
-    is served, regardless of the nesting of the path.
+    Main tornado application
     """
 
-    @classmethod
-    def get_absolute_path(cls, root: str, path: str) -> str:
-        abspath = super().get_absolute_path(root, path)
-        if not os.path.exists(abspath):
-            abspath = os.path.join(root, "index.html")
-        return abspath
+    def __init__(self, log_dir: str, debug: bool = False):
+        self.log_dir = log_dir
+        self.debug = debug
+        self.data = self.load_data()
+        self.update_lock = locks.Condition()
+        handlers: tornado.routing._RuleList = [
+            (r"/api/(.*)", ApiHandler, {"app": self}),
+            (r"/data/(.*)", tornado.web.StaticFileHandler, {"path": log_dir}),
+            # Server Sent Events (SSE) to push new data to the client
+            (r"/events", EventHandler, {"app": self}),
+            # Those are the static files shipped with the package, i.e. the frontend
+            (
+                r"/(.*)",
+                FrontendFileHandler,
+                {
+                    "path": os.path.join(package_dir, "static",),
+                    "default_filename": "index.html",
+                },
+            ),
+        ]
+        self.file_watcher = FileWatcher(self.log_dir, self.data, self.update_lock)
+        super(Application, self).__init__(handlers, debug=debug)
+
+    def load_data(self) -> Data:
+        return gather_data(self.log_dir)
 
 
 class ApiHandler(tornado.web.RequestHandler):
@@ -33,10 +53,10 @@ class ApiHandler(tornado.web.RequestHandler):
     Handler for the API to request the data
     """
 
-    def initialize(self, app):
+    def initialize(self, app: Application):
         self.app = app
 
-    def get(self, url: str):
+    async def get(self, url: str):
         if url == "all":
             self.write(self.app.data.truncated)
         else:
@@ -54,32 +74,57 @@ class ApiHandler(tornado.web.RequestHandler):
             raise tornado.web.HTTPError(404)
 
 
-class Application(tornado.web.Application):
+class EventHandler(tornado.web.RequestHandler):
     """
-    Main tornado application
+    Handler for the Server Sent Events to publish newly discovered data to the client
     """
 
-    def __init__(self, log_dir: str, debug: bool = False):
-        self.log_dir = log_dir
-        self.debug = debug
-        self.data = self.load_data()
-        handlers: tornado.routing._RuleList = [
-            (r"/api/(.*)", ApiHandler, {"app": self}),
-            (r"/data/(.*)", tornado.web.StaticFileHandler, {"path": log_dir}),
-            # Those are the static files shipped with the package, i.e. the frontend
-            (
-                r"/(.*)",
-                FrontendFileHandler,
-                {
-                    "path": os.path.join(package_dir, "static",),
-                    "default_filename": "index.html",
-                },
-            ),
-        ]
-        super(Application, self).__init__(handlers, debug=debug)
+    def initialize(self, app: Application):
+        self.app = app
+        self.wait_future = None
+        self.set_header("content-type", "text/event-stream")
+        self.set_header("cache-control", "no-cache")
+        self.set_header("connection", "keep-alive")
 
-    def load_data(self) -> Data:
-        return gather_data(self.log_dir)
+    async def publish(self):
+        try:
+            event_id = 0
+            while True:
+                event_id += 1
+                # The future to await is saved, so that it can be cancelled when the
+                # connection gets closed.
+                self.wait_future = self.app.update_lock.wait()
+                await self.wait_future
+                self.write("event: data\n")
+                self.write("id: {}\n".format(event_id))
+                self.write("data: {}\n\n".format(json.dumps(self.app.data.truncated)))
+                await self.flush()
+        except (StreamClosedError, asyncio.CancelledError):
+            return
+
+    async def get(self):
+        await self.publish()
+
+    # Automatically called when the client closes the connection
+    def on_connection_close(self):
+        if self.wait_future is not None:
+            self.wait_future.cancel()
+
+
+class FrontendFileHandler(tornado.web.StaticFileHandler):
+    """
+    Handler to serve the frontend
+
+    It's like a static file handler, except that when the file doesn't exist, index.html
+    is served, regardless of the nesting of the path.
+    """
+
+    @classmethod
+    def get_absolute_path(cls, root: str, path: str) -> str:
+        abspath = super().get_absolute_path(root, path)
+        if not os.path.exists(abspath):
+            abspath = os.path.join(root, "index.html")
+        return abspath
 
 
 def run(log_dir: str, port: int = default_port, debug: bool = False):

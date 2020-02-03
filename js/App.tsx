@@ -74,6 +74,13 @@ export const App = () => {
     show: (fn: OverlayFn) => setOverlay({ fn }),
     hide: () => setOverlay({})
   };
+  const setNewData = (d: DataMap) => {
+    setData(d);
+    const newNames = retrieveNames([...d.keys()].sort());
+    setNames(newNames);
+    setColours(retrieveColours(newNames));
+  };
+
   useEffect(() => {
     if (hasFetched) {
       storeNames(names);
@@ -82,13 +89,29 @@ export const App = () => {
   }, [hasFetched, names, colours]);
   useEffect(() => {
     fetchData().then(d => {
-      setData(d);
-      const newNames = retrieveNames([...d.keys()].sort());
-      setNames(newNames);
-      setColours(retrieveColours(newNames));
+      setNewData(d);
       setHasFetched(true);
     });
   }, []);
+  useEffect(() => {
+    if (hasFetched) {
+      const eventSource = new EventSource("/events");
+      let lastEvent = 0;
+      eventSource.addEventListener("data", e => {
+        const { data, lastEventId } = e as MessageEvent;
+        const eventId = Number.parseInt(lastEventId);
+        if (eventId > lastEvent) {
+          const d = new Map(Object.entries(JSON.parse(data)));
+          setNewData(d);
+          lastEvent = eventId;
+        }
+      });
+      // Close the connetion, when unmounted
+      return () => {
+        eventSource.close();
+      };
+    }
+  }, [hasFetched]);
   // The interceptor gets called everytime the route changes. When it happens,
   // the overlay is automatically closed.
   useInterceptor((_, nextPath) => {
@@ -101,6 +124,7 @@ export const App = () => {
       inactive: [...names.inactive, name].sort()
     });
   };
+
   return (
     <OverlayContext.Provider value={overlayContext}>
       <Overlay>{overlay.fn}</Overlay>
