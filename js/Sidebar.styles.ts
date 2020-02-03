@@ -6,6 +6,7 @@ export const sidebar = css({
   width: "18rem",
   position: "relative",
   padding: "1rem 0",
+  marginBottom: "1.5rem",
   flexDirection: "column",
   flexShrink: 0,
   // The transition is `In Out - Cubic` in Chrome dev tools.
@@ -100,20 +101,14 @@ export const nameListHidden = css({
   visibility: "hidden"
 });
 
-export const inactiveNameList = css({
+export const nameListGroup = css({
   display: "flex",
   position: "relative",
   flexDirection: "column",
   height: "50%",
-  overflow: "hidden"
+  overflow: "hidden",
+  marginBottom: "1rem"
 });
-
-export const activeNameList = cx(
-  inactiveNameList,
-  css({
-    marginBottom: "1rem"
-  })
-);
 
 export const nameList = css({
   display: "flex",

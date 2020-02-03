@@ -140,7 +140,7 @@ export const Sidebar: React.FC<Props> = ({
           style={{ top: shownColourPicker.offset }}
         />
       )}
-      <div className={styles.activeNameList}>
+      <div className={styles.nameListGroup}>
         <span className={styles.title}>Active</span>
         <span className={styles.visibilityAll} onClick={() => hideAll()}>
           <VisibilityIcon visible={true} />
@@ -151,7 +151,7 @@ export const Sidebar: React.FC<Props> = ({
           <EmptyDash />
         )}
       </div>
-      <div className={styles.inactiveNameList}>
+      <div className={styles.nameListGroup}>
         <span className={styles.title}>Inactive</span>
         <span className={styles.visibilityAll} onClick={() => showAll()}>
           <VisibilityIcon visible={false} />
