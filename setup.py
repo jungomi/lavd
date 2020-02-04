@@ -20,16 +20,16 @@ root_dir = os.path.dirname(os.path.abspath(__file__))
 version = read_version("package.json")
 readme = read_file("README.md")
 
-requirements = ["Pillow", "torch", "tornado", "watchdog"]
+requirements = ["halo", "Pillow", "tornado", "tqdm", "watchdog"]
 
 
 try:
     git_hash = (
-        subprocess.check_output(["git", "-C", root_dir, "rev-parse", "HEAD"])
+        subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=root_dir)
         .strip()
         .decode("utf-8")
     )
-except Exception:
+except subprocess.CalledProcessError:
     git_hash = "Unknown"
 
 
