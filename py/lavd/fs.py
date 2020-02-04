@@ -4,6 +4,7 @@ import io
 import json
 import mimetypes
 import os
+import pathlib
 from typing import Dict, List, Optional, Union
 
 from PIL import Image
@@ -57,7 +58,7 @@ def prepare_image(abs_path: str, root: str = "", thumbnail_size: int = 40) -> Di
         image.save(buffer, "jpeg")
         thumbnail = base64.b64encode(buffer.getvalue()).decode()
     return {
-        "source": os.path.join("/data/", os.path.relpath(abs_path, root)),
+        "source": pathlib.Path("/data/", os.path.relpath(abs_path, root)).as_posix(),
         "thumbnail": {
             "base64": "data:image/jpeg;base64,{}".format(thumbnail),
             "width": width,
@@ -162,10 +163,16 @@ def gather_files(
             file_category = categorise_file(file_name)
             if file_category is not None:
                 base_name, _ = os.path.splitext(file_name)
-                category = os.path.join(rel_path, base_name)
-                full_path = os.path.join(dir, file_name)
+                category = pathlib.Path(rel_path, base_name)
+                full_path = pathlib.Path(dir, file_name)
                 insert_file(
-                    data, full_path, name, step, category, file_category, root=root
+                    data,
+                    full_path.as_posix(),
+                    name,
+                    step,
+                    category.as_posix(),
+                    file_category,
+                    root=root,
                 )
 
 
@@ -212,7 +219,7 @@ class FileWatcherHandler(events.FileSystemEventHandler):
 
     def update_file(self, abs_path: str):
         rel_path = os.path.relpath(abs_path, self.log_dir)
-        parts = rel_path.split("/", 2)
+        parts = pathlib.Path(rel_path).parts
         # Files depending on their paths
         # filename (ignored)
         # name, file (global of name)
@@ -235,15 +242,16 @@ class FileWatcherHandler(events.FileSystemEventHandler):
                     root=self.log_dir,
                 )
             self.update_lock.notify_all()
-        elif len(parts) == 3:
-            name, first_dir, file_name = parts
+        elif len(parts) >= 3:
+            name, first_dir, *rest = parts
             if first_dir.isdigit():
                 step: Union[int, str] = int(first_dir)
+                file_name = pathlib.Path(*rest).as_posix()
             else:
                 step = "global"
                 # The file is a nested on if it isn't part of a step, therefore the
                 # file path is actually: dir/*/file
-                file_name = os.path.join(first_dir, file_name)
+                file_name = pathlib.Path(first_dir, *rest).as_posix()
             base_name, _ = os.path.splitext(file_name)
             file_category = categorise_file(file_name)
             insert_file(
@@ -260,12 +268,12 @@ class FileWatcherHandler(events.FileSystemEventHandler):
     def remove_file(self, abs_path: str, is_dir: bool = False):
         rel_path = os.path.relpath(abs_path, self.log_dir)
         if is_dir:
-            parts = rel_path.split("/", 2)
             if rel_path == ".":
                 # Resetting the data, since the whole directory is removed.
                 self.data.remove()
                 self.update_lock.notify_all()
                 return
+            parts = pathlib.Path(rel_path).parts
             # Directories depending on their paths
             # name
             # name, i (step i of name)
@@ -282,19 +290,15 @@ class FileWatcherHandler(events.FileSystemEventHandler):
                     self.data.remove(
                         name, step="global", category=first_dir, is_dir=True
                     )
-            elif len(parts) == 3:
-                name, first_dir, category = parts
+            elif len(parts) >= 3:
+                name, first_dir, *rest = parts
                 if first_dir.isdigit():
-                    self.data.remove(
-                        name, step=int(first_dir), category=category, is_dir=True
-                    )
+                    step: Union[int, str] = int(first_dir)
+                    category = pathlib.Path(*rest).as_posix()
                 else:
-                    self.data.remove(
-                        name,
-                        step="global",
-                        category=os.path.join(first_dir, category),
-                        is_dir=True,
-                    )
+                    step = "global"
+                    category = pathlib.Path(first_dir, *rest).as_posix()
+                self.data.remove(name, step=step, category=category, is_dir=True)
             self.update_lock.notify_all()
 
         else:
@@ -302,7 +306,7 @@ class FileWatcherHandler(events.FileSystemEventHandler):
             # The extension needs to be removed, since the categories do not include the
             # extension
             rel_path_no_ext, _ = os.path.splitext(rel_path)
-            parts = rel_path_no_ext.split("/", 2)
+            parts = pathlib.Path(rel_path_no_ext).parts
             kind = None
             if file_category == "image":
                 kind = "images"
@@ -321,26 +325,22 @@ class FileWatcherHandler(events.FileSystemEventHandler):
                 name, file_name = parts
                 self.data.remove(name, step="global", category=file_name, kind=kind)
                 self.update_lock.notify_all()
-            elif len(parts) == 3:
-                name, first_dir, file_name = parts
+            elif len(parts) >= 3:
+                name, first_dir, *rest = parts
                 if first_dir.isdigit():
-                    self.data.remove(
-                        name, step=int(first_dir), category=file_name, kind=kind
-                    )
+                    step = int(first_dir)
+                    category = pathlib.Path(*rest).as_posix()
                 else:
-                    self.data.remove(
-                        name,
-                        step="global",
-                        category=os.path.join(first_dir, file_name),
-                        kind=kind,
-                    )
+                    step = "global"
+                    category = pathlib.Path(first_dir, *rest).as_posix()
+                self.data.remove(name, step=step, category=category, kind=kind)
                 self.update_lock.notify_all()
 
     def on_created(self, event: Union[events.DirCreatedEvent, events.FileCreatedEvent]):
         full_path = event.src_path
         if isinstance(event, events.DirCreatedEvent):
             rel_path = os.path.relpath(full_path, self.log_dir)
-            parts = rel_path.split("/", 1)
+            parts = pathlib.Path(rel_path).parts
             # Creating directory only adds the experiment if it didn't exist, but once
             # it exists there are no further changes
             self.data.add_name(parts[0])
@@ -367,7 +367,7 @@ class FileWatcherHandler(events.FileSystemEventHandler):
         new_path = event.dest_path
         if isinstance(event, events.DirMovedEvent):
             old_rel_path = os.path.relpath(old_path, self.log_dir)
-            old_parts = old_rel_path.split("/", 1)
+            old_parts = pathlib.Path(old_rel_path).parts
             # Moving a directory is only relevant to the experiment names, all others
             # have no effect unless there are files moved inside the directory, which
             # all fire a separate event.
@@ -375,7 +375,7 @@ class FileWatcherHandler(events.FileSystemEventHandler):
                 self.remove_file(old_path, is_dir=True)
             # If the destinatino is also an experiment, it needs to be created.
             new_rel_path = os.path.relpath(new_path, self.log_dir)
-            new_parts = new_rel_path.split("/", 1)
+            new_parts = pathlib.Path(new_rel_path).parts
             if len(new_parts) == 1:
                 self.data.add_name(new_parts[0])
                 self.update_lock.notify_all()
