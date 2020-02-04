@@ -2,7 +2,6 @@ import base64
 import csv
 import io
 import json
-import mimetypes
 import os
 import pathlib
 from typing import Dict, List, Optional, Union
@@ -13,6 +12,7 @@ from watchdog import events
 from watchdog.observers import Observer
 
 from .data import Data
+from .file_types import categorise_file
 
 MAX_TEXT_LEN = 1024
 MAX_LINES = 100
@@ -71,25 +71,6 @@ def list_experiments(path: str) -> List[str]:
     _, dir_names, _ = next(os.walk(path))
     dir_names.sort()
     return dir_names
-
-
-def categorise_file(path: str) -> Optional[str]:
-    mime_type, _ = mimetypes.guess_type(path)
-    if mime_type is None:
-        return None
-    elif mime_type == "text/markdown":
-        return "markdown"
-    elif mime_type == "application/json":
-        return "json"
-    elif mime_type.startswith("image"):
-        return "image"
-    elif mime_type.startswith("text"):
-        if path.endswith(".log"):
-            return "log"
-        else:
-            return "text"
-    else:
-        return None
 
 
 def insert_file(
