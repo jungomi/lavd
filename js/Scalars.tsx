@@ -13,9 +13,8 @@ import { LinePlot } from "./plot/LinePlot";
 
 const plotsClass = css({ display: "flex", flexWrap: "wrap" });
 
-export type Scalars = {
-  start: number;
-  values: Optional<Array<number>>;
+export type Scalar = {
+  value: Optional<number>;
 };
 
 // When the series do not cover the same range (x values) the tooltip will be
@@ -43,12 +42,23 @@ function createPlot(category: string, categoryData: Array<ScalarEntry>) {
   const colours = [];
   const series = [];
   for (const d of categoryData) {
-    const stat = d.data.values;
-    if (stat === undefined || stat.length === 0) {
+    const steps = d.steps;
+    if (steps === undefined) {
+      continue;
+    }
+    const enumeratedSeries = [];
+    for (const key of Object.keys(steps).sort()) {
+      const i = Number.parseInt(key);
+      const step = steps[i];
+      if (step === undefined || step.value === undefined) {
+        continue;
+      }
+      enumeratedSeries.push([i, step.value]);
+    }
+    if (enumeratedSeries.length === 0) {
       continue;
     }
     colours.push(d.colour);
-    const enumeratedSeries = stat.map((x, i) => [i + d.data.start, x]);
     series.push({ name: d.name, data: enumeratedSeries });
   }
   const min = Math.min(...series.map(s => s.data[0][0]));

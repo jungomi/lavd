@@ -1,5 +1,5 @@
 import { Image } from "./Images";
-import { Scalars } from "./Scalars";
+import { Scalar } from "./Scalars";
 import { Text } from "./Texts";
 import { Log } from "./Logs";
 import { MarkdownDocument } from "./Markdown";
@@ -27,7 +27,11 @@ export type DataList<T> = {
 
 export type Data = {
   scalars?: {
-    [name: string]: Optional<Scalars>;
+    [name: string]: {
+      steps?: {
+        [step: number]: Optional<Scalar>;
+      };
+    };
   };
   images?: DataList<Image>;
   texts?: DataList<Text>;
@@ -158,7 +162,9 @@ export function aggregateSortedCategories(
 }
 
 export type ScalarEntry = {
-  data: Scalars;
+  steps: {
+    [step: number]: Optional<Scalar>;
+  };
   name: string;
   colour: Colour;
 };
@@ -180,7 +186,11 @@ export function nonEmptyScalars(
     if (d === undefined || colour === undefined) {
       continue;
     }
-    categoryData.push({ data: d, name: name, colour: colour });
+    const steps = d.steps;
+    if (steps === undefined) {
+      continue;
+    }
+    categoryData.push({ steps, name: name, colour: colour });
   }
   return categoryData;
 }
