@@ -687,11 +687,14 @@ class Logger(object):
         step: Optional[int] = None,
         name: str = "model",
         extension: str = ".pt",
+        grads: bool = False,
     ):
         """
         Saves the state/checkpoint of the model, to be compatible with the actual model,
         multi GPU/Node models (nn.DataParallel and nn.parallel.DistributedDataParallel)
         are automatically unwrapped.
+
+        Optionally, it also saves the current gradients.
 
         Requires torch
 
@@ -713,6 +716,10 @@ class Logger(object):
                 To further avoid ambiguities, ".pt" is used for serialised data and
                 ".ptc" is used for JIT exported modules (c = compiled).
                 [Default: ".pt"]
+            grads (bool):
+                Save gradients of the model next to the checkpoint with .grad added to
+                the name.
+                [Default: False]
         """
         assert HAS_TORCH, "save_model requires torch (PyTorch) to be installed"
         # Multi GPU/Node models wrap the original model. To make the checkpoint
@@ -726,6 +733,14 @@ class Logger(object):
         path = self.get_file_path(name, step, extension=extension)
         path.parent.mkdir(parents=True, exist_ok=True)
         torch.save(state_dict, path)
+        if grads:
+            grad_dict = {
+                name: param.grad
+                for name, param in unwrapped_model.named_parameters()
+                if param.grad is not None
+            }
+            path = self.get_file_path("{}.grad".format(name), step, extension=extension)
+            torch.save(grad_dict, path)
 
 
 class ProgressBar(tqdm):
