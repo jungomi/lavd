@@ -92,16 +92,28 @@ class EventHandler(tornado.web.RequestHandler):
     async def publish(self):
         try:
             event_id = 0
+            self.wait_future = self.app.update_lock.wait()
             while True:
-                event_id += 1
-                # The future to await is saved, so that it can be cancelled when the
-                # connection gets closed.
-                self.wait_future = self.app.update_lock.wait()
-                await self.wait_future
-                self.write("event: data\n")
-                self.write("id: {}\n".format(event_id))
-                self.write("data: {}\n\n".format(json.dumps(self.app.data.truncated)))
-                await self.flush()
+                # This is extremely silly. What would be done is that the wait() future
+                # is awaited and when it's resolved, the data is written and the loop
+                # starts over (waits again). But for some unknown reason it just
+                # doesn't resolve at all, even though notify_all() is called and all
+                # waiters are "finished".
+                # To work around that silliness, the loop waits for 1 sec and checks if
+                # the future is resolved and if that's the case the data is written
+                # (since the file watcher has notified that a change happened) and it
+                # begins with a new future.
+                # NOTE: That problem did not occur with debug=True, but oh well.
+                await tornado.gen.sleep(1)
+                if self.wait_future.done():
+                    event_id += 1
+                    self.wait_future = self.app.update_lock.wait()
+                    self.write("event: data\n")
+                    self.write("id: {}\n".format(event_id))
+                    self.write(
+                        "data: {}\n\n".format(json.dumps(self.app.data.truncated))
+                    )
+                    await self.flush()
         except (StreamClosedError, asyncio.CancelledError):
             return
 
