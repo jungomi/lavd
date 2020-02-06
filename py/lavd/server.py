@@ -8,6 +8,7 @@ import tornado.ioloop
 import tornado.web
 from tornado import locks
 from tornado.iostream import StreamClosedError
+from halo import Halo
 
 from .data import Data
 from .fs import FileWatcher, gather_data
@@ -46,7 +47,8 @@ class Application(tornado.web.Application):
         super(Application, self).__init__(handlers, debug=debug)
 
     def load_data(self) -> Data:
-        return gather_data(self.log_dir)
+        with Halo("Scanning files"):
+            return gather_data(self.log_dir)
 
 
 class ApiHandler(tornado.web.RequestHandler):
