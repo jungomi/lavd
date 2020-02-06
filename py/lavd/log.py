@@ -625,6 +625,7 @@ class Logger(object):
             ), "Images as NumPy array or torch.Tensor requires torchvision"
             image = self.to_pil(image)
         img_path = self.get_file_path(name, step, extension=extension)
+        img_path.parent.mkdir(parents=True, exist_ok=True)
         image.save(img_path)
         if boxes is not None:
             json_path = self.get_file_path(name, step, extension=".json")
@@ -632,7 +633,7 @@ class Logger(object):
             if classes is not None:
                 image_dict["images"]["classes"] = classes
             if probability_threshold is not None:
-                image_dict["images"]["minProbability"] = classes
+                image_dict["images"]["minProbability"] = probability_threshold
             write_json(image_dict, json_path, merge=True)
 
     def log_command(
