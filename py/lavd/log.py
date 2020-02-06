@@ -850,7 +850,7 @@ def extract_parser_options(
         if action.default is not None and action.default != argparse.SUPPRESS:
             act["default"] = action.default
         if action.help and action.help != argparse.SUPPRESS:
-            act["desription"] = action.help
+            act["description"] = action.help
         if action.nargs is not None:
             act["count"] = action.nargs
         if action.choices is not None:
