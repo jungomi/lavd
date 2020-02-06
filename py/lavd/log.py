@@ -553,7 +553,7 @@ class Logger(object):
             text_dict = {"texts": {"actual": text, "expected": expected}}
             write_json(text_dict, path, merge=True)
         else:
-            path = self.get_file_path(name, step, extension=".json")
+            path = self.get_file_path(name, step, extension=".txt")
             write_text_file(text, path)
 
     def log_markdown(self, markdown: str, name: str, step: Optional[int] = None):
