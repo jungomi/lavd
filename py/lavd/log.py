@@ -505,9 +505,7 @@ class Logger(object):
                     else:
                         fd.write("{}\n".format(section_content))
 
-    def log_scalar(
-        self, scalar: Union[int, float], name: str, step: Optional[int] = None
-    ):
+    def log_scalar(self, scalar: Union[int, float], name: str, step: int):
         """
         Logs a scalar
 
@@ -517,8 +515,9 @@ class Logger(object):
             name (str):
                 Name of the scalar to log
             step (int):
-                Step/epoch to which the scalar belongs, If unspecified, it is
-                saved at the top level instead. [Default: None]
+                Step/epoch to which the scalar belongs. Unlike other log methods, this
+                one requires the step, since single scalars don't make sense on a global
+                level.
         """
         path = self.get_file_path(name, step, extension=".json")
         scalar_dict = {"scalars": {"value": scalar}}
