@@ -114,7 +114,11 @@ def insert_file(
     elif file_category == "image":
         image = prepare_image(abs_path, root=root)
         if image is not None:
-            data.set("images", name, step, category, image)
+            old_image = data.get("images", name, step, category)
+            # Only overwrite if the sources are not the same. This is a conflict,
+            # otherwise the JSON has always priority.
+            if old_image is None or old_image.get("source") != image.get("source"):
+                data.set("images", name, step, category, image)
     elif file_category == "text":
         text = read_text_file(abs_path)
         data.set(
