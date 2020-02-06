@@ -55,7 +55,7 @@ class Logger(object):
 
     def __init__(
         self,
-        name: str,
+        name: str = None,
         log_dir: str = "./log",
         num_digits: int = 4,
         indent_size: int = 4,
@@ -64,7 +64,9 @@ class Logger(object):
         """
         Arguments:
             name (str):
-                Name of the experiment
+                Name of the experiment. If not specified uses the current date and time
+                as name.
+                [Default: None]
             log_dir (str):
                 Base directory of the logs [Default: ./log]
             num_digits (int):
@@ -82,12 +84,12 @@ class Logger(object):
         """
         super(Logger, self).__init__()
         self.base_dir = pathlib.Path(log_dir)
-        self.name = name
         self.delimiter = delimiter
         self.num_digits = num_digits
         self.indent_size = indent_size
         self.created_timestamp = datetime.now()
-        self.log_dir = pathlib.Path(log_dir, name)
+        self.name = self.get_start_time() if name is None else name
+        self.log_dir = pathlib.Path(log_dir, self.name)
         try:
             self.repo_path = (
                 subprocess.check_output(["git", "rev-parse", "--show-toplevel"])
