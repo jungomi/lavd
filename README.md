@@ -16,6 +16,20 @@ logged and visualised in an interactive manner, including:
 
 _...and more to come._
 
+## Table of Contents
+
+- [Getting Started](#getting-started)
+- [Logging Data](#logging-data)
+  - [Images (and other data)](#images-and-other-data)
+  - [Summary](#summary)
+  - [Command Line Options](#command-line-options)
+  - [Printing](#printing)
+  - [Spinner](#spinner)
+  - [Progress Bar](#progress-bar)
+  - [Saving a PyTorch Model](#saving-a-pytorch-model)
+- [Data Layout](#data-layout)
+- [Comparison to TensorBoard](#comparison-to-tensorboard)
+
 ## Getting Started
 
 Installing with pip:
