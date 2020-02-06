@@ -436,12 +436,12 @@ class Logger(object):
                 Command line options that are used for the current experiment.
 
         Example:
-        >>> infos = {"size": {"train": 1000, "validation": 50}}
-        >>> sections = {
-        >>>     "Additional raw Information": "Some text\nand more",
-        >>>     "Same but with Lines": ["Some text", "and more"],
-        >>> }
-        >>> logger.log_summary(infos, sections)
+            >>> infos = {"size": {"train": 1000, "validation": 50}}
+            >>> sections = {
+            >>>     "Additional raw Information": "Some text\nand more",
+            >>>     "Same but with Lines": ["Some text", "and more"],
+            >>> }
+            >>> logger.log_summary(infos, sections)
         """
         try:
             diff = subprocess.check_output(
