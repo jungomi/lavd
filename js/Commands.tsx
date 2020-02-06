@@ -11,6 +11,13 @@ export type ParserOptionTypeKind = "string" | "int" | "float" | "flag";
 
 type ArgumentCount = "+" | number;
 
+export type ParserPositional = {
+  name?: string;
+  description?: string;
+  type?: ParserOptionTypeKind;
+  count?: ArgumentCount;
+};
+
 export type ParserOption = {
   short?: string;
   default?: ParserOptionType | Array<ParserOptionType>;
@@ -23,18 +30,22 @@ export type ParserOption = {
 type ParserOptionValue = Optional<ParserOptionType | Array<ParserOptionType>>;
 
 export type Arguments = {
-  positional?: Array<string>;
+  positional?: Array<ParserOptionValue>;
   options?: {
     [name: string]: ParserOptionValue;
   };
 };
 
 export type Parser = {
-  [name: string]: Optional<ParserOption>;
+  positional?: Array<ParserPositional>;
+  options?: {
+    [name: string]: Optional<ParserOption>;
+  };
 };
 
 export type Command = {
   bin?: string;
+  script?: string;
   arguments?: Arguments;
   parser?: Parser;
 };
@@ -119,7 +130,8 @@ function completePartialsWithDefaults(
 
 type CommandPreviewProps = {
   bin?: string;
-  positional?: Array<string>;
+  script?: string;
+  positional?: Array<ParserOptionValue>;
   options?: Map<string, OptionalParserOption>;
   counts?: Map<string, number>;
   defaults?: Map<string, ParserOptionType | Array<ParserOptionType>>;
@@ -127,6 +139,7 @@ type CommandPreviewProps = {
 
 const CommandPreview: React.FC<CommandPreviewProps> = ({
   bin,
+  script,
   positional,
   options,
   counts,
@@ -143,8 +156,13 @@ const CommandPreview: React.FC<CommandPreviewProps> = ({
   let commandString = bin === undefined ? "" : `${bin} `;
   if (positional) {
     for (const posArg of positional) {
-      argSpans.push(<span key={posArg}>{posArg} </span>);
-      commandString += `${posArg} `;
+      const posArgs = Array.isArray(posArg) ? posArg : [posArg];
+      for (const posA of posArgs) {
+        if (posA) {
+          argSpans.push(<span key={posA.toString()}>{posA} </span>);
+          commandString += `${posA} `;
+        }
+      }
     }
   }
   if (options) {
@@ -185,6 +203,7 @@ const CommandPreview: React.FC<CommandPreviewProps> = ({
       <pre className={styles.commandPreviewCode}>
         <code>
           {bin && <span>{bin} </span>}
+          {script && <span>{script} </span>}
           <>{argSpans}</>
         </code>
       </pre>
@@ -503,11 +522,6 @@ type ParserOptionLineProps = {
   choices?: Array<ParserOptionType>;
   count?: ArgumentCount;
   defaults?: Map<string, ParserOptionType | Array<ParserOptionType>>;
-  showColumn: {
-    short: boolean;
-    value: boolean;
-    description: boolean;
-  };
   setValue: (name: string, value: OptionalParserOption) => void;
 };
 
@@ -520,7 +534,6 @@ const ParserOptionLine: React.FC<ParserOptionLineProps> = ({
   choices,
   count,
   defaults,
-  showColumn,
   setValue
 }) => {
   const defaultValue = defaults && defaults.get(name);
@@ -528,23 +541,17 @@ const ParserOptionLine: React.FC<ParserOptionLineProps> = ({
   return (
     <tr className={styles.tr}>
       <td className={styles.name}>--{name}</td>
-      {showColumn.short && (
-        <td className={styles.shortName}>{short && <>-{short}</>}</td>
-      )}
-      {showColumn.value && (
-        <InputList
-          name={name}
-          value={value}
-          defaultValue={defaultValue}
-          setValue={setValue}
-          type={type}
-          choices={choices}
-          count={count}
-        />
-      )}
-      {showColumn.description && (
-        <td className={styles.description}>{description}</td>
-      )}
+      <td className={styles.shortName}>{short && <>-{short}</>}</td>
+      <InputList
+        name={name}
+        value={value}
+        defaultValue={defaultValue}
+        setValue={setValue}
+        type={type}
+        choices={choices}
+        count={count}
+      />
+      <td className={styles.description}>{description}</td>
     </tr>
   );
 };
@@ -570,13 +577,15 @@ function initialCommandOptions(command: Command): CommandOptions {
   const defaults = new Map();
   const exactCounts = new Map();
   if (command.parser) {
-    for (const [key, value] of Object.entries(command.parser)) {
-      if (value !== undefined) {
-        if (value.default !== undefined) {
-          defaults.set(key, value.default);
-        }
-        if (typeof value.count === "number") {
-          exactCounts.set(key, value.count);
+    if (command.parser.options) {
+      for (const [key, value] of Object.entries(command.parser.options)) {
+        if (value !== undefined) {
+          if (value.default !== undefined) {
+            defaults.set(key, value.default);
+          }
+          if (typeof value.count === "number" && value.count > 0) {
+            exactCounts.set(key, value.count);
+          }
         }
       }
     }
@@ -584,7 +593,9 @@ function initialCommandOptions(command: Command): CommandOptions {
   // Overwrite the defaults (if any) with the actual given values.
   if (command.arguments && command.arguments.options) {
     for (const [key, value] of Object.entries(command.arguments.options)) {
-      values.set(key, value);
+      if (value !== defaults.get(key)) {
+        values.set(key, value);
+      }
     }
   }
   // Values that have exact counts need to have the exact number of values even
@@ -630,36 +641,30 @@ const CommandCard: React.FC<CommandCardProps> = ({
     setOptionsValues(new Map(optionsValues.set(name, value)));
   };
 
-  const showColumn = {
-    short: false,
-    value: false,
-    description: false
-  };
   const parserOptions: Array<CurrentParserOption> = [];
   if (command.parser) {
-    const sortedKeys = Object.keys(command.parser).sort();
-    for (const key of sortedKeys) {
-      const parserOpt = command.parser[key];
-      const currentOption: CurrentParserOption = { name: key };
-      if (parserOpt) {
-        currentOption.type = parserOpt.type;
-        currentOption.choices = parserOpt.choices;
-        currentOption.count = parserOpt.count;
-        if (parserOpt.short) {
-          currentOption.short = parserOpt.short;
-          showColumn.short = true;
+    if (command.parser.options) {
+      const sortedKeys = Object.keys(command.parser.options).sort();
+      for (const key of sortedKeys) {
+        const parserOpt = command.parser.options[key];
+        const currentOption: CurrentParserOption = { name: key };
+        if (parserOpt) {
+          currentOption.type = parserOpt.type;
+          currentOption.choices = parserOpt.choices;
+          currentOption.count = parserOpt.count;
+          if (parserOpt.short) {
+            currentOption.short = parserOpt.short;
+          }
+          if (parserOpt.description) {
+            currentOption.description = parserOpt.description;
+          }
+          const value = optionsValues.get(key);
+          if (value !== undefined) {
+            currentOption.value = value;
+          }
         }
-        if (parserOpt.description) {
-          currentOption.description = parserOpt.description;
-          showColumn.description = true;
-        }
-        const value = optionsValues.get(key);
-        if (value !== undefined) {
-          currentOption.value = value;
-          showColumn.value = true;
-        }
+        parserOptions.push(currentOption);
       }
-      parserOptions.push(currentOption);
     }
   }
   const positional = command.arguments && command.arguments.positional;
@@ -677,6 +682,7 @@ const CommandCard: React.FC<CommandCardProps> = ({
           {(command.bin || positional || optionsValues.size > 0) && (
             <CommandPreview
               bin={command.bin}
+              script={command.script}
               positional={positional}
               options={optionsValues}
               counts={commandOptions.counts}
@@ -689,13 +695,9 @@ const CommandCard: React.FC<CommandCardProps> = ({
                 <thead>
                   <tr className={styles.tr}>
                     <th className={styles.th}>Name</th>
-                    {showColumn.short && (
-                      <th className={styles.th}>Short Name</th>
-                    )}
-                    {showColumn.value && <th className={styles.th}>Value</th>}
-                    {showColumn.description && (
-                      <th className={styles.th}>Description</th>
-                    )}
+                    <th className={styles.th}>Short Name</th>
+                    <th className={styles.th}>Value</th>
+                    <th className={styles.th}>Description</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -703,7 +705,6 @@ const CommandCard: React.FC<CommandCardProps> = ({
                     <ParserOptionLine
                       {...opt}
                       defaults={commandOptions.defaults}
-                      showColumn={showColumn}
                       setValue={setNewOptionValue}
                       count={opt.count}
                       key={opt.name}

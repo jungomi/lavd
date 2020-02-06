@@ -100,8 +100,10 @@ class Data(object):
     def set_command(self, name: str, value: Dict):
         name_data = get_or_insert_dict(self.full, name)
         name_truncated = get_or_insert_dict(self.truncated, name)
-        name_data["command"] = value
-        name_truncated["command"] = value
+        command = value.get("command")
+        if command is not None:
+            name_data["command"] = command
+            name_truncated["command"] = command
 
     # Removes the specified data
     # Only the cases that are reflected in the file structure are covered.
