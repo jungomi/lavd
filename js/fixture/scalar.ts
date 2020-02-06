@@ -7,12 +7,22 @@ export const scalars: DataMap = new Map([
     {
       scalars: {
         "Character Error Rate": {
-          start: 0,
-          values: [0.9, 0.7, 0.7, 0.66, 0.65]
+          steps: {
+            0: { value: 0.9 },
+            1: { value: 0.7 },
+            2: { value: 0.7 },
+            3: { value: 0.66 },
+            4: { value: 0.65 }
+          }
         },
         Correct: {
-          start: 0,
-          values: [0.0, 0.0, 0.0, 0.16, 0.22]
+          steps: {
+            0: { value: 0.0 },
+            1: { value: 0.0 },
+            2: { value: 0.0 },
+            3: { value: 0.16 },
+            4: { value: 0.22 }
+          }
         }
       }
     }
@@ -22,16 +32,34 @@ export const scalars: DataMap = new Map([
     {
       scalars: {
         "Character Error Rate": {
-          start: 0,
-          values: [0.4, 0.44, 0.42, 0.36, 0.35, 0.28]
+          steps: {
+            0: { value: 0.4 },
+            1: { value: 0.44 },
+            2: { value: 0.42 },
+            3: { value: 0.36 },
+            4: { value: 0.35 },
+            5: { value: 0.28 }
+          }
         },
         Correct: {
-          start: 0,
-          values: [0.4, 0.45, 0.4, 0.46, 0.52, 0.6]
+          steps: {
+            0: { value: 0.4 },
+            1: { value: 0.45 },
+            2: { value: 0.4 },
+            3: { value: 0.46 },
+            4: { value: 0.52 },
+            5: { value: 0.6 }
+          }
         },
         Special: {
-          start: 0,
-          values: [10, 20, 30, 10, 30, 40]
+          steps: {
+            0: { value: 10 },
+            1: { value: 20 },
+            2: { value: 30 },
+            3: { value: 10 },
+            4: { value: 30 },
+            5: { value: 40 }
+          }
         }
       }
     }
@@ -41,12 +69,18 @@ export const scalars: DataMap = new Map([
     {
       scalars: {
         "Character Error Rate": {
-          start: 2,
-          values: [0.5, 0.54, 0.45]
+          steps: {
+            2: { value: 0.5 },
+            3: { value: 0.54 },
+            4: { value: 0.45 }
+          }
         },
         Correct: {
-          start: 2,
-          values: [0.0, 0.26, 0.32]
+          steps: {
+            2: { value: 0.0 },
+            3: { value: 0.26 },
+            4: { value: 0.32 }
+          }
         }
       }
     }

@@ -22,75 +22,77 @@ export const commands: DataMap = new Map([
           }
         },
         parser: {
-          name: {
-            description: "Name of the experiment",
-            default: "default-name",
-            type: "string"
-          },
-          "train-text": {
-            required: true,
-            description: "Path to text file for training",
-            type: "string"
-          },
-          "validation-text": {
-            description:
-              "List of text files for validation. If no name is specified it uses the name of the text file",
-            count: "+",
-            type: "string"
-          },
-          "batch-size": {
-            short: "b",
-            default: 1,
-            description: "Size of data batches",
-            type: "int"
-          },
-          model: {
-            short: "m",
-            description: "Which kind of model to use",
-            type: "string",
-            choices: ["bert", "bert-scratch", "gpt2", "gpt2-scratch"],
-            default: "bert"
-          },
-          "opt-level": {
-            short: "O",
-            description:
-              "Optimisation level for mixed precision training. See https://nvidia.github.io/apex/amp.html for details.",
-            choices: [0, 1, 2, 3],
-            type: "int"
-          },
-          "learning-rate": {
-            short: "l",
-            description: "Learning rate to use",
-            default: 5e-5,
-            type: "float"
-          },
-          checkpoint: {
-            short: "c",
-            description:
-              "Path to the checkpoint to be loaded to resume training",
-            type: "string"
-          },
-          "no-cuda": {
-            description: "Do not use CUDA even if it's available",
-            type: "flag"
-          },
-          weights: {
-            description: "Weights for the different categories",
-            type: "float",
-            count: 3
-          },
-          "weights-with-defaults": {
-            description: "Weights for the different categories with defaults",
-            type: "float",
-            count: 3,
-            default: [0.8, 0.4, 1.0]
-          },
-          "weights-with-single-default": {
-            description:
-              "Weights for the different categories with the same default for all",
-            type: "float",
-            count: 3,
-            default: 1.0
+          options: {
+            name: {
+              description: "Name of the experiment",
+              default: "default-name",
+              type: "string"
+            },
+            "train-text": {
+              required: true,
+              description: "Path to text file for training",
+              type: "string"
+            },
+            "validation-text": {
+              description:
+                "List of text files for validation. If no name is specified it uses the name of the text file",
+              count: "+",
+              type: "string"
+            },
+            "batch-size": {
+              short: "b",
+              default: 1,
+              description: "Size of data batches",
+              type: "int"
+            },
+            model: {
+              short: "m",
+              description: "Which kind of model to use",
+              type: "string",
+              choices: ["bert", "bert-scratch", "gpt2", "gpt2-scratch"],
+              default: "bert"
+            },
+            "opt-level": {
+              short: "O",
+              description:
+                "Optimisation level for mixed precision training. See https://nvidia.github.io/apex/amp.html for details.",
+              choices: [0, 1, 2, 3],
+              type: "int"
+            },
+            "learning-rate": {
+              short: "l",
+              description: "Learning rate to use",
+              default: 5e-5,
+              type: "float"
+            },
+            checkpoint: {
+              short: "c",
+              description:
+                "Path to the checkpoint to be loaded to resume training",
+              type: "string"
+            },
+            "no-cuda": {
+              description: "Do not use CUDA even if it's available",
+              type: "flag"
+            },
+            weights: {
+              description: "Weights for the different categories",
+              type: "float",
+              count: 3
+            },
+            "weights-with-defaults": {
+              description: "Weights for the different categories with defaults",
+              type: "float",
+              count: 3,
+              default: [0.8, 0.4, 1.0]
+            },
+            "weights-with-single-default": {
+              description:
+                "Weights for the different categories with the same default for all",
+              type: "float",
+              count: 3,
+              default: 1.0
+            }
           }
         }
       }

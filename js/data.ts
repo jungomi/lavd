@@ -27,11 +27,11 @@ export type DataList<T> = {
 
 export type Data = {
   scalars?: {
-    [name: string]: {
+    [name: string]: Optional<{
       steps?: {
         [step: number]: Optional<Scalar>;
       };
-    };
+    }>;
   };
   images?: DataList<Image>;
   texts?: DataList<Text>;
