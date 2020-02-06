@@ -42,7 +42,7 @@ export const classList = css({
 export const classListTitle = css({
   fontWeight: 500,
   color: labelColour,
-  margin: "0 auto 0.8rem auto"
+  marginBottom: "0.8rem"
 });
 
 export const classEntry = css({

@@ -101,6 +101,16 @@ def insert_file(
             data.set(
                 "texts", name, step, category, text, truncate=text_len > MAX_TEXT_LEN,
             )
+        if "images" in json_data:
+            image_dict = json_data["images"]
+            image_source = image_dict.get("source")
+            if image_source:
+                image_path = pathlib.Path(os.path.dirname(abs_path), image_source)
+                image = prepare_image(str(image_path), root=root)
+                if image is not None:
+                    image_dict.update(image)
+                    data.set("images", name, step, category, image_dict)
+
     elif file_category == "image":
         image = prepare_image(abs_path, root=root)
         if image is not None:

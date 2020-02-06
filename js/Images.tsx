@@ -33,7 +33,7 @@ export type Bbox = {
   yStart: number;
   xEnd: number;
   yEnd: number;
-  className: string;
+  className?: string;
   probability?: number;
 };
 
@@ -60,7 +60,7 @@ export type Image = {
   source: string;
   thumbnail?: Thumbnail;
   classes?: Array<string>;
-  bbox?: Array<Bbox>;
+  boxes?: Array<Bbox>;
   minProbability?: number;
 };
 
@@ -112,7 +112,7 @@ type BoundingBoxProps = {
   yStart: number;
   xEnd: number;
   yEnd: number;
-  className: string;
+  className?: string;
   probability?: number;
   classColours: ColourMap;
   maxWidth?: number;
@@ -129,7 +129,8 @@ const BoundingBox: React.FC<BoundingBoxProps> = ({
   maxWidth,
   maxHeight
 }) => {
-  const colour: Colour = classColours.get(className) || defaultColour;
+  const colour: Colour =
+    (className && classColours.get(className)) || defaultColour;
   // The paths draw the lines such that the centre of the line is exactly on the
   // specified coordinates. In order to have the line outside of the actual
   // covered area (i.e. the coordinates represent the very first pixel that is
@@ -216,6 +217,13 @@ const ImageOverlay: React.FC<ImageOverlayProps> = ({
     setImageSize({ width, height });
   };
   useEffect(() => {
+    const classColourMap = image.classes
+      ? assignColours(image.classes)
+      : new Map();
+    setClassColours(new Map(classColourMap));
+    setMinProbability(image.minProbability);
+  }, [image]);
+  useEffect(() => {
     const outsideClick = (e: MouseEvent) => {
       if (preventClose) {
         setPreventClose(false);
@@ -238,8 +246,8 @@ const ImageOverlay: React.FC<ImageOverlayProps> = ({
   // The probability threshold should only be visible when there are actually
   // bounding boxes that have specified a probability.
   let hasProbabilities = false;
-  if (image.bbox !== undefined) {
-    for (const bbox of image.bbox) {
+  if (image.boxes !== undefined) {
+    for (const bbox of image.boxes) {
       if (bbox.probability !== undefined) {
         hasProbabilities = true;
       }
@@ -374,17 +382,19 @@ const ImageOverlay: React.FC<ImageOverlayProps> = ({
                   }
                   key={`${bboxKey(bbox)}-tooltip`}
                 >
-                  <div className={styles.tooltipBoxEntry}>
-                    <span className={styles.tooltipLabel}>Class:</span>
-                    <span
-                      className={styles.tooltipValue}
-                      style={{
-                        color: classColour && colourString(classColour)
-                      }}
-                    >
-                      {bbox.className}
-                    </span>
-                  </div>
+                  {bbox.className && (
+                    <div className={styles.tooltipBoxEntry}>
+                      <span className={styles.tooltipLabel}>Class:</span>
+                      <span
+                        className={styles.tooltipValue}
+                        style={{
+                          color: colourString(classColour || defaultColour)
+                        }}
+                      >
+                        {bbox.className}
+                      </span>
+                    </div>
+                  )}
                   <div className={styles.tooltipBoxEntry}>
                     <span className={styles.tooltipLabel}>x-start:</span>
                     <span className={styles.tooltipValue}>{bbox.xStart}</span>
