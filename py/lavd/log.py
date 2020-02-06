@@ -1,6 +1,7 @@
 import argparse
 import os
 import pathlib
+import re
 import subprocess
 import sys
 import time
@@ -31,6 +32,9 @@ try:
     import numpy as np  # noqa: F401 - unused import
 except ImportError:
     pass
+
+
+table_separator_regex = re.compile("[^|]")
 
 
 class Logger(object):
@@ -326,6 +330,84 @@ class Logger(object):
         self.stderr_file.write("\n")
         self.log("STDERR", formatted_msg)
         print(formatted_msg, file=sys.stderr)
+
+    def print_table(
+        self,
+        header: List[str],
+        rows: List[List[Optional[Union[str, int, float]]]],
+        indent_level: int = 0,
+        placeholder: str = "-",
+        precision: int = 5,
+    ):
+        """
+        Prints a nicely formatted table in the style of a Markdown table.
+
+        Arguments:
+            header (List[str]):
+                Names for each column displayed as a table header.
+            rows (List[List[str | int | float | None]]):
+                Rows, where each row contains the columns for that row. Each row must
+                have the same length as the header. Columns may be empty, but they need
+                to be present in the list, hence can be set to None, which will be
+                replaced with the placeholder. Floats are represented with a fixed
+                precision (number of digits after the decimal point).
+            indent_level (int):
+                Indent the whole table to the specified level. The number of spaces used
+                per indentation level respects the configured indent_size of the logger.
+                [Default: 0]
+            placeholder (str):
+                Placeholder for empty columns.
+                [Default: "-"]
+            precision (int):
+                Precision (number of digits after the decimal point) for float values.
+                [Default: 5]
+
+        Example:
+            >>> header = ["Name", "Correct", "Total", "Accuracy"]
+            >>> rows = [
+            >>>     ["Train", 978, 1000, 0.978],
+            >>>     ["Validation", 90, 100, 0.9],
+            >>>     ["Test", None, 50, None],
+            >>> ]
+            >>> logger.print_table(header, rows)
+            >>> # | Name       | Correct | Total | Accuracy |
+            >>> # |------------|---------|-------|----------|
+            >>> # | Train      | 978     | 1000  | 0.97800  |
+            >>> # | Validation | 90      | 100   | 0.90000  |
+            >>> # | Test       | -       | 50    | -        |
+        """
+        rows_formatted = []
+        # Keeps track of the longest field length in each column, so that the table can
+        # be aligned nicely.
+        column_widths = [len(name) for name in header]
+        for row in rows:
+            row_formatted = []
+            for column, field in enumerate(row):
+                field_str = placeholder
+                if isinstance(field, str):
+                    field_str = field
+                elif isinstance(field, int):
+                    field_str = str(field)
+                elif isinstance(field, float):
+                    field_str = "{num:.{precision}f}".format(
+                        num=field, precision=precision
+                    )
+                row_formatted.append(field_str)
+                # Check whether the field is longer than current maximum column width
+                # and expand it if necessary.
+                if len(field_str) > column_widths[column]:
+                    column_widths[column] = len(field_str)
+            rows_formatted.append(row_formatted)
+        indent = " " * indent_level * self.indent_size
+        header = pad_table_row(header, column_widths)
+        line = "| {fields} |".format(fields=" | ".join(header))
+        self.println("{indent}{line}".format(indent=indent, line=line))
+        separator = table_separator_regex.sub("-", line)
+        self.println("{indent}{line}".format(indent=indent, line=separator))
+        for r in rows_formatted:
+            r = pad_table_row(r, column_widths)
+            line = "| {fields} |".format(fields=" | ".join(r))
+            self.println("{indent}{line}".format(indent=indent, line=line))
 
     def log_summary(
         self,
@@ -806,3 +888,10 @@ def assign_args_to_options(
     if len(opts) > 0:
         out["options"] = opts
     return out
+
+
+def pad_table_row(row: List[str], widths: List[int], value: str = " ") -> List[str]:
+    return [
+        "{field:{pad}<{width}}".format(field=field, pad=value, width=width)
+        for field, width in zip(row, widths)
+    ]
