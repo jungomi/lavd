@@ -49,11 +49,20 @@ def read_log_file(path: str) -> Dict[str, List[Dict]]:
     return {"lines": lines}
 
 
-def prepare_image(abs_path: str, root: str = "", thumbnail_size: int = 40) -> Dict:
-    image = Image.open(abs_path)
+def prepare_image(
+    abs_path: str, root: str = "", thumbnail_size: int = 40
+) -> Optional[Dict]:
+    try:
+        image = Image.open(abs_path)
+        # Creates a thumbnail with the specified max size, but keeping the aspect ratio.
+        image.thumbnail((thumbnail_size, thumbnail_size))
+    except OSError:
+        # The image may be invalid, in which case it's just ignored.
+        # When the image is not fully written to disk, it will fail, since the file is
+        # truncated. Since that mainly affects the watcher, it is okay to move on, since
+        # at least another event will be fired when it's fully written to disk.
+        return None
     width, height = image.size
-    # Creates a thumbnail with the specified max size, but keeping the aspect ratio.
-    image.thumbnail((thumbnail_size, thumbnail_size))
     with io.BytesIO() as buffer:
         image.save(buffer, "jpeg")
         thumbnail = base64.b64encode(buffer.getvalue()).decode()
@@ -93,9 +102,9 @@ def insert_file(
                 "texts", name, step, category, text, truncate=text_len > MAX_TEXT_LEN,
             )
     elif file_category == "image":
-        data.set(
-            "images", name, step, category, prepare_image(abs_path, root=root),
-        )
+        image = prepare_image(abs_path, root=root)
+        if image is not None:
+            data.set("images", name, step, category, image)
     elif file_category == "text":
         text = read_text_file(abs_path)
         data.set(
