@@ -570,8 +570,7 @@ class Logger(object):
                 saved at the top level instead. [Default: None]
         """
         path = self.get_file_path(name, step, extension=".md")
-        markdown_dict = {"markdown": {"raw": markdown}}
-        write_json(markdown_dict, path, merge=True)
+        write_text_file(markdown, path)
 
     def log_image(
         self,
