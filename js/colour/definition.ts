@@ -300,7 +300,7 @@ export const distinctColours: Array<Colour> = [
 
 export const defaultColour: Colour = {
   kind: "rgb",
-  value: { red: 193, green: 0, blue: 32 }
+  value: { red: 241, green: 58, blue: 19 }
 };
 
 export type ColourMap = Map<string, Colour>;
