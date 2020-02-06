@@ -161,7 +161,8 @@ export const td = css({
   padding: "0.2rem 0.4rem",
   verticalAlign: "middle",
   borderTop: "thin solid rgba(0, 0, 0, 0.12)",
-  borderBottom: "thin solid rgba(0, 0, 0, 0.12)"
+  borderBottom: "thin solid rgba(0, 0, 0, 0.12)",
+  height: "2rem"
 });
 
 export const name = cx(
