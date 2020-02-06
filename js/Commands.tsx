@@ -640,6 +640,9 @@ const CommandCard: React.FC<CommandCardProps> = ({
   const setNewOptionValue = (name: string, value: OptionalParserOption) => {
     setOptionsValues(new Map(optionsValues.set(name, value)));
   };
+  useEffect(() => {
+    setOptionsValues(initialCommandOptions(command).values);
+  }, [command]);
 
   const parserOptions: Array<CurrentParserOption> = [];
   if (command.parser) {
