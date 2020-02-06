@@ -390,6 +390,7 @@ class FileWatcher(object):
 
 
 def write_json(data: Dict, path: pathlib.Path, merge: bool = True):
+    path.parent.mkdir(parents=True, exist_ok=True)
     if path.is_file():
         out = load_json(str(path))
         out.update(data)
@@ -402,6 +403,7 @@ def write_json(data: Dict, path: pathlib.Path, merge: bool = True):
 def write_text_file(
     content: str, path: pathlib.Path, append: bool = False, ensure_newline: bool = True
 ):
+    path.parent.mkdir(parents=True, exist_ok=True)
     mode = "a" if append else "w"
     with open(path, mode, encoding="utf-8") as fd:
         fd.write(content)
