@@ -5,10 +5,13 @@ import subprocess
 import sys
 import time
 from datetime import datetime
-from typing import Any, Dict, List, Optional, TextIO, Union
+from typing import Any, Callable, Dict, List, Optional, TextIO, Tuple, Union
 
 from halo import Halo
+from PIL import Image
 from tqdm import tqdm
+
+from .fs import write_json, write_text_file
 
 try:
     import torch
@@ -18,6 +21,17 @@ try:
 except ImportError:
     HAS_TORCH = False
 
+try:
+    from torchvision.transforms import ToPILImage
+except ImportError:
+    ToPILImage = None
+
+try:
+    # Only for type annotations
+    import numpy as np  # noqa: F401 - unused import
+except ImportError:
+    pass
+
 
 class Logger(object):
     name: str
@@ -25,6 +39,7 @@ class Logger(object):
     num_digits: int
     indent_size: int
     created_timestamp: datetime
+    base_dir: pathlib.Path
     log_dir: pathlib.Path
     repo_path: Optional[str]
     git_hash: Optional[str]
@@ -32,6 +47,7 @@ class Logger(object):
     stdout_file: Optional[TextIO]
     stderr_file: Optional[TextIO]
     events_time: Dict[str, float]
+    to_pil: Optional[Callable[[Union["torch.Tensor", "np.array"]], Image.Image]]
 
     def __init__(
         self,
@@ -61,6 +77,7 @@ class Logger(object):
                 [Default: "\t"]
         """
         super(Logger, self).__init__()
+        self.base_dir = pathlib.Path(log_dir)
         self.name = name
         self.delimiter = delimiter
         self.num_digits = num_digits
@@ -88,6 +105,7 @@ class Logger(object):
         self.stderr_file = None
         self.prefix = ""
         self.events_time = {}
+        self.to_pil = None if ToPILImage is None else ToPILImage()
         self.log_dir.mkdir(parents=True, exist_ok=True)
 
     def __del__(self):
@@ -405,6 +423,181 @@ class Logger(object):
                     else:
                         fd.write("{}\n".format(section_content))
 
+    def log_scalar(
+        self, scalar: Union[int, float], name: str, step: Optional[int] = None
+    ):
+        """
+        Logs a scalar
+
+        Arguments:
+            scalar (int | float):
+                Scalar to be logged
+            name (str):
+                Name of the scalar to log
+            step (int):
+                Step/epoch to which the scalar belongs, If unspecified, it is
+                saved at the top level instead. [Default: None]
+        """
+        path = self.get_file_path(name, step, extension=".json")
+        scalar_dict = {"scalars": {"value": scalar}}
+        write_json(scalar_dict, path, merge=True)
+
+    def log_text(
+        self,
+        text: str,
+        name: str,
+        step: Optional[int] = None,
+        expected: Optional[str] = None,
+    ):
+        """
+        Logs a text and optionally the expected text, which will show a diff between the
+        two.
+
+        Arguments:
+            text (str):
+                Text to be logged
+            name (str):
+                Name of the text to log
+            step (int):
+                Step/epoch to which the text belongs, If unspecified, it is
+                saved at the top level instead. [Default: None]
+            expected (str):
+                Expected text to compare to the actual text with a diff. If not
+                specified, there will be no diff.
+                [Default: None]
+        """
+        if expected:
+            path = self.get_file_path(name, step, extension=".json")
+            text_dict = {"texts": {"actual": text, "expected": expected}}
+            write_json(text_dict, path, merge=True)
+        else:
+            path = self.get_file_path(name, step, extension=".json")
+            write_text_file(text, path)
+
+    def log_markdown(self, markdown: str, name: str, step: Optional[int] = None):
+        """
+        Logs a Markdown document
+
+        Arguments:
+            markdown (str):
+                Raw markdown text to be logged as Markdown document
+            name (str):
+                Name of the Markdown document to log
+            step (int):
+                Step/epoch to which the Markdown document belongs, If unspecified, it is
+                saved at the top level instead. [Default: None]
+        """
+        path = self.get_file_path(name, step, extension=".md")
+        markdown_dict = {"markdown": {"raw": markdown}}
+        write_json(markdown_dict, path, merge=True)
+
+    def log_image(
+        self,
+        image: Union[Image.Image, "torch.Tensor", "np.array"],
+        name: str,
+        step: Optional[int] = None,
+        boxes: Optional[List[Dict]] = None,
+        classes: Optional[List[str]] = None,
+        probability_threshold: Optional[float] = None,
+        extension: str = ".png",
+    ):
+        """
+        Logs an image and optionally bounding boxes that are present in the image.
+
+        Arguments:
+            image (PIL.Image | torch.Tensor | np.array):
+                Image to be logged. torch.Tensor and np.array are converted to a PIL
+                Image, this requires torchvision to be installed.
+            name (str):
+                Name of the image to log
+            step (int):
+                Step/epoch to which the image belongs, If unspecified, it is
+                saved at the top level instead. [Default: None]
+            boxes (List[{ "xStart": int, "yStart": int, "xEnd": int, "yEnd": int,
+                          "className": Optional[str], probability: Optional[float] }]):
+                A list of bounding boxes given as dict. Defined with two points,
+                top-left (xStart and yStart) and bottom-right (xEnd, yEnd), an optional
+                class name (className) and an optional probability (probability).
+                [Default: None]
+            classes (List[str]):
+                A list of the available bounding box classes. Only used if boxes are
+                specified.
+                [Default: None]
+            probability_threshold (float):
+                Threshold that is used to determine positive and negative bounding
+                boxes. Allows to only show bounding boxes with a probability higher than
+                this threshold. All boxes are saved, but for the visualisation it serves
+                as a filter to only show boxes that would actually be used. This value
+                can be changed to see lower scoring boxes, instead of discarding them
+                entirely. Only used if boxes are specified.
+                [Default: None]
+            extension (str):
+                File extension for the image file.
+                Note: Images with the same name but different extension will be in
+                conflict. Always use a different name if you want two different images.
+                The extension should only be changed if a different format is desired.
+                [Default: ".png"]
+        """
+        if not isinstance(image, Image.Image):
+            assert (
+                self.to_pil
+            ), "Images as NumPy array or torch.Tensor requires torchvision"
+            image = self.to_pil(image)
+        img_path = self.get_file_path(name, step, extension=extension)
+        image.save(img_path)
+        if boxes is not None:
+            json_path = self.get_file_path(name, step, extension=".json")
+            image_dict = {"images": {"source": img_path.name, "boxes": boxes}}
+            if classes is not None:
+                image_dict["images"]["classes"] = classes
+            if probability_threshold is not None:
+                image_dict["images"]["minProbability"] = classes
+            write_json(image_dict, json_path, merge=True)
+
+    def log_command(
+        self,
+        parser: argparse.ArgumentParser,
+        args: argparse.Namespace,
+        binary: str = "python",
+        script_name: Optional[str] = None,
+    ):
+        """
+        Logs a command, which includes the command line arguments used as well as the
+        available options in the parser.
+
+        Arguments:
+            parser (argparse.ArgumentParser):
+                Parser that parsed the command line arguments.
+            args (argparse.Namespace):
+                Command line arguments parsed from the parser.
+            binary (str):
+                Binary that is used to run the program.
+                [Default: "python"]
+            script_name (str):
+                Name of the script that is used as the entry point. If not specified it
+                resorts to the first argument that started the program
+                (i.e.  sys.argv[0]).
+                [Default: None]
+        """
+        path = self.get_file_path("command", extension=".json")
+        if script_name is None:
+            script_name = sys.argv[0]
+        command_dict: Dict[str, Dict] = {"command": {"bin": binary}}
+        if script_name != "":
+            command_dict["command"]["script"] = script_name
+        positionals, options = extract_parser_options(parser)
+        parser_dict: Dict[str, Union[List, Dict]] = {}
+        if len(positionals) > 0:
+            parser_dict["positional"] = list(positionals.values())
+        if len(options) > 0:
+            parser_dict["options"] = {opt["name"]: opt for opt in options.values()}
+        if len(parser_dict) > 0:
+            command_dict["command"]["parser"] = parser_dict
+        arguments_dict = assign_args_to_options(args, positionals, options)
+        if len(arguments_dict) > 0:
+            command_dict["command"]["arguments"] = arguments_dict
+        write_json(command_dict, path, merge=True)
+
     # The type annotation is given as string because torch might not be available, this
     # allows to still make it work while having type checking as well.
     def save_model(
@@ -449,7 +642,7 @@ class Logger(object):
             else model
         )
         state_dict = unwrapped_model.state_dict()
-        path = self.get_file_path(name, step, extension=".pt")
+        path = self.get_file_path(name, step, extension=extension)
         path.parent.mkdir(parents=True, exist_ok=True)
         torch.save(state_dict, path)
 
@@ -534,3 +727,82 @@ def write_list(fd: TextIO, data: Dict[str, Any], level: int = 0, indent_size: in
                     indent=" " * level * indent_size, key=key, value=value
                 )
             )
+
+
+# NOTE: This relies on so called internals (i.e. attributes that start with an
+# underscore, `_actions`  in this case). Argparse considers almost everything as an
+# implementation detail except for the usual methods that can be called to add an
+# argument and parse them. There is no public way to get the options that have been
+# defined with `add_argument()`.
+def extract_parser_options(
+    parser: argparse.ArgumentParser,
+) -> Tuple[Dict[str, Dict], Dict[str, Dict]]:
+    positionals = {}
+    options = {}
+    for action in parser._actions:
+        act = {}
+        if action.default is not None and action.default != argparse.SUPPRESS:
+            act["default"] = action.default
+        if action.help and action.help != argparse.SUPPRESS:
+            act["desription"] = action.help
+        if action.nargs is not None:
+            act["count"] = action.nargs
+        if action.choices is not None:
+            act["choices"] = action.choices
+        # The type is currently limited to string | int | float | flag
+        # Everything else is just considered as string
+        if action.type is None:
+            if action.nargs == 0:
+                # flag is the term used for an option that does not take any argument.
+                act["type"] = "flag"
+            else:
+                default_value = act.get("default")
+                if isinstance(default_value, int):
+                    act["type"] = "int"
+                elif isinstance(default_value, float):
+                    act["type"] = "float"
+                else:
+                    act["type"] = "string"
+        elif action.type == int:
+            act["type"] = "int"
+        elif action.type == float:
+            act["type"] = "float"
+        elif action.type == bool:
+            act["type"] = "flag"
+        else:
+            act["type"] = "string"
+
+        if len(action.option_strings) == 0:
+            act["name"] = action.dest
+            positionals[action.dest] = act
+        else:
+            for opt_name in action.option_strings:
+                if opt_name.startswith("--"):
+                    act["name"] = opt_name.lstrip("-")
+                else:
+                    act["short"] = opt_name.lstrip("-")
+            if "name" not in act:
+                act["name"] = act.get("short") or action.dest
+            options[action.dest] = act
+    return positionals, options
+
+
+def assign_args_to_options(
+    args: argparse.Namespace, positionals: Dict[str, Dict], options: Dict[str, Dict],
+) -> Dict[str, Union[List, Dict]]:
+    pos = []
+    opts = {}
+    for key, value in vars(args).items():
+        if key in positionals:
+            pos.append(value)
+        else:
+            o = options.get(key)
+            if o is not None:
+                name = o.get("name") or key
+                opts[name] = value
+    out: Dict[str, Union[List, Dict]] = {}
+    if len(pos) > 0:
+        out["positional"] = pos
+    if len(opts) > 0:
+        out["options"] = opts
+    return out

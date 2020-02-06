@@ -387,3 +387,23 @@ class FileWatcher(object):
 
     def __del__(self):
         self.stop()
+
+
+def write_json(data: Dict, path: pathlib.Path, merge: bool = True):
+    if path.is_file():
+        out = load_json(str(path))
+        out.update(data)
+    else:
+        out = data
+    with open(path, "w", encoding="utf-8") as fd:
+        json.dump(out, fd)
+
+
+def write_text_file(
+    content: str, path: pathlib.Path, append: bool = False, ensure_newline: bool = True
+):
+    mode = "a" if append else "w"
+    with open(path, mode, encoding="utf-8") as fd:
+        fd.write(content)
+        if not content.endswith("\n"):
+            fd.write("\n")
