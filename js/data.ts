@@ -105,7 +105,7 @@ export function sortedSteps<T>(dataList: DataList<T>): Array<number> {
       uniqueSteps.add(Number.parseInt(step));
     }
   }
-  return Array.from(uniqueSteps).sort();
+  return Array.from(uniqueSteps).sort((a, b) => a - b);
 }
 
 export function sortedCategorySteps<T>(data: DataOfCategory<T>): Array<number> {
@@ -116,7 +116,7 @@ export function sortedCategorySteps<T>(data: DataOfCategory<T>): Array<number> {
   for (const step of Object.keys(data.steps)) {
     uniqueSteps.add(Number.parseInt(step));
   }
-  return Array.from(uniqueSteps).sort();
+  return Array.from(uniqueSteps).sort((a, b) => a - b);
 }
 
 export function sortObject<V>(
