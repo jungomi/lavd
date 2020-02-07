@@ -566,7 +566,9 @@ class Logger(object):
         Example:
             >>> logger.log_text("The quick brown fox...", "famous-sentence", step=1)
             >>> # With an expected text
-            >>> logger.log_text("hello world", "with-diff", step=2, expected="Hallo Welt")
+            >>> logger.log_text(
+            >>>     "hello world", "with-diff", step=2, expected="Hallo Welt"
+            >>> )
         """
         if expected:
             path = self.get_file_path(name, step, extension=".json")
