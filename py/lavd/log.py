@@ -528,6 +528,12 @@ class Logger(object):
                 Step/epoch to which the scalar belongs. Unlike other log methods, this
                 one requires the step, since single scalars don't make sense on a global
                 level.
+
+        Example:
+            >>> logger.log_scalar(0.8, "accuracy", step=1)
+            >>> logger.log_scalar(0.6, "accuracy", step=2)
+            >>> logger.log_scalar(0.1, "easy/accuracy", step=7)
+            >>> logger.log_scalar(0.05, "easy/accuracy", step=14)
         """
         path = self.get_file_path(name, step, extension=".json")
         scalar_dict = {"scalars": {"value": scalar}}
@@ -556,6 +562,11 @@ class Logger(object):
                 Expected text to compare to the actual text with a diff. If not
                 specified, there will be no diff.
                 [Default: None]
+
+        Example:
+            >>> logger.log_text("The quick brown fox...", "famous-sentence", step=1)
+            >>> # With an expected text
+            >>> logger.log_text("hello world", "with-diff", step=2, expected="Hallo Welt")
         """
         if expected:
             path = self.get_file_path(name, step, extension=".json")
@@ -577,6 +588,10 @@ class Logger(object):
             step (int):
                 Step/epoch to which the Markdown document belongs, If unspecified, it is
                 saved at the top level instead. [Default: None]
+
+        Example:
+            >>> logger.log_markdown("# Hello\n\nMore markdown...", "some-markdown")
+            >>> logger.log_markdown("# Step 1\\nn## Result\n\nGood", "for-step", step=1)
         """
         path = self.get_file_path(name, step, extension=".md")
         write_text_file(markdown, path)
@@ -627,6 +642,35 @@ class Logger(object):
                 conflict. Always use a different name if you want two different images.
                 The extension should only be changed if a different format is desired.
                 [Default: ".png"]
+
+        Example:
+            >>> # Saves image to: log/some-experiment-name/0001/bird.png
+            >>> logger.log_image(image, "bird", step=1)
+            >>> # Saves image to: log/some-experiment-name/0001/other/bird.png
+            >>> logger.log_image(image, "other/bird", step=1)
+            >>> # With bounding boxes
+            >>> boxes = [
+            >>>     {
+            >>>         "xStart": 100,
+            >>>         "yStart": 100,
+            >>>         "xEnd": 150,
+            >>>         "yEnd": 200,
+            >>>         "className": "bird",
+            >>>         "probability": 0.4,
+            >>>     },
+            >>>     # Another bounding box, without class or probability
+            >>>     {"xStart": 200, "yStart": 22, "xEnd": 233, "yEnd": 80,},
+            >>> ]
+            >>> classes = ["bird", "orange", "background"]
+            >>> threshold = 0.2
+            >>> logger.log_image(
+            >>>     img,
+            >>>     "birds-with-bounding-boxes",
+            >>>     step=3,
+            >>>     boxes=boxes,
+            >>>     classes=class_names,
+            >>>     threshold=threshold,
+            >>> )
         """
         if not isinstance(image, Image.Image):
             assert (
@@ -669,6 +713,14 @@ class Logger(object):
                 resorts to the first argument that started the program
                 (i.e.  sys.argv[0]).
                 [Default: None]
+
+        Example:
+            >>> import argparse
+            >>> parser = argparse.ArgumentParser()
+            >>> # Add all options with: parser.add_argument()
+            >>> # ...
+            >>> args = parser.parse_args()
+            >>> logger.log_command(parser, args)
         """
         path = self.get_file_path("command", extension=".json")
         if script_name is None:

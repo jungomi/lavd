@@ -1,9 +1,7 @@
 # Log and Visualise Data (Lavd)
 
-
 ![](https://github.com/jungomi/lavd/workflows/Node.js/badge.svg)
 ![](https://github.com/jungomi/lavd/workflows/Python/badge.svg)
-
 
 Tracking the progress of Machine Learning (ML) experiments is essential for
 deciding what model works well with the available data. Using some kind of
@@ -23,11 +21,15 @@ _...and more to come._
 
 ## Table of Contents
 
+- [Table of Contents](#table-of-contents)
 - [Getting Started](#getting-started)
 - [Logging Data](#logging-data)
-  - [Images (and other data)](#images-and-other-data)
-  - [Summary](#summary)
+  - [Scalars](#scalars)
+  - [Images](#images)
+  - [Text](#text)
+  - [Markdown](#markdown)
   - [Command Line Options](#command-line-options)
+  - [Summary](#summary)
   - [Printing](#printing)
   - [Spinner](#spinner)
   - [Progress Bar](#progress-bar)
@@ -69,7 +71,23 @@ import lavd
 logger = lavd.Logger("some-experiment-name")
 ```
 
-### Images (and other data)
+### Scalars
+
+Scalars will be plotted and unlike other categories, the have to be assigned to
+a step.
+
+```python
+logger.log_scalar(0.8, "accuracy", step=1)
+logger.log_scalar(0.6, "accuracy", step=2)
+logger.log_scalar(0.3, "accuracy", step=3)
+
+logger.log_scalar(0.1, "easy/accuracy", step=7)
+logger.log_scalar(0.05, "easy/accuracy", step=14)
+```
+
+### Images
+
+Logging images with optional bounding boxes that for interactive visualisation.
 
 ```python
  # Saves image to: log/some-experiment-name/0001/bird.png
@@ -78,10 +96,71 @@ logger.log_image(image, "bird", step=1)
 logger.log_image(image, "other/bird", step=1)
 # No step saves it to: log/some-experiment-name/other/bird.png
 logger.log_image(image, "other/bird")
+
+# With bounding boxes, each box is given by 2 points: top-left and bottom-right.
+boxes = [
+    {
+        "xStart": 100,
+        "yStart": 100,
+        "xEnd": 150,
+        "yEnd": 200,
+        "className": "bird", # Optional
+        "probability": 0.4,  # Optional
+    },
+    # Another bounding box, without class or probability
+    {"xStart": 200, "yStart": 22, "xEnd": 233, "yEnd": 80,},
+]
+# List of available classes
+classes = ["bird", "orange", "background"]
+# Threshold to count boxes as valid and threfore visible
+threshold = 0.2
+logger.log_image(
+    img,
+    "birds-with-bounding-boxes",
+    step=3,
+    boxes=boxes,
+    classes=class_names,
+    threshold=threshold,
+)
 ```
 
-The other categories (`log_text`, `log_scalar`, etc.) have the same general
-signatures `data, name, step` plus some extra (optional) arguments at the end.
+### Text
+
+Text can be logged with an additional expected text, which then shows a diff
+between the actual text and the expected, otherwise it's just the text.
+
+```python
+logger.log_text("The quick brown fox...", "famous-sentence", step=1)
+# With an expected text
+logger.log_text("hello world", "with-diff", step=2, expected="Hallo Welt")
+```
+
+### Markdown
+
+Markdown files are given as Markdown string.
+
+```python
+logger.log_markdown("# Hello\n\nMore markdown...", "some-markdown")
+
+logger.log_markdown("# Step 1\\nn## Result\n\nGood", "for-step", step=1)
+```
+
+### Command Line Options
+
+Command line arguments that have been used to start the experiment and all
+available options for that script can be saved, if you use `argparse` to parse
+the command line options.
+
+```python
+import argparse
+
+parser = argparse.ArgumentParser()
+# Add all options with: parser.add_argument()
+# ...
+args = parser.parse_args()
+
+logger.log_command(parser, args)
+```
 
 ### Summary
 
@@ -104,22 +183,6 @@ sections = {
     "Same but with Lines": ["Some text", "and more"],
 }
 logger.log_summary(infos, sections)
-```
-
-### Command Line Options
-
-Command line arguments that have been used to start the experiment and all
-available options for that script can be saved, if you use `argparse` to parse
-the command line options.
-
-```python
-import argparse
-
-parser = argparse.ArgumentParser()
-# Add all options with: parser.add_argument
-args = parser.parse_args()
-
-logger.log_command(parser, args)
 ```
 
 ### Printing
