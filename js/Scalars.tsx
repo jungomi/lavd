@@ -47,8 +47,10 @@ function createPlot(category: string, categoryData: Array<ScalarEntry>) {
       continue;
     }
     const enumeratedSeries = [];
-    for (const key of Object.keys(steps).sort()) {
-      const i = Number.parseInt(key);
+    const sortedSteps = Object.keys(steps)
+      .map(s => Number.parseInt(s))
+      .sort((a, b) => a - b);
+    for (const i of sortedSteps) {
       const step = steps[i];
       if (step === undefined || step.value === undefined) {
         continue;
