@@ -271,6 +271,12 @@ const ImageOverlay: React.FC<ImageOverlayProps> = ({
   };
   const hasSidebar =
     !fullscreen && (hasProbabilities || image.classes !== undefined);
+  // The image can be too small to display the expand icon inside.
+  const imageTooSmall =
+    imageSize.width &&
+    imageSize.height &&
+    imageSize.width < styles.smallImageSize &&
+    imageSize.height < styles.smallImageSize;
   return (
     <>
       <div
@@ -280,11 +286,6 @@ const ImageOverlay: React.FC<ImageOverlayProps> = ({
             : styles.imageOverlayContainer
         }
       >
-        {!fullscreen && showOverlay !== undefined && (
-          <div className={styles.expand} onClick={() => showOverlay()}>
-            <ExpandIcon />
-          </div>
-        )}
         <div
           className={
             fullscreen ? styles.imageOverlayFullscreen : styles.imageOverlay
@@ -363,6 +364,14 @@ const ImageOverlay: React.FC<ImageOverlayProps> = ({
             )}
           </div>
         </div>
+        {!fullscreen && showOverlay !== undefined && (
+          <div
+            className={imageTooSmall ? styles.expandSmall : styles.expand}
+            onClick={() => showOverlay()}
+          >
+            <ExpandIcon />
+          </div>
+        )}
       </div>
       {tooltipBoxes.length > 0 && (
         <div className={fullscreen ? undefined : styles.tooltipContainer}>

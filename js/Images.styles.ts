@@ -2,6 +2,8 @@ import { css, cx } from "emotion";
 
 const labelColour = "#616161";
 
+export const smallImageSize = 200;
+
 export const title = css({
   display: "flex",
   flexDirection: "column",
@@ -102,13 +104,9 @@ export const imageContainerFullscreen = cx(
   })
 );
 
-export const expand = css({
+export const expandSmall = css({
   width: "1.3rem",
   height: "1.3rem",
-  position: "absolute",
-  zIndex: 10,
-  top: 0,
-  right: "0.5rem",
   padding: "0.5rem",
   cursor: "pointer",
   fill: "#555555",
@@ -116,6 +114,16 @@ export const expand = css({
     fill: "#404040"
   }
 });
+
+export const expand = cx(
+  expandSmall,
+  css({
+    position: "absolute",
+    zIndex: 10,
+    top: 0,
+    right: "0.5rem"
+  })
+);
 
 export const strokeWidth = 2;
 
