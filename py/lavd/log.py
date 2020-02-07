@@ -899,6 +899,10 @@ def assign_args_to_options(
     pos = []
     opts = {}
     for key, value in vars(args).items():
+        # None values are not saved, they just cause trouble because they are null and
+        # undefined, and they should rather not be present than being null.
+        if value is None:
+            continue
         if key in positionals:
             pos.append(value)
         else:
