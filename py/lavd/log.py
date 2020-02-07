@@ -588,7 +588,7 @@ class Logger(object):
         step: Optional[int] = None,
         boxes: Optional[List[Dict]] = None,
         classes: Optional[List[str]] = None,
-        probability_threshold: Optional[float] = None,
+        threshold: Optional[float] = None,
         extension: str = ".png",
     ):
         """
@@ -613,7 +613,7 @@ class Logger(object):
                 A list of the available bounding box classes. Only used if boxes are
                 specified.
                 [Default: None]
-            probability_threshold (float):
+            threshold (float):
                 Threshold that is used to determine positive and negative bounding
                 boxes. Allows to only show bounding boxes with a probability higher than
                 this threshold. All boxes are saved, but for the visualisation it serves
@@ -641,8 +641,8 @@ class Logger(object):
             image_dict = {"images": {"source": img_path.name, "boxes": boxes}}
             if classes is not None:
                 image_dict["images"]["classes"] = classes
-            if probability_threshold is not None:
-                image_dict["images"]["minProbability"] = probability_threshold
+            if threshold is not None:
+                image_dict["images"]["minProbability"] = threshold
             write_json(image_dict, json_path, merge=True)
 
     def log_command(
