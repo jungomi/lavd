@@ -54,6 +54,7 @@ def prepare_image(
 ) -> Optional[Dict]:
     try:
         image = Image.open(abs_path)
+        width, height = image.size
         # Creates a thumbnail with the specified max size, but keeping the aspect ratio.
         image.thumbnail((thumbnail_size, thumbnail_size))
     except OSError:
@@ -62,7 +63,6 @@ def prepare_image(
         # truncated. Since that mainly affects the watcher, it is okay to move on, since
         # at least another event will be fired when it's fully written to disk.
         return None
-    width, height = image.size
     with io.BytesIO() as buffer:
         image.save(buffer, "jpeg")
         thumbnail = base64.b64encode(buffer.getvalue()).decode()
