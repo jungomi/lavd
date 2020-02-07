@@ -53,19 +53,19 @@ def prepare_image(
     abs_path: str, root: str = "", thumbnail_size: int = 40
 ) -> Optional[Dict]:
     try:
-        image = Image.open(abs_path)
+        image = Image.open(abs_path).convert("RGB")
         width, height = image.size
         # Creates a thumbnail with the specified max size, but keeping the aspect ratio.
         image.thumbnail((thumbnail_size, thumbnail_size))
+        with io.BytesIO() as buffer:
+            image.save(buffer, "jpeg")
+            thumbnail = base64.b64encode(buffer.getvalue()).decode()
     except OSError:
         # The image may be invalid, in which case it's just ignored.
         # When the image is not fully written to disk, it will fail, since the file is
         # truncated. Since that mainly affects the watcher, it is okay to move on, since
         # at least another event will be fired when it's fully written to disk.
         return None
-    with io.BytesIO() as buffer:
-        image.save(buffer, "jpeg")
-        thumbnail = base64.b64encode(buffer.getvalue()).decode()
     return {
         "source": pathlib.Path("/data/", os.path.relpath(abs_path, root)).as_posix(),
         "thumbnail": {
