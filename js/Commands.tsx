@@ -9,10 +9,11 @@ import { stringToFloat, stringToInt } from "./number";
 export type ParserOptionType = string | number | boolean;
 export type ParserOptionTypeKind = "string" | "int" | "float" | "flag";
 
-type ArgumentCount = "+" | number;
+type ArgumentCount = "?" | "*" | "+" | number;
 
 export type ParserPositional = {
-  name?: string;
+  name: string;
+  default?: ParserOptionType | Array<ParserOptionType>;
   description?: string;
   type?: ParserOptionTypeKind;
   count?: ArgumentCount;
@@ -131,7 +132,10 @@ function completePartialsWithDefaults(
 type CommandPreviewProps = {
   bin?: string;
   script?: string;
-  positional?: Array<ParserOptionValue>;
+  positional?: {
+    values: Array<OptionalParserOption>;
+    names?: Array<string>;
+  };
   options?: Map<string, OptionalParserOption>;
   counts?: Map<string, number>;
   defaults?: Map<string, ParserOptionType | Array<ParserOptionType>>;
@@ -155,14 +159,11 @@ const CommandPreview: React.FC<CommandPreviewProps> = ({
   const argSpans = [];
   let commandString = bin === undefined ? "" : `${bin} `;
   if (positional) {
-    for (const posArg of positional) {
-      const posArgs = Array.isArray(posArg) ? posArg : [posArg];
-      for (const posA of posArgs) {
-        if (posA) {
-          argSpans.push(<span key={posA.toString()}>{posA} </span>);
-          commandString += `${posA} `;
-        }
-      }
+    for (const [i, posArg] of positional.values.entries()) {
+      const name = positional.names ? positional.names[i] : undefined;
+      const valueText: string | undefined = optionsToString(posArg);
+      argSpans.push(<span key={`${name}`}>{valueText} </span>);
+      commandString += `${valueText} `;
     }
   }
   if (options) {
@@ -270,7 +271,7 @@ const Input: React.FC<InputProps> = ({
   // When Enter is pressed on the inputs that allow adding new fields, it will
   // create signal to create a new input field.
   const pressEnter = (e: React.KeyboardEvent) => {
-    if (count === "+") {
+    if (count === "+" || count === "*") {
       if (e.key === "Enter") {
         addInput(index);
       } else if (e.key === "Backspace" && value === "") {
@@ -318,7 +319,11 @@ const Input: React.FC<InputProps> = ({
               const newValue = stringToInt(e.target.value);
               setValue(newValue, index);
             }}
-            className={count === "+" ? styles.inputWithCount : styles.input}
+            className={
+              count === "+" || count === "*"
+                ? styles.inputWithCount
+                : styles.input
+            }
             onKeyDown={pressEnter}
             ref={inputRef}
           />
@@ -336,7 +341,11 @@ const Input: React.FC<InputProps> = ({
               const newValue = stringToFloat(e.target.value);
               setValue(newValue, index);
             }}
-            className={count === "+" ? styles.inputWithCount : styles.input}
+            className={
+              count === "+" || count === "*"
+                ? styles.inputWithCount
+                : styles.input
+            }
             onKeyDown={pressEnter}
             ref={inputRef}
           />
@@ -355,7 +364,11 @@ const Input: React.FC<InputProps> = ({
                 e.target.value === "" ? undefined : e.target.value;
               setValue(newValue, index);
             }}
-            className={count === "+" ? styles.inputWithCount : styles.input}
+            className={
+              count === "+" || count === "*"
+                ? styles.inputWithCount
+                : styles.input
+            }
             onKeyDown={pressEnter}
             ref={inputRef}
           />
@@ -381,7 +394,7 @@ const Input: React.FC<InputProps> = ({
     return (
       <div className={styles.inputContainer}>
         {input}
-        {count === "+" && (
+        {(count === "+" || count === "*") && (
           <div
             className={styles.inputRemoveControls}
             onClick={() => destroy(index)}
@@ -505,7 +518,7 @@ const InputList: React.FC<InputListProps> = ({
     <td className={styles.tdValues}>
       <div className={styles.values}>
         {inputs}
-        {count === "+" && (
+        {(count === "+" || count === "*") && (
           <div className={styles.addInput} onClick={() => addInput()} />
         )}
       </div>
@@ -556,6 +569,44 @@ const ParserOptionLine: React.FC<ParserOptionLineProps> = ({
   );
 };
 
+type ParserPositionalLineProps = {
+  name: string;
+  value?: OptionalParserOption;
+  description?: string;
+  type?: ParserOptionTypeKind;
+  count?: ArgumentCount;
+  defaults?: Map<string, ParserOptionType | Array<ParserOptionType>>;
+  setValue: (name: string, value: OptionalParserOption) => void;
+};
+
+const ParserPositionalLine: React.FC<ParserPositionalLineProps> = ({
+  name,
+  value,
+  description,
+  type,
+  count,
+  defaults,
+  setValue
+}) => {
+  const defaultValue = defaults && defaults.get(name);
+  // Only columns are rendered that have at least one entry.
+  return (
+    <tr className={styles.tr}>
+      <td className={styles.name}>{name}</td>
+      <td className={styles.shortName}></td>
+      <InputList
+        name={name}
+        value={value}
+        defaultValue={defaultValue}
+        setValue={setValue}
+        type={type}
+        count={count}
+      />
+      <td className={styles.description}>{description}</td>
+    </tr>
+  );
+};
+
 type CurrentParserOption = {
   name: string;
   short?: string;
@@ -566,42 +617,106 @@ type CurrentParserOption = {
   count?: ArgumentCount;
 };
 
+export type CurrentParserPositional = {
+  name: string;
+  value?: OptionalParserOption;
+  description?: string;
+  type?: ParserOptionTypeKind;
+  count?: ArgumentCount;
+};
+
 type CommandOptions = {
-  values: Map<string, OptionalParserOption>;
-  defaults?: Map<string, ParserOptionType | Array<ParserOptionType>>;
-  counts?: Map<string, number>;
+  options: {
+    values: Map<string, OptionalParserOption>;
+    defaults?: Map<string, ParserOptionType | Array<ParserOptionType>>;
+    counts?: Map<string, number>;
+  };
+  positional: {
+    values: Array<OptionalParserOption>;
+    defaults?: Map<string, ParserOptionType | Array<ParserOptionType>>;
+    counts?: Map<string, number>;
+    orderedNames?: Array<string>;
+  };
 };
 
 function initialCommandOptions(command: Command): CommandOptions {
-  const values = new Map();
-  const defaults = new Map();
-  const exactCounts = new Map();
+  const optionsValues = new Map();
+  const optionsDefaults = new Map();
+  const exactOptionsCounts = new Map();
+  const positionalDefaults = new Map();
+  const exactPositionalCounts = new Map();
+  let positionalValues: Array<ParserOptionValue> = [];
+  // Just to keep the order of the keys, even though Maps are in insertion
+  // order, they may not have all of the values, hence creating gaps.
+  const positionalOrder = [];
   if (command.parser) {
     if (command.parser.options) {
       for (const [key, value] of Object.entries(command.parser.options)) {
         if (value !== undefined) {
           if (value.default !== undefined) {
-            defaults.set(key, value.default);
+            optionsDefaults.set(key, value.default);
           }
           if (typeof value.count === "number" && value.count > 0) {
-            exactCounts.set(key, value.count);
+            exactOptionsCounts.set(key, value.count);
           }
+        }
+      }
+    }
+    if (command.parser.positional) {
+      for (const pos of command.parser.positional) {
+        positionalOrder.push(pos.name);
+        if (pos.default !== undefined) {
+          positionalDefaults.set(pos.name, pos.default);
+        }
+        if (typeof pos.count === "number" && pos.count > 0) {
+          exactPositionalCounts.set(pos.name, pos.count);
         }
       }
     }
   }
   // Overwrite the defaults (if any) with the actual given values.
-  if (command.arguments && command.arguments.options) {
-    for (const [key, value] of Object.entries(command.arguments.options)) {
-      if (value !== defaults.get(key)) {
-        values.set(key, value);
+  if (command.arguments) {
+    if (command.arguments.options) {
+      for (const [key, value] of Object.entries(command.arguments.options)) {
+        if (value !== optionsDefaults.get(key)) {
+          optionsValues.set(key, value);
+        }
+      }
+    }
+    if (command.arguments.positional) {
+      if (positionalOrder.length > 0) {
+        for (const [i, argName] of positionalOrder.entries()) {
+          const count = exactPositionalCounts.get(argName);
+          let value = undefined;
+          if (i < command.arguments.positional.length) {
+            const posValue = command.arguments.positional[i];
+            if (posValue !== positionalDefaults.get(argName)) {
+              value = posValue;
+            }
+          }
+          // Everything that has a non-zero count needs to have exactly the
+          // number of elements, so pad if needed.
+          if (count) {
+            if (value === undefined) {
+              value = new Array(count).fill(undefined);
+            } else if (Array.isArray(value)) {
+              const padLength = count - value.length;
+              if (padLength > 0) {
+                value = [...value, ...new Array(padLength).fill(undefined)];
+              }
+            }
+          }
+          positionalValues.push(value);
+        }
+      } else {
+        positionalValues = command.arguments.positional;
       }
     }
   }
   // Values that have exact counts need to have the exact number of values even
   // if they were not yet specified.
-  for (const [key, count] of exactCounts.entries()) {
-    let value = values.get(key);
+  for (const [key, count] of exactOptionsCounts.entries()) {
+    let value = optionsValues.get(key);
     if (value === undefined) {
       value = new Array(count).fill(undefined);
     } else if (Array.isArray(value)) {
@@ -610,12 +725,20 @@ function initialCommandOptions(command: Command): CommandOptions {
         value = [...value, ...new Array(padLength).fill(undefined)];
       }
     }
-    values.set(key, value);
+    optionsValues.set(key, value);
   }
   return {
-    values,
-    defaults: defaults.size > 0 ? defaults : undefined,
-    counts: exactCounts
+    options: {
+      values: optionsValues,
+      defaults: optionsDefaults.size > 0 ? optionsDefaults : undefined,
+      counts: exactOptionsCounts
+    },
+    positional: {
+      values: positionalValues,
+      defaults: positionalDefaults.size > 0 ? positionalDefaults : undefined,
+      counts: exactPositionalCounts,
+      orderedNames: positionalOrder
+    }
   };
 }
 
@@ -633,18 +756,40 @@ const CommandCard: React.FC<CommandCardProps> = ({
   hideName
 }) => {
   const commandOptions = initialCommandOptions(command);
-  const [optionsValues, setOptionsValues] = useState(commandOptions.values);
+  const [optionsValues, setOptionsValues] = useState(
+    commandOptions.options.values
+  );
+  const [positionalValues, setPositionalValues] = useState(
+    commandOptions.positional.values
+  );
   // A copy map of the Map is created such that React re-renders it, since
   // mutating it won't change the reference and therefore won't trigger
   // a re-render.
   const setNewOptionValue = (name: string, value: OptionalParserOption) => {
     setOptionsValues(new Map(optionsValues.set(name, value)));
   };
+  const setNewPositionalValue = (name: string, value: OptionalParserOption) => {
+    const names = commandOptions.positional.orderedNames;
+    if (names) {
+      const index = names.indexOf(name);
+      if (index !== -1) {
+        const newValues = [
+          ...positionalValues.slice(0, index),
+          value,
+          ...positionalValues.slice(index + 1)
+        ];
+        setPositionalValues(newValues);
+      }
+    }
+  };
   useEffect(() => {
-    setOptionsValues(initialCommandOptions(command).values);
+    const commandOptions = initialCommandOptions(command);
+    setOptionsValues(commandOptions.options.values);
+    setPositionalValues(commandOptions.positional.values);
   }, [command]);
 
   const parserOptions: Array<CurrentParserOption> = [];
+  let parserPositionals: Array<CurrentParserPositional> = [];
   if (command.parser) {
     if (command.parser.options) {
       const sortedKeys = Object.keys(command.parser.options).sort();
@@ -669,8 +814,10 @@ const CommandCard: React.FC<CommandCardProps> = ({
         parserOptions.push(currentOption);
       }
     }
+    if (command.parser.positional) {
+      parserPositionals = command.parser.positional;
+    }
   }
-  const positional = command.arguments && command.arguments.positional;
   return (
     <Card
       name={name}
@@ -682,14 +829,17 @@ const CommandCard: React.FC<CommandCardProps> = ({
     >
       {() => (
         <>
-          {(command.bin || positional || optionsValues.size > 0) && (
+          {(command.bin || positionalValues || optionsValues.size > 0) && (
             <CommandPreview
               bin={command.bin}
               script={command.script}
-              positional={positional}
+              positional={{
+                values: positionalValues,
+                names: commandOptions.positional.orderedNames
+              }}
               options={optionsValues}
-              counts={commandOptions.counts}
-              defaults={commandOptions.defaults}
+              counts={commandOptions.options.counts}
+              defaults={commandOptions.options.defaults}
             />
           )}
           {command.parser && (
@@ -704,10 +854,20 @@ const CommandCard: React.FC<CommandCardProps> = ({
                   </tr>
                 </thead>
                 <tbody>
+                  {[...parserPositionals.entries()].map(([i, pos]) => (
+                    <ParserPositionalLine
+                      {...pos}
+                      value={positionalValues[i]}
+                      defaults={commandOptions.positional.defaults}
+                      setValue={setNewPositionalValue}
+                      count={pos.count}
+                      key={pos.name}
+                    />
+                  ))}
                   {parserOptions.map(opt => (
                     <ParserOptionLine
                       {...opt}
-                      defaults={commandOptions.defaults}
+                      defaults={commandOptions.options.defaults}
                       setValue={setNewOptionValue}
                       count={opt.count}
                       key={opt.name}
