@@ -49,8 +49,7 @@ const routes: Routes = {
   ),
   "/commands": () => ({ data, colours, names, hideName }) => (
     <Commands data={data} colours={colours} names={names} hideName={hideName} />
-  ),
-  "/about": () => () => <span>About</span>
+  )
 };
 
 export const App = () => {

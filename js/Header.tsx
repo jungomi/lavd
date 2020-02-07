@@ -109,14 +109,6 @@ export const Header = () => {
         >
           Commands
         </Link>
-        <Link
-          href="/about"
-          onClick={clickLink}
-          className={itemClass}
-          activeClassName={activeClass}
-        >
-          About
-        </Link>
       </nav>
       <div onClick={() => setIsOpen(!isOpen)} className={styles.burgerMenu}>
         <div className={iconClass} />
