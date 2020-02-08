@@ -16,8 +16,11 @@
     "lint-python": "flake8 py/",
     "type-check-python": "mypy py/ setup.py --ignore-missing-imports",
     "fmt-check-python": "black --check py/ setup.py",
+    "fix-python": "black py/ setup.py",
+    "watch-python": "python -m py.lavd.server --debug",
     "build-python": "python -m pep517.build .",
-    "build-package": "yarn run clean && yarn run build && yarn run build-python",
+    "build-package": "yarn clean && yarn build && yarn build-python",
+    "check-all": "yarn lint && yarn type-check && yarn lint-python && yarn type-check-python && yarn fmt-check-python",
     "clean": "rimraf build dist py/lavd/static py/lavd/version.py"
   },
   "browserslist": [
