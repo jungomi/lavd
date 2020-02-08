@@ -30,6 +30,8 @@ EXTENSIONS = OrderedDict(
     ],
 )
 
+SAVE_ALL_EXTENSIONS = [".gif", ".tiff", ".tif"]
+
 
 def categorise_file(path: str) -> Optional[str]:
     lower_case = path.lower()

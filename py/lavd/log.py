@@ -12,6 +12,7 @@ from halo import Halo
 from PIL import Image
 from tqdm import tqdm
 
+from .file_types import SAVE_ALL_EXTENSIONS
 from .fs import write_json, write_text_file
 
 try:
@@ -681,7 +682,9 @@ class Logger(object):
             image = self.to_pil(image)
         img_path = self.get_file_path(name, step, extension=extension)
         img_path.parent.mkdir(parents=True, exist_ok=True)
-        image.save(img_path)
+        # The save_all is for animated images with multiple frames to save them as an
+        # animated image, otherwise only the first frame is saved.
+        image.save(img_path, save_all=extension in SAVE_ALL_EXTENSIONS)
         if boxes is not None:
             json_path = self.get_file_path(name, step, extension=".json")
             image_dict = {"images": {"source": img_path.name, "boxes": boxes}}
