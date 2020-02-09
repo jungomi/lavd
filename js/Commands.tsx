@@ -658,8 +658,10 @@ function initialCommandOptions(command: Command): CommandOptions {
   const optionsValues = new Map();
   const optionsDefaults = new Map();
   const exactOptionsCounts = new Map();
+  const looseOptionsCounts = new Map();
   const positionalDefaults = new Map();
   const exactPositionalCounts = new Map();
+  const loosePositionalCounts = new Map();
   let positionalValues: Array<ParserOptionValue> = [];
   // Just to keep the order of the keys, even though Maps are in insertion
   // order, they may not have all of the values, hence creating gaps.
@@ -670,6 +672,11 @@ function initialCommandOptions(command: Command): CommandOptions {
         if (value !== undefined) {
           if (value.default !== undefined) {
             optionsDefaults.set(key, value.default);
+            // When the options can be any number of values, the defaults should
+            // be set as values only if none were specified.
+            if (Array.isArray(value.default) && value.count === "+") {
+              looseOptionsCounts.set(key, value.default.length);
+            }
           }
           if (typeof value.count === "number" && value.count > 0) {
             exactOptionsCounts.set(key, value.count);
@@ -682,6 +689,12 @@ function initialCommandOptions(command: Command): CommandOptions {
         positionalOrder.push(pos.name);
         if (pos.default !== undefined) {
           positionalDefaults.set(pos.name, pos.default);
+          if (
+            Array.isArray(pos.default) &&
+            (pos.count === "+" || pos.count === "*")
+          ) {
+            loosePositionalCounts.set(pos.name, pos.default.length);
+          }
         }
         if (typeof pos.count === "number" && pos.count > 0) {
           exactPositionalCounts.set(pos.name, pos.count);
@@ -702,6 +715,7 @@ function initialCommandOptions(command: Command): CommandOptions {
       if (positionalOrder.length > 0) {
         for (const [i, argName] of positionalOrder.entries()) {
           const count = exactPositionalCounts.get(argName);
+          const looseCount = exactPositionalCounts.get(argName);
           let value = undefined;
           if (i < command.arguments.positional.length) {
             const posValue = command.arguments.positional[i];
@@ -720,6 +734,8 @@ function initialCommandOptions(command: Command): CommandOptions {
                 value = [...value, ...new Array(padLength).fill(undefined)];
               }
             }
+          } else if (looseCount && value === undefined) {
+            value = new Array(looseCount).fill(undefined);
           }
           positionalValues.push(value);
         }
@@ -741,6 +757,15 @@ function initialCommandOptions(command: Command): CommandOptions {
       }
     }
     optionsValues.set(key, value);
+  }
+  // Values that have loose counts (+ or *) should only get the defaults if no
+  // value was specified at all.
+  for (const [key, count] of looseOptionsCounts.entries()) {
+    const value = optionsValues.get(key);
+    if (value === undefined) {
+      const newValue = new Array(count).fill(undefined);
+      optionsValues.set(key, newValue);
+    }
   }
   return {
     options: {
