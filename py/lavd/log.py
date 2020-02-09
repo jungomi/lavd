@@ -571,7 +571,7 @@ class Logger(object):
             >>>     "hello world", "with-diff", step=2, expected="Hallo Welt"
             >>> )
         """
-        if expected:
+        if expected is not None:
             path = self.get_file_path(name, step, extension=".json")
             text_dict = {"texts": {"actual": text, "expected": expected}}
             write_json(text_dict, path, merge=True)

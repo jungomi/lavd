@@ -34,8 +34,7 @@ export const Text: React.FC<TextProps> = ({ actual, expected }) => {
     );
   } else {
     const changes = diffChars(actual, expected);
-    // Only one entry in the change list means they are equal.
-    const identical = changes.length === 1;
+    const identical = actual === expected;
     if (!identical) {
       for (const change of changes) {
         if (change.removed) {
