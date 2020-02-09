@@ -21,6 +21,7 @@ import { useDragScroll } from "./hook/drag";
 import * as styles from "./Images.styles";
 import { stringToFloat } from "./number";
 import { OverlayContext } from "./Overlay";
+import { roundFloat } from "./number";
 
 const ExpandIcon: React.FC = () => (
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 352.054 352.054">
@@ -198,7 +199,11 @@ const ImageOverlay: React.FC<ImageOverlayProps> = ({
   const { startDrag } = useDragScroll(scrollRef);
   const [preventClose, setPreventClose] = useState(false);
   const [tooltipBoxes, setTooltipBoxes] = useState<Array<Bbox>>([]);
-  const [minProbability, setMinProbability] = useState(image.minProbability);
+  const [minProbability, setMinProbability] = useState(
+    image.minProbability === undefined
+      ? undefined
+      : roundFloat(image.minProbability, 3)
+  );
   const classColourMap = image.classes
     ? assignColours(image.classes)
     : new Map();
@@ -221,7 +226,11 @@ const ImageOverlay: React.FC<ImageOverlayProps> = ({
       ? assignColours(image.classes)
       : new Map();
     setClassColours(new Map(classColourMap));
-    setMinProbability(image.minProbability);
+    setMinProbability(
+      image.minProbability === undefined
+        ? undefined
+        : roundFloat(image.minProbability, 3)
+    );
   }, [image]);
   useEffect(() => {
     const outsideClick = (e: MouseEvent) => {
@@ -424,7 +433,7 @@ const ImageOverlay: React.FC<ImageOverlayProps> = ({
                     <div className={styles.tooltipBoxEntry}>
                       <span className={styles.tooltipLabel}>Probability:</span>
                       <span className={styles.tooltipValue}>
-                        {bbox.probability}
+                        {roundFloat(bbox.probability, 3)}
                       </span>
                     </div>
                   )}

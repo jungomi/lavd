@@ -41,9 +41,10 @@ export const images: DataMap = new Map([
                   yStart: 100,
                   yEnd: 682,
                   className: "orange",
-                  probability: 0.3
+                  probability: 0.33333333333333
                 }
-              ]
+              ],
+              minProbability: 0.255555555
             },
             2: {
               source: birdImage,
