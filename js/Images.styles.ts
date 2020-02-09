@@ -155,18 +155,26 @@ export const probabilityLabel = css({
 
 export const probabilityInput = css({
   background: "none",
-  height: "1.6rem",
+  height: "1.8rem",
   border: "thin solid rgba(0, 0, 0, 0.12)",
   borderRadius: "4px",
-  textAlign: "center",
-  color: "rgba(0, 0, 0, 0.6)",
-  // Firefox is very weird with <input> in flex, without setting a (max-)width,
-  // it is blown out of proportion and takes up way too much space and causes
-  // the label to wrap, which shouldn't happen since there is plenty of space
-  // without the input being so massive (in the worst case it even breaks out of
-  // the container).
-  // This restricts it roughly to the size that Chrome naturally renders.
-  maxWidth: "4rem"
+  color: "#484848",
+  padding: "0 0.6rem",
+  width: "8rem",
+  ":hover": {
+    borderColor: "rgba(0, 0, 0, 0.36)"
+  },
+  ":focus": {
+    // That's the default in Chrome, so other browsers now look the same.
+    borderColor: "#469bde"
+  },
+  "::placeholder": {
+    color: "rgba(0, 0, 0, 0.4)",
+    textAlign: "center",
+    // Firefox lowers the opacity for the placeholders, but that has already
+    // been incorporated into the text colour, so that would double dip.
+    opacity: 1
+  }
 });
 
 export const tooltipTitle = css({

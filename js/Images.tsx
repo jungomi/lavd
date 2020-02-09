@@ -19,9 +19,8 @@ import { DataLoader } from "./DataLoader";
 import { Empty } from "./Empty";
 import { useDragScroll } from "./hook/drag";
 import * as styles from "./Images.styles";
-import { stringToFloat } from "./number";
+import { roundFloat, stringToFloat } from "./number";
 import { OverlayContext } from "./Overlay";
-import { roundFloat } from "./number";
 
 const ExpandIcon: React.FC = () => (
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 352.054 352.054">
@@ -199,10 +198,8 @@ const ImageOverlay: React.FC<ImageOverlayProps> = ({
   const { startDrag } = useDragScroll(scrollRef);
   const [preventClose, setPreventClose] = useState(false);
   const [tooltipBoxes, setTooltipBoxes] = useState<Array<Bbox>>([]);
-  const [minProbability, setMinProbability] = useState(
-    image.minProbability === undefined
-      ? undefined
-      : roundFloat(image.minProbability, 3)
+  const [minProbability, setMinProbability] = useState<number | undefined>(
+    undefined
   );
   const classColourMap = image.classes
     ? assignColours(image.classes)
@@ -226,11 +223,6 @@ const ImageOverlay: React.FC<ImageOverlayProps> = ({
       ? assignColours(image.classes)
       : new Map();
     setClassColours(new Map(classColourMap));
-    setMinProbability(
-      image.minProbability === undefined
-        ? undefined
-        : roundFloat(image.minProbability, 3)
-    );
   }, [image]);
   useEffect(() => {
     const outsideClick = (e: MouseEvent) => {
@@ -260,12 +252,12 @@ const ImageOverlay: React.FC<ImageOverlayProps> = ({
       if (bbox.probability !== undefined) {
         hasProbabilities = true;
       }
-      if (
-        minProbability !== undefined &&
-        bbox.probability !== undefined &&
-        bbox.probability < minProbability
-      ) {
-        continue;
+      if (bbox.probability !== undefined) {
+        const probToCompare =
+          minProbability === undefined ? image.minProbability : minProbability;
+        if (probToCompare !== undefined && bbox.probability < probToCompare) {
+          continue;
+        }
       }
       boxes.push(bbox);
     }
@@ -462,6 +454,11 @@ const ImageOverlay: React.FC<ImageOverlayProps> = ({
                 min={0}
                 max={1}
                 step={0.01}
+                placeholder={
+                  image.minProbability === undefined
+                    ? ""
+                    : `Default: ${roundFloat(image.minProbability, 3)}`
+                }
                 className={styles.probabilityInput}
                 value={minProbability === undefined ? "" : minProbability}
                 onChange={e => {
