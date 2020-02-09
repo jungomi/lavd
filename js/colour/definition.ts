@@ -314,3 +314,7 @@ export function assignColours(data: Array<string>): ColourMap {
   }
   return colourMap;
 }
+
+export function getDistinctColour(i: number): Colour {
+  return distinctColours[i % distinctColours.length];
+}
