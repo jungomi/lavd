@@ -126,7 +126,8 @@ export const commandPreviewCode = css({
 
 export const optionsList = css({
   overflow: "scroll",
-  marginTop: "1.0rem"
+  marginTop: "1.0rem",
+  maxHeight: "66vh"
 });
 
 export const table = css({
