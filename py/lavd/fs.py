@@ -327,7 +327,10 @@ class FileWatcherHandler(events.FileSystemEventHandler):
             # name, dir, */file (global but nested of name)
             if len(parts) == 2:
                 name, file_name = parts
-                self.data.remove(name, step="global", category=file_name, kind=kind)
+                if file_name == "command":
+                    self.data.remove_command(name)
+                else:
+                    self.data.remove(name, step="global", category=file_name, kind=kind)
                 self.update_lock.notify_all()
             elif len(parts) >= 3:
                 name, first_dir, *rest = parts

@@ -105,6 +105,12 @@ class Data(object):
             name_data["command"] = command
             name_truncated["command"] = command
 
+    def remove_command(self, name: str):
+        name_data = get_or_insert_dict(self.full, name)
+        name_truncated = get_or_insert_dict(self.truncated, name)
+        name_data.pop("command", None)
+        name_truncated.pop("command", None)
+
     # Removes the specified data
     # Only the cases that are reflected in the file structure are covered.
     # Assumes that full and truncated are in sync.
