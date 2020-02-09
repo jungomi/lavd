@@ -12,6 +12,7 @@ import { Markdown } from "./Markdown";
 import { Overlay, OverlayContext, OverlayFn } from "./Overlay";
 import { Scalars } from "./Scalars";
 import { Names, Sidebar } from "./Sidebar";
+import { Loading } from "./Spinner";
 import {
   retrieveColours,
   retrieveNames,
@@ -134,17 +135,22 @@ export const App = () => {
           setNames={setNames}
           colours={colours}
           setColour={setNewColour}
+          loading={!hasFetched}
         />
         <main className={styles.main}>
-          {Content && (
-            <div className={styles.content}>
-              <Content
-                data={data}
-                colours={colours}
-                names={names.active}
-                hideName={hideName}
-              />
-            </div>
+          {hasFetched ? (
+            Content && (
+              <div className={styles.content}>
+                <Content
+                  data={data}
+                  colours={colours}
+                  names={names.active}
+                  hideName={hideName}
+                />
+              </div>
+            )
+          ) : (
+            <Loading />
           )}
         </main>
       </div>

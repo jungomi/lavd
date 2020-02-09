@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { ColourPicker } from "./colour/ColourPicker";
 import { fieldHeight } from "./colour/ColourPicker.styles";
 import {
@@ -9,6 +9,7 @@ import {
 } from "./colour/definition";
 import { EmptyDash, SmallEmpty } from "./Empty";
 import * as styles from "./Sidebar.styles";
+import { SmallLoading } from "./Spinner";
 
 export type Names = { active: Array<string>; inactive: Array<string> };
 
@@ -37,13 +38,15 @@ type Props = {
   setNames: (names: Names) => void;
   colours: ColourMap;
   setColour: (name: string, colour: Colour) => void;
+  loading: boolean;
 };
 
 export const Sidebar: React.FC<Props> = ({
   names,
   setNames,
   colours,
-  setColour
+  setColour,
+  loading
 }) => {
   const listRef = useRef<HTMLDivElement>(null);
   const [shownColourPicker, setShownColourPicker] = useState<
@@ -174,12 +177,16 @@ export const Sidebar: React.FC<Props> = ({
       >
         <path d="M11.727 26.71l9.977-9.999a1.012 1.012 0 000-1.429l-9.97-9.991c-.634-.66-1.748-.162-1.723.734v19.943c-.023.893 1.083 1.377 1.716.742zm7.84-10.713l-7.55 7.566V8.431l7.55 7.566z" />
       </svg>
-      <div
-        className={shown ? styles.nameListContainer : styles.nameListHidden}
-        ref={listRef}
-      >
-        {hasData ? nameLists : <SmallEmpty text="data" />}
-      </div>
+      {loading ? (
+        <SmallLoading />
+      ) : (
+        <div
+          className={shown ? styles.nameListContainer : styles.nameListHidden}
+          ref={listRef}
+        >
+          {hasData ? nameLists : <SmallEmpty text="data" />}
+        </div>
+      )}
     </div>
   );
 };

@@ -35,3 +35,11 @@ export const SmallEmpty: React.FC<Props> = ({ text }) => {
 export const EmptyDash: React.FC = () => {
   return <div className={baseClass}>—</div>;
 };
+
+export const EmptyLoading: React.FC = () => {
+  return <div className={emptyClass}>Loading</div>;
+};
+
+export const SmallEmptyLoading: React.FC = () => {
+  return <div className={smallEmptyClass}>Loading</div>;
+};

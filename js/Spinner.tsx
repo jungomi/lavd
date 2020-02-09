@@ -1,17 +1,23 @@
-import { css, keyframes } from "emotion";
 import React from "react";
+import { EmptyLoading, SmallEmptyLoading } from "./Empty";
+import * as styles from "./Spinner.styles";
 
-const animation = keyframes({
-  "0%": { transform: "scale(0)" },
-  "100%": { transform: "scale(1.0)", opacity: 0 }
-});
+export const Spinner: React.FC = () => <div className={styles.spinner} />;
 
-const spinnerClass = css({
-  width: "2rem",
-  height: "2rem",
-  background: "grey",
-  borderRadius: "50%",
-  animation: `${animation} 1.0s infinite ease-in-out`
-});
+export const Loading: React.FC = () => (
+  <div className={styles.loading}>
+    <EmptyLoading />
+    <div className={styles.loadingSpinner}>
+      <Spinner />
+    </div>
+  </div>
+);
 
-export const Spinner: React.FC = () => <div className={spinnerClass} />;
+export const SmallLoading: React.FC = () => (
+  <div className={styles.loading}>
+    <SmallEmptyLoading />
+    <div className={styles.loadingSpinner}>
+      <Spinner />
+    </div>
+  </div>
+);
