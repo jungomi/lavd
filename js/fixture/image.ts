@@ -26,7 +26,7 @@ export const images: DataMap = new Map([
             1: {
               source: birdImage,
               classes,
-              bbox: [
+              boxes: [
                 {
                   xStart: 0,
                   xEnd: 250,
@@ -48,7 +48,7 @@ export const images: DataMap = new Map([
             2: {
               source: birdImage,
               classes,
-              bbox: [
+              boxes: [
                 {
                   xStart: 500,
                   xEnd: 1024,
@@ -66,7 +66,7 @@ export const images: DataMap = new Map([
             1: {
               source: flippedImage,
               classes,
-              bbox: [
+              boxes: [
                 {
                   xStart: 50,
                   xEnd: 300,
@@ -92,7 +92,7 @@ export const images: DataMap = new Map([
             1: {
               source: greyImage,
               classes,
-              bbox: [
+              boxes: [
                 {
                   xStart: 50,
                   xEnd: 250,
@@ -123,7 +123,7 @@ export const images: DataMap = new Map([
             1: {
               source: birdImage,
               classes,
-              bbox: [
+              boxes: [
                 {
                   xStart: 150,
                   xEnd: 200,
@@ -145,7 +145,7 @@ export const images: DataMap = new Map([
             2: {
               source: birdImage,
               classes,
-              bbox: [
+              boxes: [
                 {
                   xStart: 150,
                   xEnd: 200,
