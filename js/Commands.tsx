@@ -639,6 +639,21 @@ type CommandOptions = {
   };
 };
 
+function optionsEqual(value: ParserOptionValue, other?: ParserOptionValue) {
+  if (value === other) {
+    return true;
+  }
+  if (
+    other !== undefined &&
+    Array.isArray(value) &&
+    Array.isArray(other) &&
+    value.length === other.length
+  ) {
+    return [...value.entries()].every(([i, v]) => v === other[i]);
+  }
+  return false;
+}
+
 function initialCommandOptions(command: Command): CommandOptions {
   const optionsValues = new Map();
   const optionsDefaults = new Map();
@@ -678,7 +693,7 @@ function initialCommandOptions(command: Command): CommandOptions {
   if (command.arguments) {
     if (command.arguments.options) {
       for (const [key, value] of Object.entries(command.arguments.options)) {
-        if (value !== optionsDefaults.get(key)) {
+        if (!optionsEqual(value, optionsDefaults.get(key))) {
           optionsValues.set(key, value);
         }
       }
@@ -690,7 +705,7 @@ function initialCommandOptions(command: Command): CommandOptions {
           let value = undefined;
           if (i < command.arguments.positional.length) {
             const posValue = command.arguments.positional[i];
-            if (posValue !== positionalDefaults.get(argName)) {
+            if (!optionsEqual(posValue, positionalDefaults.get(argName))) {
               value = posValue;
             }
           }
