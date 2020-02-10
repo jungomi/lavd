@@ -502,9 +502,9 @@ class Logger(object):
                 fd.write(
                     "There were uncommitted changes when running the experiment\n\n"
                 )
-                fd.write("```diff\n")
+                fd.write("````diff\n")
                 fd.write(diff)
-                fd.write("```\n")
+                fd.write("````\n")
 
             if sections is not None:
                 for section_title, section_content in sections.items():
