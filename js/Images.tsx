@@ -341,7 +341,7 @@ const ImageOverlay: React.FC<ImageOverlayProps> = ({
                 }}
               />
             </div>
-            {boxes && (
+            {boxes.length > 0 && (
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox={`0 0 ${imageSize.width || 0} ${imageSize.height || 0}`}
