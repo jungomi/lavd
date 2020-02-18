@@ -1,14 +1,14 @@
 import argparse
 import asyncio
-import json
 import os
 import sys
 
+import simplejson
 import tornado.ioloop
 import tornado.web
+from halo import Halo
 from tornado import locks
 from tornado.iostream import StreamClosedError
-from halo import Halo
 
 from .data import Data
 from .fs import FileWatcher, gather_data
@@ -61,7 +61,11 @@ class ApiHandler(tornado.web.RequestHandler):
 
     async def get(self, url: str):
         if url == "all":
-            self.write(self.app.data.truncated)
+            self.set_header("Content-Type", "application/json; charset=UTF-8")
+            # The data may contain NaNs, and the regular JSON encoder creates NaN values
+            # in the JSON, which are not allowed. With simplejson they can be replaced
+            # with null.
+            self.write(simplejson.dumps(self.app.data.truncated, ignore_nan=True))
         else:
             parts = url.split("/", 3)
             if len(parts) == 4:
@@ -72,7 +76,8 @@ class ApiHandler(tornado.web.RequestHandler):
                     data = self.app.data.get(kind, name, int(step), category)
 
                 if data is not None:
-                    self.write(data)
+                    self.set_header("Content-Type", "application/json; charset=UTF-8")
+                    self.write(simplejson.dumps(data, ignore_nan=True))
                     return
             raise tornado.web.HTTPError(404)
 
@@ -111,7 +116,9 @@ class EventHandler(tornado.web.RequestHandler):
                     self.write("event: data\n")
                     self.write("id: {}\n".format(event_id))
                     self.write(
-                        "data: {}\n\n".format(json.dumps(self.app.data.truncated))
+                        "data: {}\n\n".format(
+                            simplejson.dumps(self.app.data.truncated, ignore_nan=True)
+                        )
                     )
                     await self.flush()
         except (StreamClosedError, asyncio.CancelledError):
