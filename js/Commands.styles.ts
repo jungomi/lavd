@@ -30,7 +30,6 @@ export const commandPreview = css({
 
 export const copy = css({
   display: "flex",
-  position: "relative",
   width: "1rem",
   height: "1rem",
   marginLeft: "0.4rem",
