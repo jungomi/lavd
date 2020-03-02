@@ -158,6 +158,9 @@ const CommandPreview: React.FC<CommandPreviewProps> = ({
   }, [copied]);
   const argSpans = [];
   let commandString = bin === undefined ? "" : `${bin} `;
+  if (script) {
+    commandString += `${script} `;
+  }
   if (positional) {
     for (const [i, posArg] of positional.values.entries()) {
       const name = positional.names ? positional.names[i] : undefined;
