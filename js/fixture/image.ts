@@ -13,7 +13,7 @@ const classes = [
   "a slightly longer class name",
   "orange",
   "An extremely long class name that might wrap or break everything in the layout",
-  "cat"
+  "cat",
 ];
 
 export const images: DataMap = new Map([
@@ -33,7 +33,7 @@ export const images: DataMap = new Map([
                   yStart: 0,
                   yEnd: 300,
                   className: "bird",
-                  probability: 0.2
+                  probability: 0.2,
                 },
                 {
                   xStart: 500,
@@ -41,10 +41,10 @@ export const images: DataMap = new Map([
                   yStart: 100,
                   yEnd: 682,
                   className: "orange",
-                  probability: 0.33333333333333
-                }
+                  probability: 0.33333333333333,
+                },
               ],
-              minProbability: 0.255555555
+              minProbability: 0.255555555,
             },
             2: {
               source: birdImage,
@@ -56,11 +56,11 @@ export const images: DataMap = new Map([
                   yStart: 100,
                   yEnd: 682,
                   className: "bird",
-                  probability: 0.3
-                }
-              ]
-            }
-          }
+                  probability: 0.3,
+                },
+              ],
+            },
+          },
         },
         "Birds Flipped": {
           steps: {
@@ -74,7 +74,7 @@ export const images: DataMap = new Map([
                   yStart: 50,
                   yEnd: 250,
                   className: "bird",
-                  probability: 0.9
+                  probability: 0.9,
                 },
                 {
                   xStart: 100,
@@ -82,11 +82,11 @@ export const images: DataMap = new Map([
                   yStart: 500,
                   yEnd: 650,
                   className: "orange",
-                  probability: 0.3
-                }
-              ]
-            }
-          }
+                  probability: 0.3,
+                },
+              ],
+            },
+          },
         },
         "Birds Greyscale": {
           steps: {
@@ -99,21 +99,21 @@ export const images: DataMap = new Map([
                   xEnd: 250,
                   yStart: 50,
                   yEnd: 300,
-                  className: "bird"
+                  className: "bird",
                 },
                 {
                   xStart: 500,
                   xEnd: 650,
                   yStart: 100,
                   yEnd: 300,
-                  className: "orange"
-                }
-              ]
-            }
-          }
-        }
-      }
-    }
+                  className: "orange",
+                },
+              ],
+            },
+          },
+        },
+      },
+    },
   ],
   [
     "An extremely long title name that might wrap or break everything in the layout",
@@ -131,7 +131,7 @@ export const images: DataMap = new Map([
                   yStart: 150,
                   yEnd: 250,
                   className: "bird",
-                  probability: 0.2
+                  probability: 0.2,
                 },
                 {
                   xStart: 50,
@@ -139,9 +139,9 @@ export const images: DataMap = new Map([
                   yStart: 200,
                   yEnd: 400,
                   className: "bird",
-                  probability: 0.4
-                }
-              ]
+                  probability: 0.4,
+                },
+              ],
             },
             2: {
               source: birdImage,
@@ -153,7 +153,7 @@ export const images: DataMap = new Map([
                   yStart: 150,
                   yEnd: 250,
                   className: "bird",
-                  probability: 0.2
+                  probability: 0.2,
                 },
                 {
                   xStart: 50,
@@ -161,14 +161,14 @@ export const images: DataMap = new Map([
                   yStart: 200,
                   yEnd: 400,
                   className: "orange",
-                  probability: 0.333
-                }
-              ]
-            }
-          }
-        }
-      }
-    }
+                  probability: 0.333,
+                },
+              ],
+            },
+          },
+        },
+      },
+    },
   ],
   [
     "different start",
@@ -177,11 +177,11 @@ export const images: DataMap = new Map([
         Birds: {
           steps: {
             1: {
-              source: flippedImage
-            }
-          }
-        }
-      }
-    }
-  ]
+              source: flippedImage,
+            },
+          },
+        },
+      },
+    },
+  ],
 ]);

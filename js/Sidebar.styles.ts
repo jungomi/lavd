@@ -13,7 +13,7 @@ export const sidebar = css({
   transition: "all 0.3s cubic-bezier(0.65, 0.05, 0.36, 1)",
   background: bgColour,
   borderRight: "2px solid #e9e9e9",
-  zIndex: 50
+  zIndex: 50,
 });
 
 export const sidebarHidden = cx(
@@ -22,7 +22,7 @@ export const sidebarHidden = cx(
     width: 0,
     border: 0,
     padding: 0,
-    margin: 0
+    margin: 0,
   })
 );
 
@@ -32,19 +32,19 @@ export const entry = css({
   alignItems: "flex-start",
   flexShrink: 0,
   fontWeight: 300,
-  margin: "0.2rem"
+  margin: "0.2rem",
 });
 
 export const hiddenEntry = cx(
   entry,
   css({
-    color: "#929292"
+    color: "#929292",
   })
 );
 
 export const entryName = css({
   flexGrow: 1,
-  margin: "0.1rem 0.6rem 0 0.6rem"
+  margin: "0.1rem 0.6rem 0 0.6rem",
 });
 
 export const title = css({
@@ -52,7 +52,7 @@ export const title = css({
   justifyContent: "center",
   fontWeight: 500,
   color: "#616161",
-  marginBottom: "0.5rem"
+  marginBottom: "0.5rem",
 });
 
 export const colour = css({
@@ -61,7 +61,7 @@ export const colour = css({
   flexShrink: 0,
   borderRadius: "50%",
   border: "1px solid #dadada",
-  cursor: "pointer"
+  cursor: "pointer",
 });
 
 const toggleOffset = "18rem";
@@ -76,7 +76,7 @@ export const toggle = css({
   width: "1.5rem",
   height: "1.5rem",
   fill: "#8c8c8c",
-  transform: "rotate(180deg)"
+  transform: "rotate(180deg)",
 });
 
 export const toggleHidden = cx(
@@ -84,7 +84,7 @@ export const toggleHidden = cx(
   css({
     // Moves the icon back to 0. At the same time it removes the rotation of the
     // icon, which should be rotated to point in the opposite direction.
-    transform: `translateX(-${toggleOffset})`
+    transform: `translateX(-${toggleOffset})`,
   })
 );
 
@@ -94,11 +94,11 @@ export const nameListContainer = css({
   height: "100%",
   // The visibility is delayed for 0.3s to avoid clamping the text into small
   // spaces.
-  transition: "visibility 0s 0.3s"
+  transition: "visibility 0s 0.3s",
 });
 
 export const nameListHidden = css({
-  visibility: "hidden"
+  visibility: "hidden",
 });
 
 export const nameListGroup = css({
@@ -107,7 +107,7 @@ export const nameListGroup = css({
   flexDirection: "column",
   height: "50%",
   overflow: "hidden",
-  marginBottom: "1rem"
+  marginBottom: "1rem",
 });
 
 export const nameList = css({
@@ -115,7 +115,7 @@ export const nameList = css({
   flexDirection: "column",
   overflow: "scroll",
   height: "100%",
-  marginLeft: "0.7rem"
+  marginLeft: "0.7rem",
 });
 
 export const visibility = css({
@@ -123,7 +123,7 @@ export const visibility = css({
   height: "1rem",
   marginTop: "0.1rem",
   flexShrink: 0,
-  cursor: "pointer"
+  cursor: "pointer",
 });
 
 export const visibilityAll = cx(
@@ -137,29 +137,29 @@ export const visibilityAll = cx(
     // Also, it doesn't seem to reserve space for the scrollbar in responsive
     // mode.
     "@-moz-document url-prefix()": {
-      right: "0.6rem"
-    }
+      right: "0.6rem",
+    },
   })
 );
 
 export const visibilityIcon = css({
-  fill: "#8c8c8c"
+  fill: "#8c8c8c",
 });
 
 export const visibilityIconShown = cx(
   visibilityIcon,
   css({
     "& > path:nth-child(2)": {
-      visibility: "hidden"
+      visibility: "hidden",
     },
     ":hover": {
       "& > path:nth-child(1)": {
-        visibility: "hidden"
+        visibility: "hidden",
       },
       "& > path:nth-child(2)": {
-        visibility: "visible"
-      }
-    }
+        visibility: "visible",
+      },
+    },
   })
 );
 
@@ -167,15 +167,15 @@ export const visibilityIconHidden = cx(
   visibilityIcon,
   css({
     "& > path:nth-child(1)": {
-      visibility: "hidden"
+      visibility: "hidden",
     },
     ":hover": {
       "& > path:nth-child(2)": {
-        visibility: "hidden"
+        visibility: "hidden",
       },
       "& > path:nth-child(1)": {
-        visibility: "visible"
-      }
-    }
+        visibility: "visible",
+      },
+    },
   })
 );

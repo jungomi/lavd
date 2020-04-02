@@ -6,7 +6,7 @@ import {
   DataMap,
   nonEmptyScalars,
   Optional,
-  ScalarEntry
+  ScalarEntry,
 } from "./data";
 import { Empty } from "./Empty";
 import { LinePlot } from "./plot/LinePlot";
@@ -48,7 +48,7 @@ function createPlot(category: string, categoryData: Array<ScalarEntry>) {
     }
     const enumeratedSeries = [];
     const sortedSteps = Object.keys(steps)
-      .map(s => Number.parseInt(s))
+      .map((s) => Number.parseInt(s))
       .sort((a, b) => a - b);
     for (const i of sortedSteps) {
       const step = steps[i];
@@ -63,11 +63,11 @@ function createPlot(category: string, categoryData: Array<ScalarEntry>) {
     colours.push(d.colour);
     series.push({ name: d.name, data: enumeratedSeries });
   }
-  const min = Math.min(...series.map(s => s.data[0][0]));
-  const max = Math.max(...series.map(s => s.data[s.data.length - 1][0]));
-  const paddedSeries = series.map(s => ({
+  const min = Math.min(...series.map((s) => s.data[0][0]));
+  const max = Math.max(...series.map((s) => s.data[s.data.length - 1][0]));
+  const paddedSeries = series.map((s) => ({
     ...s,
-    data: padSeries(s.data, min, max)
+    data: padSeries(s.data, min, max),
   }));
   return (
     <LinePlot
@@ -88,7 +88,7 @@ type Props = {
 export const Scalars: React.FC<Props> = ({ data, colours, names }) => {
   const kind = "scalars";
   const categories = aggregateSortedCategories(data, kind, names);
-  const plots = categories.map(category =>
+  const plots = categories.map((category) =>
     createPlot(category, nonEmptyScalars(data, category, names, colours))
   );
   return plots.length === 0 ? (

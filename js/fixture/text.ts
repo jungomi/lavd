@@ -13,18 +13,18 @@ export const texts: DataMap = new Map([
             4: { actual: "Swizlunda", expected: "Switzerland" },
             5: { actual: "Swaziland", expected: "Switzerland" },
             6: { actual: "Swizland", expected: "Switzerland" },
-            7: { actual: "Switzerland", expected: "Switzerland" }
-          }
+            7: { actual: "Switzerland", expected: "Switzerland" },
+          },
         },
         Dates: {
           steps: {
-            1: { actual: "2222", expected: "22.02.2020" }
-          }
+            1: { actual: "2222", expected: "22.02.2020" },
+          },
         },
         "Some thing random": {
           steps: {
-            1: { actual: "asdf", expected: "asdf" }
-          }
+            1: { actual: "asdf", expected: "asdf" },
+          },
         },
         "long text": {
           steps: {
@@ -32,28 +32,28 @@ export const texts: DataMap = new Map([
               actual:
                 "An extremely long text that might wrap or break everything in the layout",
               expected:
-                "An extremely long text that might wrap or break everything in the layout, hopefully not"
-            }
-          }
-        }
-      }
-    }
+                "An extremely long text that might wrap or break everything in the layout, hopefully not",
+            },
+          },
+        },
+      },
+    },
   ],
   [
     "An extremely long title name that might wrap or break everything in the layout",
     {
       texts: {
         Countries: {
-          global: { actual: "japn", expected: "Japan" }
+          global: { actual: "japn", expected: "Japan" },
         },
         Dates: {
-          global: { actual: "22/02/2020", expected: "22.02.2020" }
+          global: { actual: "22/02/2020", expected: "22.02.2020" },
         },
         "Some thing random": {
-          global: { actual: "   klpj nm e ", expected: "klpj bef e" }
-        }
-      }
-    }
+          global: { actual: "   klpj nm e ", expected: "klpj bef e" },
+        },
+      },
+    },
   ],
   [
     "different start",
@@ -61,10 +61,10 @@ export const texts: DataMap = new Map([
       texts: {
         "Some thing random": {
           steps: {
-            3: { actual: "no expected" }
-          }
-        }
-      }
-    }
-  ]
+            3: { actual: "no expected" },
+          },
+        },
+      },
+    },
+  ],
 ]);

@@ -1,7 +1,7 @@
 import {
   assignColours,
   ColourMap,
-  getDistinctColour
+  getDistinctColour,
 } from "./colour/definition";
 import { Names } from "./Sidebar";
 
@@ -17,14 +17,14 @@ export function retrieveNames(nameList: Array<string>): Names {
   if (names) {
     // Names that were not in the local storage, are added to the active list.
     const newNames = nameList.filter(
-      n => !names.active.includes(n) && !names.inactive.includes(n)
+      (n) => !names.active.includes(n) && !names.inactive.includes(n)
     );
     // Only keep the names from the storage that are still present in the list.
-    const activeNames = names.active.filter(n => nameList.includes(n));
-    const inactiveNames = names.inactive.filter(n => nameList.includes(n));
+    const activeNames = names.active.filter((n) => nameList.includes(n));
+    const inactiveNames = names.inactive.filter((n) => nameList.includes(n));
     return {
       active: [...activeNames, ...newNames].sort(),
-      inactive: inactiveNames
+      inactive: inactiveNames,
     };
   } else {
     return { active: nameList, inactive: [] };

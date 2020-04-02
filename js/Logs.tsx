@@ -6,7 +6,7 @@ import {
   getDataKind,
   sortedCategorySteps,
   sortedSteps,
-  sortObject
+  sortObject,
 } from "./data";
 import { DataLoader } from "./DataLoader";
 import { Empty } from "./Empty";
@@ -37,7 +37,7 @@ const LogLine: React.FC<LogLineProps> = ({
   elapsed,
   tag,
   lineNr,
-  showColumn
+  showColumn,
 }) => {
   // Only columns are rendered that have at least one entry.
   return (
@@ -70,7 +70,7 @@ export const Log: React.FC<Log> = ({ lines }) => {
     timestamp: false,
     elapsed: false,
     tag: false,
-    lineNr: true
+    lineNr: true,
   };
   const logLines = [];
   for (const [i, line] of lines.entries()) {
@@ -108,7 +108,7 @@ export const Log: React.FC<Log> = ({ lines }) => {
         </tr>
       </thead>
       <tbody className={styles.tableContent}>
-        {logLines.map(line => (
+        {logLines.map((line) => (
           <LogLine
             {...line}
             showColumn={showColumn}
@@ -132,7 +132,7 @@ export const Logs: React.FC<Props> = ({ data, colours, names, hideName }) => {
   const dataOfKind = getDataKind(data, kind, names, colours);
   const cards = dataOfKind
     .map(
-      d =>
+      (d) =>
         d.data &&
         Object.keys(d.data).length > 0 && (
           <Card
@@ -142,7 +142,7 @@ export const Logs: React.FC<Props> = ({ data, colours, names, hideName }) => {
             steps={sortedSteps(d.data)}
             key={d.name}
           >
-            {selected =>
+            {(selected) =>
               sortObject(d.data).map(({ key, value }) => (
                 <CategoryCard
                   category={key}
@@ -150,7 +150,7 @@ export const Logs: React.FC<Props> = ({ data, colours, names, hideName }) => {
                   selectedStep={selected}
                   key={key}
                 >
-                  {selectedCategory => {
+                  {(selectedCategory) => {
                     const selectedValue =
                       selectedCategory !== undefined && value.steps
                         ? value.steps[selectedCategory]
@@ -158,7 +158,7 @@ export const Logs: React.FC<Props> = ({ data, colours, names, hideName }) => {
                     return (
                       selectedValue && (
                         <DataLoader data={selectedValue}>
-                          {loadedData => <Log lines={loadedData.lines} />}
+                          {(loadedData) => <Log lines={loadedData.lines} />}
                         </DataLoader>
                       )
                     );
@@ -169,6 +169,6 @@ export const Logs: React.FC<Props> = ({ data, colours, names, hideName }) => {
           </Card>
         )
     )
-    .filter(c => c);
+    .filter((c) => c);
   return cards.length === 0 ? <Empty text={kind} /> : <>{cards}</>;
 };

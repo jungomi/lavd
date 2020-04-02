@@ -92,9 +92,9 @@ function isOptionComplete(
     // When it's a fixed count, all values need to exist, otherwise it's enough
     // if it's just one.
     if (counts && counts.get(name)) {
-      return opt.every(o => o !== undefined);
+      return opt.every((o) => o !== undefined);
     } else {
-      return opt.some(o => o !== undefined);
+      return opt.some((o) => o !== undefined);
     }
   }
   return true;
@@ -113,7 +113,7 @@ function completePartialsWithDefaults(
     defaults !== undefined &&
     opt !== undefined &&
     Array.isArray(opt) &&
-    opt.some(o => o !== undefined)
+    opt.some((o) => o !== undefined)
   ) {
     const defaultValue = defaults.get(name);
     if (defaultValue !== undefined) {
@@ -147,7 +147,7 @@ const CommandPreview: React.FC<CommandPreviewProps> = ({
   positional,
   options,
   counts,
-  defaults
+  defaults,
 }) => {
   const [copied, setCopied] = useState(false);
   useEffect(() => {
@@ -214,12 +214,12 @@ const CommandPreview: React.FC<CommandPreviewProps> = ({
       {navigator.clipboard && (
         <div
           className={copied ? styles.copySuccess : styles.copy}
-          onClick={e => {
+          onClick={(e) => {
             e.preventDefault();
             navigator.clipboard
               .writeText(commandString)
               .then(() => setCopied(true))
-              .catch(e => console.error(e));
+              .catch((e) => console.error(e));
           }}
         >
           <div className={copied ? styles.copyIconSuccess : styles.copyIcon} />
@@ -259,7 +259,7 @@ const Input: React.FC<InputProps> = ({
   destroy,
   focus,
   finishFocus,
-  addInput
+  addInput,
 }) => {
   const inputRef = useRef<HTMLInputElement>(null);
   useEffect(() => {
@@ -295,14 +295,14 @@ const Input: React.FC<InputProps> = ({
       >
         <select
           value={value.toString()}
-          onChange={e => {
+          onChange={(e) => {
             const newValue = e.target.value === "" ? undefined : e.target.value;
             setValue(newValue, index);
           }}
           className={styles.select}
         >
           <option value="" />
-          {choices.map(c => (
+          {choices.map((c) => (
             <option value={c} key={c}>
               {c}
             </option>
@@ -318,7 +318,7 @@ const Input: React.FC<InputProps> = ({
             type="number"
             value={value as number | string}
             placeholder={placeholder}
-            onChange={e => {
+            onChange={(e) => {
               const newValue = stringToInt(e.target.value);
               setValue(newValue, index);
             }}
@@ -340,7 +340,7 @@ const Input: React.FC<InputProps> = ({
             value={value as number | string}
             placeholder={placeholder}
             step={0.01}
-            onChange={e => {
+            onChange={(e) => {
               const newValue = stringToFloat(e.target.value);
               setValue(newValue, index);
             }}
@@ -361,7 +361,7 @@ const Input: React.FC<InputProps> = ({
             type="text"
             value={value as string}
             placeholder={placeholder}
-            onChange={e => {
+            onChange={(e) => {
               // When the input is empty, it needs to be unset.
               const newValue =
                 e.target.value === "" ? undefined : e.target.value;
@@ -427,7 +427,7 @@ const InputList: React.FC<InputListProps> = ({
   type,
   choices,
   count,
-  setValue
+  setValue,
 }) => {
   const [focused, setFocused] = useState<number | undefined>(undefined);
   const inputs = [];
@@ -436,9 +436,9 @@ const InputList: React.FC<InputListProps> = ({
   const valueArr = Array.isArray(value) ? value : [value];
   const choiceStrs =
     choices !== undefined && choices.length > 0
-      ? choices.map(c => c.toString())
+      ? choices.map((c) => c.toString())
       : undefined;
-  const inputValues = valueArr.map(v => (v === undefined ? "" : v));
+  const inputValues = valueArr.map((v) => (v === undefined ? "" : v));
   const setNewValue = (
     newValue: ParserOptionType | undefined,
     index: number
@@ -459,7 +459,7 @@ const InputList: React.FC<InputListProps> = ({
       const newValue = [
         ...value.slice(0, newIndex),
         undefined,
-        ...value.slice(newIndex)
+        ...value.slice(newIndex),
       ];
       setValue(name, newValue);
       // The new input will be focused.
@@ -550,7 +550,7 @@ const ParserOptionLine: React.FC<ParserOptionLineProps> = ({
   choices,
   count,
   defaults,
-  setValue
+  setValue,
 }) => {
   const defaultValue = defaults && defaults.get(name);
   // Only columns are rendered that have at least one entry.
@@ -589,7 +589,7 @@ const ParserPositionalLine: React.FC<ParserPositionalLineProps> = ({
   type,
   count,
   defaults,
-  setValue
+  setValue,
 }) => {
   const defaultValue = defaults && defaults.get(name);
   // Only columns are rendered that have at least one entry.
@@ -774,14 +774,14 @@ function initialCommandOptions(command: Command): CommandOptions {
     options: {
       values: optionsValues,
       defaults: optionsDefaults.size > 0 ? optionsDefaults : undefined,
-      counts: exactOptionsCounts
+      counts: exactOptionsCounts,
     },
     positional: {
       values: positionalValues,
       defaults: positionalDefaults.size > 0 ? positionalDefaults : undefined,
       counts: exactPositionalCounts,
-      orderedNames: positionalOrder
-    }
+      orderedNames: positionalOrder,
+    },
   };
 }
 
@@ -796,7 +796,7 @@ const CommandCard: React.FC<CommandCardProps> = ({
   name,
   command,
   colour,
-  hideName
+  hideName,
 }) => {
   const commandOptions = initialCommandOptions(command);
   const [optionsValues, setOptionsValues] = useState(
@@ -819,7 +819,7 @@ const CommandCard: React.FC<CommandCardProps> = ({
         const newValues = [
           ...positionalValues.slice(0, index),
           value,
-          ...positionalValues.slice(index + 1)
+          ...positionalValues.slice(index + 1),
         ];
         setPositionalValues(newValues);
       }
@@ -878,7 +878,7 @@ const CommandCard: React.FC<CommandCardProps> = ({
               script={command.script}
               positional={{
                 values: positionalValues,
-                names: commandOptions.positional.orderedNames
+                names: commandOptions.positional.orderedNames,
               }}
               options={optionsValues}
               counts={commandOptions.options.counts}
@@ -907,7 +907,7 @@ const CommandCard: React.FC<CommandCardProps> = ({
                       key={pos.name}
                     />
                   ))}
-                  {parserOptions.map(opt => (
+                  {parserOptions.map((opt) => (
                     <ParserOptionLine
                       {...opt}
                       defaults={commandOptions.options.defaults}
@@ -937,11 +937,11 @@ export const Commands: React.FC<Props> = ({
   data,
   colours,
   names,
-  hideName
+  hideName,
 }) => {
   const kind = "command";
   const cards = getDataKind(data, kind, names, colours).map(
-    d =>
+    (d) =>
       d.data && (
         <CommandCard
           name={d.name}

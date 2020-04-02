@@ -5,7 +5,7 @@ import {
   Colour,
   ColourMap,
   colourString,
-  defaultColour
+  defaultColour,
 } from "./colour/definition";
 import { EmptyDash, SmallEmpty } from "./Empty";
 import * as styles from "./Sidebar.styles";
@@ -14,7 +14,7 @@ import { SmallLoading } from "./Spinner";
 export type Names = { active: Array<string>; inactive: Array<string> };
 
 export const VisibilityIcon: React.FC<{ visible?: boolean }> = ({
-  visible
+  visible,
 }) => (
   <svg
     className={
@@ -46,7 +46,7 @@ export const Sidebar: React.FC<Props> = ({
   setNames,
   colours,
   setColour,
-  loading
+  loading,
 }) => {
   const listRef = useRef<HTMLDivElement>(null);
   const [shownColourPicker, setShownColourPicker] = useState<
@@ -75,36 +75,36 @@ export const Sidebar: React.FC<Props> = ({
   const hideAll = () => {
     setNames({
       active: [],
-      inactive: [...names.active, ...names.inactive].sort()
+      inactive: [...names.active, ...names.inactive].sort(),
     });
   };
   const showAll = () => {
     setNames({
       active: [...names.active, ...names.inactive].sort(),
-      inactive: []
+      inactive: [],
     });
   };
   const hideName = (name: string) => {
     setNames({
-      active: names.active.filter(n => n !== name),
-      inactive: [...names.inactive, name].sort()
+      active: names.active.filter((n) => n !== name),
+      inactive: [...names.inactive, name].sort(),
     });
   };
   const showName = (name: string) => {
     setNames({
       active: [...names.active, name].sort(),
-      inactive: names.inactive.filter(n => n !== name)
+      inactive: names.inactive.filter((n) => n !== name),
     });
   };
 
-  const activeNameList = names.active.map(name => {
+  const activeNameList = names.active.map((name) => {
     const colour: Colour = colours.get(name) || defaultColour;
     return (
       <div key={name} className={styles.entry}>
         <span
           className={styles.colour}
           style={{ background: colourString(colour) }}
-          onClick={e => showColourPicker(name, e.clientY)}
+          onClick={(e) => showColourPicker(name, e.clientY)}
         />
         <span className={styles.entryName}>{name}</span>
         <span className={styles.visibility} onClick={() => hideName(name)}>
@@ -113,14 +113,14 @@ export const Sidebar: React.FC<Props> = ({
       </div>
     );
   });
-  const inactiveNameList = names.inactive.map(name => {
+  const inactiveNameList = names.inactive.map((name) => {
     const colour: Colour = colours.get(name) || defaultColour;
     return (
       <div key={name} className={styles.hiddenEntry}>
         <span
           className={styles.colour}
           style={{ background: colourString(colour) }}
-          onClick={e => showColourPicker(name, e.clientY)}
+          onClick={(e) => showColourPicker(name, e.clientY)}
         />
         <span className={styles.entryName}>{name}</span>
         <span className={styles.visibility} onClick={() => showName(name)}>
@@ -136,7 +136,7 @@ export const Sidebar: React.FC<Props> = ({
       {shownColourPicker && (
         <ColourPicker
           colour={colours.get(shownColourPicker.name) || defaultColour}
-          onSelect={colour => {
+          onSelect={(colour) => {
             setShownColourPicker(undefined);
             setColour(shownColourPicker.name, colour);
           }}

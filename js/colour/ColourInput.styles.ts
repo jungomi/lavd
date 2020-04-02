@@ -6,7 +6,7 @@ export const inputPanel = css({
   alignItems: "center",
   justifyContent: "space-evenly",
   marginLeft: "0.8rem",
-  marginBottom: "0.5rem"
+  marginBottom: "0.5rem",
 });
 
 export const inputField = css({
@@ -15,7 +15,7 @@ export const inputField = css({
   alignItems: "center",
   width: "100%",
   font: "inherit",
-  fontSize: "0.8rem"
+  fontSize: "0.8rem",
 });
 
 export const inputSwitch = css({
@@ -28,11 +28,11 @@ export const inputSwitch = css({
   border: "2px solid transparent",
   borderRadius: "50%",
   ":hover": {
-    background: "rgba(0, 0, 0, 0.06)"
+    background: "rgba(0, 0, 0, 0.06)",
   },
   ":active": {
-    background: "rgba(0, 0, 0, 0.12)"
-  }
+    background: "rgba(0, 0, 0, 0.12)",
+  },
 });
 
 export const input = css({
@@ -41,10 +41,10 @@ export const input = css({
   border: "thin solid rgba(0, 0, 0, 0.12)",
   borderRadius: "4px",
   textAlign: "center",
-  color: "rgba(0, 0, 0, 0.6)"
+  color: "rgba(0, 0, 0, 0.6)",
 });
 
 export const label = css({
   color: "rgba(0, 0, 0, 0.6)",
-  margin: "0.5rem 0"
+  margin: "0.5rem 0",
 });

@@ -6,13 +6,13 @@ import { OverlayContext } from "./Overlay";
 import { VisibilityIcon } from "./Sidebar";
 
 function padStepsStart(steps: Array<number>): Array<string> {
-  let result: Array<string> = steps.map(s => s.toString());
+  let result: Array<string> = steps.map((s) => s.toString());
   if (steps.length > 4) {
     result = [
       result[0],
       "…",
       result[steps.length - 2],
-      result[steps.length - 1]
+      result[steps.length - 1],
     ];
   } else if (steps.length < 4) {
     result = [...new Array(4 - steps.length).fill(""), ...result];
@@ -21,7 +21,7 @@ function padStepsStart(steps: Array<number>): Array<string> {
 }
 
 function padStepsEnd(steps: Array<number>): Array<string> {
-  let result: Array<string> = steps.map(s => s.toString());
+  let result: Array<string> = steps.map((s) => s.toString());
   if (steps.length > 4) {
     result = [result[0], result[1], "…", result[steps.length - 1]];
   } else if (steps.length < 4) {
@@ -32,7 +32,7 @@ function padStepsEnd(steps: Array<number>): Array<string> {
 
 const Arrow: React.FC<{ disabled?: boolean; flip?: boolean }> = ({
   disabled,
-  flip
+  flip,
 }) => (
   <svg
     viewBox="0 0 32 32"
@@ -62,7 +62,7 @@ const StepSelection: React.FC<StepSelectionProps> = ({
   steps,
   selected,
   setSelected,
-  className = styles.steps
+  className = styles.steps,
 }) => {
   const [inputValue, setInputValue] = useState("");
   const currentIndex = steps.indexOf(selected);
@@ -104,7 +104,7 @@ const StepSelection: React.FC<StepSelectionProps> = ({
         type="number"
         placeholder={selected.toString()}
         value={inputValue}
-        onChange={e => {
+        onChange={(e) => {
           const { value } = e.target;
           setInputValue(value);
           const newValue = stringToInt(value);
@@ -153,7 +153,7 @@ export const Card: React.FC<CardProps> = ({
   colour,
   steps,
   className = styles.card,
-  children
+  children,
 }) => {
   const initialStep =
     steps && steps.length ? steps[steps.length - 1] : undefined;
@@ -207,7 +207,7 @@ export const CategoryCard: React.FC<CategoryCardProps> = ({
   steps,
   selectedStep,
   contentClass = styles.categoryContent,
-  children
+  children,
 }) => {
   const [collapsed, setCollapsed] = useState(true);
   const overlay = useContext(OverlayContext);
@@ -235,7 +235,7 @@ export const CategoryCard: React.FC<CategoryCardProps> = ({
   let showOverlay = undefined;
   if (children) {
     showOverlay = () => {
-      overlay.show(startDrag =>
+      overlay.show((startDrag) =>
         children(selected, { isOverlay: true, startDrag })
       );
     };

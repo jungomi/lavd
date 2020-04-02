@@ -7,7 +7,7 @@ export type OverlayFn = (fn: (e: React.MouseEvent) => void) => Element;
 
 export const OverlayContext = createContext({
   show: (_: OverlayFn) => {},
-  hide: () => {}
+  hide: () => {},
 });
 
 type Props = {

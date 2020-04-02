@@ -17,7 +17,7 @@ import {
   retrieveColours,
   retrieveNames,
   storeColours,
-  storeNames
+  storeNames,
 } from "./storage";
 import { Texts } from "./Texts";
 
@@ -50,7 +50,7 @@ const routes: Routes = {
   ),
   "/commands": () => ({ data, colours, names, hideName }) => (
     <Commands data={data} colours={colours} names={names} hideName={hideName} />
-  )
+  ),
 };
 
 export const App = () => {
@@ -72,7 +72,7 @@ export const App = () => {
   const [overlay, setOverlay] = useState<{ fn?: OverlayFn }>({});
   const overlayContext = {
     show: (fn: OverlayFn) => setOverlay({ fn }),
-    hide: () => setOverlay({})
+    hide: () => setOverlay({}),
   };
   const setNewData = (d: DataMap) => {
     setData(d);
@@ -88,7 +88,7 @@ export const App = () => {
     }
   }, [hasFetched, names, colours]);
   useEffect(() => {
-    fetchData().then(d => {
+    fetchData().then((d) => {
       setNewData(d);
       setHasFetched(true);
     });
@@ -97,7 +97,7 @@ export const App = () => {
     if (hasFetched) {
       const eventSource = new EventSource("/events");
       let lastEvent = 0;
-      eventSource.addEventListener("data", e => {
+      eventSource.addEventListener("data", (e) => {
         const { data, lastEventId } = e as MessageEvent;
         const eventId = Number.parseInt(lastEventId);
         if (eventId > lastEvent) {
@@ -120,8 +120,8 @@ export const App = () => {
   });
   const hideName = (name: string) => {
     setNames({
-      active: names.active.filter(n => n !== name),
-      inactive: [...names.inactive, name].sort()
+      active: names.active.filter((n) => n !== name),
+      inactive: [...names.inactive, name].sort(),
     });
   };
 

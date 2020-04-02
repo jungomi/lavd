@@ -7,7 +7,7 @@ import {
   getDataKind,
   sortedCategorySteps,
   sortedSteps,
-  sortObject
+  sortObject,
 } from "./data";
 import { DataLoader } from "./DataLoader";
 import { Empty } from "./Empty";
@@ -27,13 +27,13 @@ export const Markdown: React.FC<Props> = ({
   data,
   colours,
   names,
-  hideName
+  hideName,
 }) => {
   const kind = "markdown";
   const dataOfKind = getDataKind(data, kind, names, colours);
   const cards = dataOfKind
     .map(
-      d =>
+      (d) =>
         d.data &&
         Object.keys(d.data).length > 0 && (
           <Card
@@ -43,7 +43,7 @@ export const Markdown: React.FC<Props> = ({
             steps={sortedSteps(d.data)}
             key={d.name}
           >
-            {selected =>
+            {(selected) =>
               sortObject(d.data).map(({ key, value }) => (
                 <CategoryCard
                   category={key}
@@ -51,7 +51,7 @@ export const Markdown: React.FC<Props> = ({
                   selectedStep={selected}
                   key={key}
                 >
-                  {selectedCategory => {
+                  {(selectedCategory) => {
                     const selectedValue =
                       selectedCategory !== undefined && value.steps
                         ? value.steps[selectedCategory]
@@ -59,7 +59,7 @@ export const Markdown: React.FC<Props> = ({
                     return (
                       selectedValue && (
                         <DataLoader data={selectedValue}>
-                          {loadedData => (
+                          {(loadedData) => (
                             <div className="markdown-body">
                               <ReactMarkdown
                                 source={loadedData.raw}
@@ -77,6 +77,6 @@ export const Markdown: React.FC<Props> = ({
           </Card>
         )
     )
-    .filter(c => c);
+    .filter((c) => c);
   return cards.length === 0 ? <Empty text={kind} /> : <>{cards}</>;
 };

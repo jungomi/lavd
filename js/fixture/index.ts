@@ -26,5 +26,5 @@ export const data = mergeData([
   texts,
   logs,
   markdown,
-  commands
+  commands,
 ]);

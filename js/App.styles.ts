@@ -6,7 +6,7 @@ export const wrapper = css({
   display: "flex",
   flexShrink: 0,
   height: "100%",
-  position: "relative"
+  position: "relative",
 });
 
 export const main = css({
@@ -16,7 +16,7 @@ export const main = css({
   padding: "1.5rem",
   overflow: "scroll",
   width: "100%",
-  background: bgColour
+  background: bgColour,
 });
 
 export const content = css({
@@ -25,5 +25,5 @@ export const content = css({
   flexShrink: 0,
   position: "relative",
   marginBottom: "1.5rem",
-  marginRight: "1.5rem"
+  marginRight: "1.5rem",
 });

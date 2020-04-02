@@ -6,7 +6,7 @@ const baseClass = css({
   justifyContent: "center",
   color: "#888",
   fontStyle: "italic",
-  width: "100%"
+  width: "100%",
 });
 
 const emptyClass = cx(
@@ -14,7 +14,7 @@ const emptyClass = cx(
   css({
     height: "100%",
     fontSize: "2rem",
-    alignItems: "center"
+    alignItems: "center",
   })
 );
 

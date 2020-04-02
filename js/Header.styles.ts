@@ -15,7 +15,7 @@ export const header = css({
   padding: "0 1rem",
   // Needs to be on top for the shadow to show
   zIndex: 100,
-  boxShadow
+  boxShadow,
 });
 
 export const headerOpen = cx(
@@ -23,8 +23,8 @@ export const headerOpen = cx(
   css({
     "@media only screen and (max-width: 896px)": {
       height: "100%",
-      flexShrink: 0
-    }
+      flexShrink: 0,
+    },
   })
 );
 
@@ -36,15 +36,15 @@ export const nav = css({
   width: "100%",
   height: "100%",
   overflow: "hidden",
-  transition: "all 0.2s ease-out"
+  transition: "all 0.2s ease-out",
 });
 
 export const navOpen = cx(
   nav,
   css({
     "@media only screen and (max-width: 896px)": {
-      height: "unset"
-    }
+      height: "unset",
+    },
   })
 );
 
@@ -77,8 +77,8 @@ export const item = css({
     height: 0,
     margin: 0,
     padding: 0,
-    visibility: "hidden"
-  }
+    visibility: "hidden",
+  },
 });
 
 export const itemOpen = cx(
@@ -89,15 +89,15 @@ export const itemOpen = cx(
       height: "3rem",
       margin: "inherit",
       padding: "inherit",
-      visibility: "visible"
-    }
+      visibility: "visible",
+    },
   })
 );
 
 export const activeOpen = cx(
   itemOpen,
   css({
-    color: "#fff"
+    color: "#fff",
   })
 );
 
@@ -110,8 +110,8 @@ export const active = cx(
       height: "3rem",
       margin: "inherit",
       padding: "unset",
-      visibility: "unset"
-    }
+      visibility: "unset",
+    },
   })
 );
 
@@ -127,8 +127,8 @@ export const burgerMenu = css({
   cursor: "pointer",
   visibility: "hidden",
   "@media only screen and (max-width: 896px)": {
-    visibility: "visible"
-  }
+    visibility: "visible",
+  },
 });
 
 export const burgerIcon = css({
@@ -147,7 +147,7 @@ export const burgerIcon = css({
     height: "100%",
     flexShrink: 0,
     top: "-5px",
-    transition: "all 0.2s ease-out"
+    transition: "all 0.2s ease-out",
   },
   "::after": {
     content: "''",
@@ -157,8 +157,8 @@ export const burgerIcon = css({
     height: "100%",
     flexShrink: 0,
     top: "5px",
-    transition: "all 0.2s ease-out"
-  }
+    transition: "all 0.2s ease-out",
+  },
 });
 
 export const burgerIconOpen = cx(
@@ -167,11 +167,11 @@ export const burgerIconOpen = cx(
     background: "transparent",
     "::before": {
       top: 0,
-      transform: "rotate(45deg)"
+      transform: "rotate(45deg)",
     },
     "::after": {
       top: 0,
-      transform: "rotate(-45deg)"
-    }
+      transform: "rotate(-45deg)",
+    },
   })
 );

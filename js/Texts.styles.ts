@@ -8,15 +8,15 @@ export const textCard = cx(
   css({
     maxHeight: "80%",
     minWidth: "20rem",
-    overflow: "hidden"
+    overflow: "hidden",
   })
 );
 
 export const text = css({
   display: "flex",
   "@media only screen and (min-width: 896px)": {
-    fontSize: "1.3rem"
-  }
+    fontSize: "1.3rem",
+  },
 });
 
 export const column = css({
@@ -25,7 +25,7 @@ export const column = css({
   marginLeft: "0.3em",
   marginRight: "0.3em",
   width: "33%",
-  overflow: "hidden"
+  overflow: "hidden",
 });
 
 export const columnTitle = css({
@@ -34,7 +34,7 @@ export const columnTitle = css({
   fontSize: "1rem",
   fontWeight: 500,
   color: labelColour,
-  marginBottom: "0.8em"
+  marginBottom: "0.8em",
 });
 
 export const columnText = css({
@@ -44,7 +44,7 @@ export const columnText = css({
   justifyContent: "center",
   padding: "0.1em",
   // Needed to show trailing white space, otherwise they are not rendered.
-  whiteSpace: "pre-wrap"
+  whiteSpace: "pre-wrap",
 });
 
 export const columnDiff = css({
@@ -55,7 +55,7 @@ export const columnDiff = css({
   whiteSpace: "pre",
   overflowX: "scroll",
   overflowY: "hidden",
-  alignItems: "center"
+  alignItems: "center",
 });
 
 export const columnTextActual = cx(
@@ -64,7 +64,7 @@ export const columnTextActual = cx(
     overflow: "unset",
     justifyContent: "unset",
     marginBottom: "0.2em",
-    whiteSpace: "unset"
+    whiteSpace: "unset",
   })
 );
 
@@ -73,29 +73,29 @@ export const columnTextExpected = cx(
   css({
     overflow: "unset",
     justifyContent: "unset",
-    whiteSpace: "unset"
+    whiteSpace: "unset",
   })
 );
 
 const diffChanges = css({
   display: "inline-block",
-  borderRadius: "2px"
+  borderRadius: "2px",
 });
 
 export const diffAdded = cx(
   diffChanges,
   css({
-    background: "#97f295"
+    background: "#97f295",
   })
 );
 
 export const diffRemoved = cx(
   diffChanges,
   css({
-    background: "#ffb6ba"
+    background: "#ffb6ba",
   })
 );
 
 export const diffContainer = css({
-  margin: "auto"
+  margin: "auto",
 });

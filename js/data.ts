@@ -89,7 +89,7 @@ export function getDataKind<K extends DataKind>(
       // though TypeScript should know this at this point, since just before
       // that dat[kind] was done.
       data: d as Data[K],
-      colour
+      colour,
     });
   }
   return dataOfKind;

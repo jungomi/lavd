@@ -9,7 +9,7 @@ export const overlay = css({
   background: "rgba(0, 0, 0, 0.97)",
   overflow: "hidden",
   opacity: 1,
-  transition: "opacity 0.3s ease"
+  transition: "opacity 0.3s ease",
 });
 
 export const overlayHidden = cx(
@@ -18,7 +18,7 @@ export const overlayHidden = cx(
     height: 0,
     width: 0,
     opacity: 0,
-    transition: "opacity 0.3s ease, width 0s 0.3s, height 0s 0.3s"
+    transition: "opacity 0.3s ease, width 0s 0.3s, height 0s 0.3s",
   })
 );
 
@@ -27,7 +27,7 @@ export const close = css({
   position: "absolute",
   width: "100%",
   justifyContent: "flex-end",
-  zIndex: 2
+  zIndex: 2,
 });
 
 export const closeIcon = cx(
@@ -35,12 +35,12 @@ export const closeIcon = cx(
   css({
     width: "3.5rem",
     height: "3.5rem",
-    transform: "rotate(45deg)"
+    transform: "rotate(45deg)",
   })
 );
 
 export const content = css({
   display: "flex",
   height: "100%",
-  overflow: "scroll"
+  overflow: "scroll",
 });

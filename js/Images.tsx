@@ -6,14 +6,14 @@ import {
   Colour,
   ColourMap,
   colourString,
-  defaultColour
+  defaultColour,
 } from "./colour/definition";
 import {
   DataMap,
   getDataKind,
   sortedCategorySteps,
   sortedSteps,
-  sortObject
+  sortObject,
 } from "./data";
 import { DataLoader } from "./DataLoader";
 import { Empty } from "./Empty";
@@ -45,7 +45,7 @@ function bboxKey(bbox: Bbox): string {
     bbox.xEnd,
     bbox.yEnd,
     bbox.className,
-    bbox.probability
+    bbox.probability,
   ];
   return values.join("-");
 }
@@ -73,7 +73,7 @@ type ClassListProps = {
 const ClassList: React.FC<ClassListProps> = ({
   classes,
   classColours,
-  setClassColour
+  setClassColour,
 }) => {
   const [shownColourPicker, setShownColourPicker] = useState<
     string | undefined
@@ -81,7 +81,7 @@ const ClassList: React.FC<ClassListProps> = ({
   return (
     <div className={styles.classList}>
       <span className={styles.classListTitle}>Classes</span>
-      {classes.map(className => {
+      {classes.map((className) => {
         const colour: Colour = classColours.get(className) || defaultColour;
         return (
           <div key={className} className={styles.classEntry}>
@@ -94,7 +94,7 @@ const ClassList: React.FC<ClassListProps> = ({
             {shownColourPicker === className && (
               <ColourPicker
                 colour={colour}
-                onSelect={colour => {
+                onSelect={(colour) => {
                   setShownColourPicker(undefined);
                   setClassColour(className, colour);
                 }}
@@ -127,7 +127,7 @@ const BoundingBox: React.FC<BoundingBoxProps> = ({
   className,
   classColours,
   maxWidth,
-  maxHeight
+  maxHeight,
 }) => {
   const colour: Colour =
     (className && classColours.get(className)) || defaultColour;
@@ -163,7 +163,7 @@ function boxesInside(
   scaleFactor: number = 1.0
 ): Array<Bbox> {
   return boxes.filter(
-    box =>
+    (box) =>
       scaleFactor * (box.xStart - border) <= x &&
       scaleFactor * (box.xEnd + border) >= x &&
       scaleFactor * (box.yStart - border) <= y &&
@@ -189,7 +189,7 @@ const ImageOverlay: React.FC<ImageOverlayProps> = ({
   name,
   fullscreen,
   showOverlay,
-  dragOverlay
+  dragOverlay,
 }) => {
   const overlay = useContext(OverlayContext);
   const imgRef = useRef<HTMLDivElement>(null);
@@ -291,7 +291,7 @@ const ImageOverlay: React.FC<ImageOverlayProps> = ({
           className={
             fullscreen ? styles.imageOverlayFullscreen : styles.imageOverlay
           }
-          onMouseDown={e => {
+          onMouseDown={(e) => {
             if (fullscreen && dragOverlay) {
               setPreventClose(true);
               dragOverlay(e);
@@ -314,7 +314,7 @@ const ImageOverlay: React.FC<ImageOverlayProps> = ({
                 showThumbnail && image.thumbnail
                   ? {
                       width: image.thumbnail.width,
-                      height: image.thumbnail.height
+                      height: image.thumbnail.height,
                     }
                   : undefined
               }
@@ -333,7 +333,7 @@ const ImageOverlay: React.FC<ImageOverlayProps> = ({
                 src={image.source}
                 alt={name}
                 draggable="false"
-                onLoad={e => {
+                onLoad={(e) => {
                   // This is always a HTMLImageElement, obviously.
                   const imgElem = e.target as HTMLImageElement;
                   setSize(imgElem.width, imgElem.height);
@@ -346,13 +346,13 @@ const ImageOverlay: React.FC<ImageOverlayProps> = ({
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox={`0 0 ${imageSize.width || 0} ${imageSize.height || 0}`}
                 className={styles.svg}
-                onMouseMove={e => updateTooltip(e.clientX, e.clientY)}
+                onMouseMove={(e) => updateTooltip(e.clientX, e.clientY)}
                 onMouseLeave={() => {
                   setTooltipBoxes([]);
                 }}
                 ref={svgRef}
               >
-                {boxes.map(bbox => (
+                {boxes.map((bbox) => (
                   <BoundingBox
                     {...bbox}
                     classColours={classColours}
@@ -383,7 +383,7 @@ const ImageOverlay: React.FC<ImageOverlayProps> = ({
                 : styles.tooltipBoxList
             }
           >
-            {tooltipBoxes.map(bbox => {
+            {tooltipBoxes.map((bbox) => {
               const classColour = classColours.get(bbox.className);
               return (
                 <div
@@ -398,7 +398,7 @@ const ImageOverlay: React.FC<ImageOverlayProps> = ({
                       <span
                         className={styles.tooltipValue}
                         style={{
-                          color: colourString(classColour || defaultColour)
+                          color: colourString(classColour || defaultColour),
                         }}
                       >
                         {bbox.className}
@@ -461,7 +461,7 @@ const ImageOverlay: React.FC<ImageOverlayProps> = ({
                 }
                 className={styles.probabilityInput}
                 value={minProbability === undefined ? "" : minProbability}
-                onChange={e => {
+                onChange={(e) => {
                   const prob = stringToFloat(e.target.value);
                   setMinProbability(prob);
                 }}
@@ -486,7 +486,7 @@ export const Images: React.FC<Props> = ({ data, colours, names, hideName }) => {
   const dataOfKind = getDataKind(data, kind, names, colours);
   const cards = dataOfKind
     .map(
-      d =>
+      (d) =>
         d.data &&
         Object.keys(d.data).length > 0 && (
           <Card
@@ -496,7 +496,7 @@ export const Images: React.FC<Props> = ({ data, colours, names, hideName }) => {
             steps={sortedSteps(d.data)}
             key={d.name}
           >
-            {selected =>
+            {(selected) =>
               sortObject(d.data).map(({ key, value }) => (
                 <CategoryCard
                   category={key}
@@ -516,7 +516,7 @@ export const Images: React.FC<Props> = ({ data, colours, names, hideName }) => {
                     return (
                       selectedValue && (
                         <DataLoader data={selectedValue}>
-                          {loadedData => (
+                          {(loadedData) => (
                             <ImageOverlay
                               image={loadedData}
                               name={key}
@@ -535,6 +535,6 @@ export const Images: React.FC<Props> = ({ data, colours, names, hideName }) => {
           </Card>
         )
     )
-    .filter(c => c);
+    .filter((c) => c);
   return cards.length === 0 ? <Empty text={kind} /> : <>{cards}</>;
 };

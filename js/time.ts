@@ -68,30 +68,15 @@ export function formatDate(
     // + 1 since it's zero based to index month names.
     (date.getMonth() + 1).toString().padStart(2, "0"),
     // This is the day number, because .getDay() returns the day of the week.
-    date
-      .getDate()
-      .toString()
-      .padStart(2, "0")
+    date.getDate().toString().padStart(2, "0"),
   ].join(dateSeparator);
   let timeStr = [
-    date
-      .getHours()
-      .toString()
-      .padStart(2, "0"),
-    date
-      .getMinutes()
-      .toString()
-      .padStart(2, "0"),
-    date
-      .getSeconds()
-      .toString()
-      .padStart(2, "0")
+    date.getHours().toString().padStart(2, "0"),
+    date.getMinutes().toString().padStart(2, "0"),
+    date.getSeconds().toString().padStart(2, "0"),
   ].join(timeSeparator);
   if (showMs) {
-    timeStr += `.${date
-      .getMilliseconds()
-      .toString()
-      .padStart(3, "0")}`;
+    timeStr += `.${date.getMilliseconds().toString().padStart(3, "0")}`;
   }
   return `${dateStr} ${timeStr}`;
 }

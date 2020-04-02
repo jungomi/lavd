@@ -16,10 +16,10 @@ const scrollbarConfig = {
     fg: "rgba(0, 0, 0, 0.2)",
     bg: "transparent",
     hover: "rgba(0, 0, 0, 0.3)",
-    active: "rgba(0, 0, 0, 0.5)"
+    active: "rgba(0, 0, 0, 0.5)",
   },
   size: "0.5rem",
-  thumb: { minSize: "1.4rem" }
+  thumb: { minSize: "1.4rem" },
 };
 
 export const scrollbar = `

@@ -91,7 +91,7 @@ function rgbToHsl(colour: Rgb): Hsl {
     hue: Math.round(hue * 60),
     saturation: Math.round(saturation * 100),
     lightness: Math.round(lightness * 100),
-    alpha: colour.alpha && roundFloat(colour.alpha)
+    alpha: colour.alpha && roundFloat(colour.alpha),
   };
 }
 
@@ -138,7 +138,7 @@ function hslToRgb(colour: Hsl): Rgb {
     red: Math.round(red * 255),
     green: Math.round(green * 255),
     blue: Math.round(blue * 255),
-    alpha: colour.alpha && roundFloat(colour.alpha)
+    alpha: colour.alpha && roundFloat(colour.alpha),
   };
 }
 
@@ -156,7 +156,7 @@ function hsvToHsl(colour: Hsv): Hsl {
     hue: Math.round(colour.hue),
     saturation: Math.round(saturation),
     lightness: Math.round(lightness),
-    alpha: colour.alpha && roundFloat(colour.alpha)
+    alpha: colour.alpha && roundFloat(colour.alpha),
   };
 }
 
@@ -171,7 +171,7 @@ function hslToHsv(colour: Hsl): Hsv {
     hue: Math.round(colour.hue),
     saturation: Math.round(saturation),
     value: Math.round(value),
-    alpha: colour.alpha && roundFloat(colour.alpha)
+    alpha: colour.alpha && roundFloat(colour.alpha),
   };
 }
 
@@ -231,7 +231,7 @@ export function parseHex(str: string): RgbColour | undefined {
   // Short version of hex (with optional alpha) where it the value is just
   // repeated once.
   if (hexString.length === 3 || hexString.length === 4) {
-    hexString = [...hexString].map(s => s.repeat(2)).join("");
+    hexString = [...hexString].map((s) => s.repeat(2)).join("");
   }
   // Not a valid hex colour
   if (hexString.length !== 6 && hexString.length !== 8) {
@@ -295,12 +295,12 @@ export const distinctColours: Array<Colour> = [
   { kind: "rgb", value: { red: 147, green: 170, blue: 0 } }, // vivid_yellowish_green
   { kind: "rgb", value: { red: 89, green: 51, blue: 21 } }, // deep_yellowish_brown
   { kind: "rgb", value: { red: 241, green: 58, blue: 19 } }, // vivid_reddish_orange
-  { kind: "rgb", value: { red: 35, green: 44, blue: 22 } } // dark_olive_green
+  { kind: "rgb", value: { red: 35, green: 44, blue: 22 } }, // dark_olive_green
 ];
 
 export const defaultColour: Colour = {
   kind: "rgb",
-  value: { red: 241, green: 58, blue: 19 }
+  value: { red: 241, green: 58, blue: 19 },
 };
 
 export type ColourMap = Map<string, Colour>;

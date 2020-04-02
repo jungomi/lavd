@@ -9,13 +9,13 @@ export const boxShadow = `
 export const whiteGradient = css({
   width: "100%",
   height: "100%",
-  background: "linear-gradient(to right, white, rgba(0, 0, 0, 0))"
+  background: "linear-gradient(to right, white, rgba(0, 0, 0, 0))",
 });
 
 export const blackGradient = css({
   width: "100%",
   height: "100%",
-  background: "linear-gradient(to bottom, rgba(0, 0, 0, 0), black)"
+  background: "linear-gradient(to bottom, rgba(0, 0, 0, 0), black)",
 });
 
 export const fieldWidth = 300;
@@ -33,13 +33,13 @@ export const popup = css({
   top: "2rem",
   background: "#ffffff",
   zIndex: 100,
-  boxShadow
+  boxShadow,
 });
 
 export const colourField = css({
   width: `${fieldWidth}px`,
   height: `${fieldHeight}px`,
-  overflow: "hidden"
+  overflow: "hidden",
 });
 
 export const pointer = css({
@@ -54,7 +54,7 @@ export const pointer = css({
   border: "2.5px solid white",
   boxShadow,
   borderRadius: "50%",
-  cursor: "pointer"
+  cursor: "pointer",
 });
 
 export const panel = css({
@@ -62,7 +62,7 @@ export const panel = css({
   alignItems: "center",
   justifyContent: "space-evenly",
   width: "100%",
-  padding: "0.8rem"
+  padding: "0.8rem",
 });
 
 export const preview = css({
@@ -70,13 +70,13 @@ export const preview = css({
   height: "2.0rem",
   flexShrink: 0,
   borderRadius: "50%",
-  border: "1px solid #dadada"
+  border: "1px solid #dadada",
 });
 
 export const sliders = css({
   display: "flex",
   flexDirection: "column",
-  alignItems: "center"
+  alignItems: "center",
 });
 
 export const hueSlider = css({
@@ -95,7 +95,7 @@ export const hueSlider = css({
       #F00 100%
     )
   `,
-  marginBottom: "0.6rem"
+  marginBottom: "0.6rem",
 });
 
 export const alphaSlider = css({
@@ -103,7 +103,7 @@ export const alphaSlider = css({
   height: `${sliderHeight}px`,
   borderRadius: "1rem",
   background:
-    "url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAGElEQVQYlWNgYGCQwoKxgqGgcJA5h3yFAAs8BRWVSwooAAAAAElFTkSuQmCC) repeat"
+    "url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAGElEQVQYlWNgYGCQwoKxgqGgcJA5h3yFAAs8BRWVSwooAAAAAElFTkSuQmCC) repeat",
 });
 
 export const sliderPointer = css({
@@ -117,5 +117,5 @@ export const sliderPointer = css({
   background: "#ffffff",
   boxShadow,
   borderRadius: "50%",
-  cursor: "pointer"
+  cursor: "pointer",
 });

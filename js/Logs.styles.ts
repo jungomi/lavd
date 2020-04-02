@@ -9,14 +9,14 @@ export const logCard = cx(
   css({
     maxHeight: "80%",
     minWidth: "20rem",
-    overflow: "hidden"
+    overflow: "hidden",
   })
 );
 
 export const tableContent = css({
   fontFamily: "monospace",
   // Render white space as is and don't break
-  whiteSpace: "pre"
+  whiteSpace: "pre",
 });
 
 export const th = css({
@@ -27,11 +27,11 @@ export const th = css({
   top: 0,
   // Needs to be over the line numbers, which are also sticky.
   zIndex: 2,
-  background: bgColour
+  background: bgColour,
 });
 
 export const td = css({
-  padding: "0.1rem 0.8rem"
+  padding: "0.1rem 0.8rem",
 });
 
 export const tr = css({
@@ -41,10 +41,10 @@ export const tr = css({
       "::before": {
         // When the row is hovered, the line number (::before pseudo element)
         // changes colour.
-        color: "rgba(27, 31, 35, 0.6)"
-      }
-    }
-  }
+        color: "rgba(27, 31, 35, 0.6)",
+      },
+    },
+  },
 });
 
 export const lineNr = css({
@@ -56,14 +56,14 @@ export const lineNr = css({
   background: bgColour,
   "::before": {
     // Show the line nr as ::before pseudo element
-    content: "attr(data-line-nr)"
-  }
+    content: "attr(data-line-nr)",
+  },
 });
 
 export const time = cx(
   td,
   css({
     color: "#5f5f5f",
-    textAlign: "right"
+    textAlign: "right",
   })
 );

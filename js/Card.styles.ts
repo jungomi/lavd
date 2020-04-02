@@ -14,18 +14,18 @@ export const card = css({
   borderRadius: "4px",
   width: "100%",
   minWidth: "20rem",
-  boxShadow
+  boxShadow,
 });
 
 export const content = css({
   display: "flex",
   overflow: "hidden",
-  flexDirection: "column"
+  flexDirection: "column",
 });
 
 export const categoryContent = css({
   padding: "0 0.8rem",
-  overflow: "scroll"
+  overflow: "scroll",
 });
 
 export const categoryCard = css({
@@ -34,7 +34,7 @@ export const categoryCard = css({
   flexDirection: "column",
   marginBottom: "0.2rem",
   overflow: "hidden",
-  maxHeight: "66vh"
+  maxHeight: "66vh",
 });
 
 export const title = css({
@@ -43,7 +43,7 @@ export const title = css({
   flexDirection: "column",
   alignItems: "center",
   fontSize: "1.1rem",
-  marginBottom: "1rem"
+  marginBottom: "1rem",
 });
 
 export const categoryTitle = css({
@@ -66,14 +66,14 @@ export const categoryTitle = css({
     pointerEvents: "none",
     borderWidth: "0 2px 2px 0",
     transform: "rotate(45deg)",
-    transition: "transform 0.2s ease-in-out"
+    transition: "transform 0.2s ease-in-out",
   },
   ":hover": {
     background: "rgba(0, 0, 0, 0.02)",
     "::before": {
-      color: iconHoverColour
-    }
-  }
+      color: iconHoverColour,
+    },
+  },
 });
 
 export const categoryTitleCollapsed = cx(
@@ -81,26 +81,26 @@ export const categoryTitleCollapsed = cx(
   css({
     "::before": {
       // Rotate to make it point down
-      transform: "rotate(-45deg)"
-    }
+      transform: "rotate(-45deg)",
+    },
   })
 );
 
 export const category = css({
   fontWeight: 500,
   color: labelColour,
-  marginLeft: "1.4rem"
+  marginLeft: "1.4rem",
 });
 
 export const name = css({
-  fontStyle: "italic"
+  fontStyle: "italic",
 });
 
 export const arrowLeftDisabled = css({
   fill: "#cccccc",
   height: "1em",
   width: "1em",
-  cursor: "default"
+  cursor: "default",
 });
 
 export const arrowLeft = css({
@@ -108,8 +108,8 @@ export const arrowLeft = css({
   height: "1em",
   width: "1em",
   ":hover": {
-    fill: "#ff9800b0"
-  }
+    fill: "#ff9800b0",
+  },
 });
 
 export const arrowRight = cx(arrowLeft, css({ transform: "rotate(180deg)" }));
@@ -122,7 +122,7 @@ export const steps = css({
   display: "flex",
   fontSize: "0.9rem",
   alignItems: "center",
-  marginTop: "0.8rem"
+  marginTop: "0.8rem",
 });
 
 export const categorySteps = css({
@@ -130,7 +130,7 @@ export const categorySteps = css({
   fontSize: "0.9rem",
   alignItems: "center",
   marginBottom: "1.2rem",
-  justifyContent: "center"
+  justifyContent: "center",
 });
 
 export const step = css({
@@ -142,8 +142,8 @@ export const step = css({
   cursor: "pointer",
   userSelect: "none",
   ":hover": {
-    color: "#ff9800b0"
-  }
+    color: "#ff9800b0",
+  },
 });
 
 export const stepEllipsis = cx(
@@ -152,8 +152,8 @@ export const stepEllipsis = cx(
     cursor: "default",
     userSelect: "none",
     ":hover": {
-      color: "unset"
-    }
+      color: "unset",
+    },
   })
 );
 
@@ -171,15 +171,15 @@ export const input = css({
   appearance: "textfield",
   // This is for the other browsers
   "::-webkit-outer-spin-button, ::-webkit-inner-spin-button": {
-    appearance: "none"
+    appearance: "none",
   },
   "::placeholder": {
     color: "rgba(0, 0, 0, 0.4)",
     textAlign: "center",
     // Firefox lowers the opacity for the placeholders, but that has already
     // been incorporated into the text colour, so that would double dip.
-    opacity: 1
-  }
+    opacity: 1,
+  },
 });
 
 export const visibility = css({
@@ -189,5 +189,5 @@ export const visibility = css({
   flexShrink: 0,
   top: 0,
   right: "0.4rem",
-  cursor: "pointer"
+  cursor: "pointer",
 });

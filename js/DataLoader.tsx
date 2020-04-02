@@ -34,7 +34,7 @@ export function DataLoader<T>({ data, children }: Props<T>) {
     const controller = new AbortController();
     if (toFetch) {
       fetchUrl<T>(toFetch, controller)
-        .then(d => {
+        .then((d) => {
           if (!cancelled) {
             setLoadedData(d);
             setToFetch(undefined);

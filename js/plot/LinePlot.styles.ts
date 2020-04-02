@@ -3,7 +3,7 @@ import { css } from "emotion";
 export const container = css({
   display: "flex",
   flexDirection: "column",
-  alignItems: "center"
+  alignItems: "center",
 });
 
 export const title = css({
@@ -12,5 +12,5 @@ export const title = css({
   textOverflow: "ellipsis",
   whiteSpace: "nowrap",
   overflow: "hidden",
-  maxWidth: "330px"
+  maxWidth: "330px",
 });

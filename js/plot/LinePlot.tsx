@@ -45,9 +45,9 @@ export const LinePlot: React.FC<Props> = ({ data, colours, title }) => {
           zoomin: true,
           zoomout: true,
           pan: true,
-          reset: icons.resetZoom
+          reset: icons.resetZoom,
         },
-        autoSelected: "zoom"
+        autoSelected: "zoom",
       },
       zoom: {
         enabled: true,
@@ -56,74 +56,74 @@ export const LinePlot: React.FC<Props> = ({ data, colours, title }) => {
         zoomedArea: {
           fill: {
             color: "#90CAF9",
-            opacity: 0.4
+            opacity: 0.4,
           },
           stroke: {
             color: "#0D47A1",
             opacity: 0.4,
-            width: 1
-          }
-        }
-      }
+            width: 1,
+          },
+        },
+      },
     },
     stroke: {
       show: true,
       curve: "straight",
       lineCap: "butt",
       width: 2,
-      dashArray: 0
+      dashArray: 0,
     },
     markers: {
       hover: {
-        size: 0
-      }
+        size: 0,
+      },
     },
     xaxis: {
       tooltip: {
-        enabled: false
+        enabled: false,
       },
       labels: {
-        formatter: formatAxisValues
+        formatter: formatAxisValues,
       },
       crosshairs: {
-        show: false
-      }
+        show: false,
+      },
     },
     yaxis: {
       tooltip: {
-        enabled: false
+        enabled: false,
       },
       labels: {
-        formatter: formatAxisValues
+        formatter: formatAxisValues,
       },
       crosshairs: {
-        show: false
-      }
+        show: false,
+      },
     },
     legend: {
-      show: false
+      show: false,
     },
     tooltip: {
       shared: true,
       marker: {
-        show: true
+        show: true,
       },
       x: {
         show: true,
-        formatter: (n?: number) => `Step ${formatTooltipValues(n)}`
+        formatter: (n?: number) => `Step ${formatTooltipValues(n)}`,
       },
       y: {
-        formatter: formatTooltipValues
+        formatter: formatTooltipValues,
       },
       style: {
-        fontSize: "0.7rem"
+        fontSize: "0.7rem",
       },
       fixed: {
         enabled: true,
         position: "topLeft",
-        offsetY: 290
-      }
-    }
+        offsetY: 290,
+      },
+    },
   };
 
   return (

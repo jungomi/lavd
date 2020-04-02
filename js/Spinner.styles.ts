@@ -2,7 +2,7 @@ import { css, keyframes } from "emotion";
 
 const animation = keyframes({
   "0%": { transform: "scale(0)" },
-  "100%": { transform: "scale(1.0)", opacity: 0 }
+  "100%": { transform: "scale(1.0)", opacity: 0 },
 });
 
 export const spinner = css({
@@ -10,15 +10,15 @@ export const spinner = css({
   height: "2rem",
   background: "grey",
   borderRadius: "50%",
-  animation: `${animation} 1.0s infinite ease-in-out`
+  animation: `${animation} 1.0s infinite ease-in-out`,
 });
 
 export const loading = css({
   display: "flex",
   flexDirection: "column",
-  alignItems: "center"
+  alignItems: "center",
 });
 
 export const loadingSpinner = css({
-  marginTop: "0.8rem"
+  marginTop: "0.8rem",
 });

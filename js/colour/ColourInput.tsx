@@ -9,7 +9,7 @@ import {
   toHex,
   toHsl,
   toHsv,
-  toRgb
+  toRgb,
 } from "./definition";
 
 export type InputFormat = "rgb" | "hsl" | "hex";
@@ -32,7 +32,7 @@ const RgbInput: React.FC<InputProps> = ({ colour, setColour, switchMode }) => {
       red: rgbColour.red.toString(),
       green: rgbColour.green.toString(),
       blue: rgbColour.blue.toString(),
-      alpha: currentAlpha.toString()
+      alpha: currentAlpha.toString(),
     };
   };
   const rgbColour = toRgb({ kind: "hsv", value: colour }).value;
@@ -52,7 +52,7 @@ const RgbInput: React.FC<InputProps> = ({ colour, setColour, switchMode }) => {
           min={0}
           max={255}
           value={inputValues.red}
-          onChange={e => {
+          onChange={(e) => {
             const { value } = e.target;
             // Don't allow more than 3 characters
             if (value.length > 3) {
@@ -64,7 +64,7 @@ const RgbInput: React.FC<InputProps> = ({ colour, setColour, switchMode }) => {
             if (red !== undefined && red >= 0 && red <= 255) {
               const newColour: Colour = {
                 kind: "rgb",
-                value: { ...rgbColour, red }
+                value: { ...rgbColour, red },
               };
               setColour(toHsv(newColour).value);
             }
@@ -79,7 +79,7 @@ const RgbInput: React.FC<InputProps> = ({ colour, setColour, switchMode }) => {
           min={0}
           max={255}
           value={inputValues.green}
-          onChange={e => {
+          onChange={(e) => {
             const { value } = e.target;
             // Don't allow more than 3 characters
             if (value.length > 3) {
@@ -91,7 +91,7 @@ const RgbInput: React.FC<InputProps> = ({ colour, setColour, switchMode }) => {
             if (green !== undefined && green >= 0 && green <= 255) {
               const newColour: Colour = {
                 kind: "rgb",
-                value: { ...rgbColour, green }
+                value: { ...rgbColour, green },
               };
               setColour(toHsv(newColour).value);
             }
@@ -106,7 +106,7 @@ const RgbInput: React.FC<InputProps> = ({ colour, setColour, switchMode }) => {
           min={0}
           max={255}
           value={inputValues.blue}
-          onChange={e => {
+          onChange={(e) => {
             const { value } = e.target;
             // Don't allow more than 3 characters
             if (value.length > 3) {
@@ -118,7 +118,7 @@ const RgbInput: React.FC<InputProps> = ({ colour, setColour, switchMode }) => {
             if (blue !== undefined && blue >= 0 && blue <= 255) {
               const newColour: Colour = {
                 kind: "rgb",
-                value: { ...rgbColour, blue }
+                value: { ...rgbColour, blue },
               };
               setColour(toHsv(newColour).value);
             }
@@ -134,7 +134,7 @@ const RgbInput: React.FC<InputProps> = ({ colour, setColour, switchMode }) => {
           max={1}
           step={0.01}
           value={inputValues.alpha}
-          onChange={e => {
+          onChange={(e) => {
             const { value } = e.target;
             // Don't allow more than 4 characters
             if (value.length > 4) {
@@ -170,7 +170,7 @@ const HslInput: React.FC<InputProps> = ({ colour, setColour, switchMode }) => {
       hue: hslColour.hue.toString(),
       saturation: hslColour.saturation.toString(),
       lightness: hslColour.lightness.toString(),
-      alpha: currentAlpha.toString()
+      alpha: currentAlpha.toString(),
     };
   };
   const hslColour = toHsl({ kind: "hsv", value: colour }).value;
@@ -190,7 +190,7 @@ const HslInput: React.FC<InputProps> = ({ colour, setColour, switchMode }) => {
           min={0}
           max={360}
           value={inputValues.hue}
-          onChange={e => {
+          onChange={(e) => {
             const { value } = e.target;
             // Don't allow more than 3 characters
             if (value.length > 3) {
@@ -214,7 +214,7 @@ const HslInput: React.FC<InputProps> = ({ colour, setColour, switchMode }) => {
           min={0}
           max={100}
           value={inputValues.saturation}
-          onChange={e => {
+          onChange={(e) => {
             const { value } = e.target;
             // Don't allow more than 3 characters
             if (value.length > 3) {
@@ -230,7 +230,7 @@ const HslInput: React.FC<InputProps> = ({ colour, setColour, switchMode }) => {
             ) {
               const newColour: Colour = {
                 kind: "hsl",
-                value: { ...hslColour, saturation }
+                value: { ...hslColour, saturation },
               };
               setColour(toHsv(newColour).value);
             }
@@ -245,7 +245,7 @@ const HslInput: React.FC<InputProps> = ({ colour, setColour, switchMode }) => {
           min={0}
           max={100}
           value={inputValues.lightness}
-          onChange={e => {
+          onChange={(e) => {
             const { value } = e.target;
             // Don't allow more than 3 characters
             if (value.length > 3) {
@@ -257,7 +257,7 @@ const HslInput: React.FC<InputProps> = ({ colour, setColour, switchMode }) => {
             if (lightness !== undefined && lightness >= 0 && lightness <= 100) {
               const newColour: Colour = {
                 kind: "hsl",
-                value: { ...hslColour, lightness }
+                value: { ...hslColour, lightness },
               };
               setColour(toHsv(newColour).value);
             }
@@ -273,7 +273,7 @@ const HslInput: React.FC<InputProps> = ({ colour, setColour, switchMode }) => {
           max={1}
           step={0.01}
           value={inputValues.alpha}
-          onChange={e => {
+          onChange={(e) => {
             const { value } = e.target;
             // Don't allow more than 4 characters
             if (value.length > 4) {
@@ -337,7 +337,7 @@ const HexInput: React.FC<InputProps> = ({ colour, setColour, switchMode }) => {
         <input
           className={styles.input}
           value={inputValue}
-          onChange={e => {
+          onChange={(e) => {
             const { value } = e.target;
             // Don't allow more than 9 characters (# + 8 hex values)
             if (value.length > 9) {

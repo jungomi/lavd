@@ -21,7 +21,7 @@ const movingStates = {
   off: { field: false, hue: false, alpha: false },
   field: { field: true, hue: false, alpha: false },
   hue: { field: false, hue: true, alpha: false },
-  alpha: { field: false, hue: false, alpha: true }
+  alpha: { field: false, hue: false, alpha: true },
 };
 
 export const ColourPicker: React.FC<Props> = ({ colour, onSelect, style }) => {
@@ -113,11 +113,11 @@ export const ColourPicker: React.FC<Props> = ({ colour, onSelect, style }) => {
 
   const bgColour = colourString({
     kind: "hsl",
-    value: { hue: currentColour.hue, saturation: 100, lightness: 50 }
+    value: { hue: currentColour.hue, saturation: 100, lightness: 50 },
   });
   const previewColour = colourString({
     kind: "hsv",
-    value: currentColour
+    value: currentColour,
   });
 
   return (
@@ -126,7 +126,7 @@ export const ColourPicker: React.FC<Props> = ({ colour, onSelect, style }) => {
         className={styles.colourField}
         style={{ background: bgColour }}
         ref={fieldRef}
-        onMouseDown={e => {
+        onMouseDown={(e) => {
           // Do nothing when it's not a left click
           if (e.button !== 0) {
             return;
@@ -155,7 +155,7 @@ export const ColourPicker: React.FC<Props> = ({ colour, onSelect, style }) => {
           <div
             className={styles.hueSlider}
             ref={hueRef}
-            onMouseDown={e => {
+            onMouseDown={(e) => {
               // Do nothing when it's not a left click
               if (e.button !== 0) {
                 return;
@@ -174,7 +174,7 @@ export const ColourPicker: React.FC<Props> = ({ colour, onSelect, style }) => {
           <div
             className={styles.alphaSlider}
             ref={alphaRef}
-            onMouseDown={e => {
+            onMouseDown={(e) => {
               // Do nothing when it's not a left click
               if (e.button !== 0) {
                 return;
@@ -188,7 +188,7 @@ export const ColourPicker: React.FC<Props> = ({ colour, onSelect, style }) => {
             <div
               className={styles.alphaSlider}
               style={{
-                background: `linear-gradient(to right, rgb(0, 0, 0, 0), ${bgColour})`
+                background: `linear-gradient(to right, rgb(0, 0, 0, 0), ${bgColour})`,
               }}
             >
               <div
