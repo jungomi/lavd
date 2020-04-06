@@ -60,7 +60,7 @@ def prepare_image(
         with io.BytesIO() as buffer:
             image.save(buffer, "jpeg")
             thumbnail = base64.b64encode(buffer.getvalue()).decode()
-    except OSError:
+    except (OSError, SyntaxError):
         # The image may be invalid, in which case it's just ignored.
         # When the image is not fully written to disk, it will fail, since the file is
         # truncated. Since that mainly affects the watcher, it is okay to move on, since
