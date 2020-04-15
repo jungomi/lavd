@@ -48,6 +48,7 @@ class Logger(object):
     log_dir: pathlib.Path
     repo_path: Optional[str]
     git_hash: Optional[str]
+    git_branch: Optional[str]
     events_file: Optional[TextIO]
     stdout_file: Optional[TextIO]
     stderr_file: Optional[TextIO]
@@ -104,9 +105,17 @@ class Logger(object):
                 .strip()
                 .decode("utf-8")
             )
+            self.git_branch = (
+                subprocess.check_output(
+                    ["git", "rev-parse", "--abbrev-ref", "HEAD"], cwd=self.repo_path,
+                )
+                .strip()
+                .decode("utf-8")
+            )
         except subprocess.CalledProcessError:
             self.repo_path = None
             self.git_hash = None
+            self.git_branch = None
         self.events_file = None
         self.stdout_file = None
         self.stderr_file = None
@@ -457,9 +466,17 @@ class Logger(object):
         with open(os.path.join(self.log_dir, "summary.md"), "w") as fd:
             fd.write("# {}\n\n".format(self.name))
             fd.write("- **Start**: {}\n".format(self.get_start_time()))
+            fd.write("- **Git**:\n")
             fd.write(
-                "- **Git Commit**: {}\n".format(
-                    "-" if self.git_hash is None else self.git_hash
+                "{indent}- **Branch**: {branch}\n".format(
+                    indent=" " * self.indent_size,
+                    branch="-" if self.git_branch is None else self.git_branch,
+                )
+            )
+            fd.write(
+                "{indent}- **Commit**: {commit}\n".format(
+                    indent=" " * self.indent_size,
+                    commit="-" if self.git_hash is None else self.git_hash,
                 )
             )
             if infos is not None:
