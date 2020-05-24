@@ -36,6 +36,8 @@ _...and more to come._
   - [Saving a PyTorch Model](#saving-a-pytorch-model)
 - [Data Layout](#data-layout)
 - [Comparison to TensorBoard](#comparison-to-tensorboard)
+- [Known Issues](#known-issues)
+  - [Inotify watch limit reached](#inotify-watch-limit-reached)
 
 ## Getting Started
 
@@ -378,6 +380,29 @@ reason to create it again, but there are countless experiments that use the
 exact same graph. This also means that _Lavd_ does not try to cover everything
 that TensorBoard does. Of course there are also features that TensorBoard does
 not cover.
+
+## Known Issues
+
+### Inotify watch limit reached
+
+```
+OSError: [Errno 28] inotify watch limit reached
+```
+
+The error occurs if there are too many files that are being watch at the same
+time. You can check how many watches are allowed as follows:
+
+```sh
+cat /proc/sys/fs/inotify/max_user_watches
+# => 8192
+```
+
+The default is 8192 on most systems. To solve the issue the limit needs to be
+increased:
+
+```sh
+sudo sysctl fs.inotify.max_user_watches=524288
+```
 
 [halo]: https://github.com/manrajgrover/halo
 [pytorch]: https://pytorch.org
