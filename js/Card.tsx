@@ -161,9 +161,12 @@ export const Card: React.FC<CardProps> = ({
   useEffect(() => {
     // When the steps change, there is a potential the the current selection is
     // no longer valid, so reset to the default value if that is the case.
-    const newStep = steps && steps.length ? steps[steps.length - 1] : undefined;
-    setSelected(newStep);
-  }, [steps]);
+    if (selected !== undefined && steps && !steps.includes(selected)) {
+      const newStep =
+        steps && steps.length ? steps[steps.length - 1] : undefined;
+      setSelected(newStep);
+    }
+  }, [steps, selected]);
 
   return (
     <div className={className}>
@@ -219,10 +222,8 @@ export const CategoryCard: React.FC<CategoryCardProps> = ({
       : undefined;
   const [selected, setSelected] = useState(initialStep);
   useEffect(() => {
-    if (selectedStep !== undefined && steps && steps.includes(selectedStep)) {
-      setSelected(selectedStep);
-    }
-  }, [steps, selectedStep]);
+    setSelected(selectedStep);
+  }, [selectedStep]);
   useEffect(() => {
     // When the steps change, there is a potential the the current selection is
     // no longer valid, so reset to the default value if that is the case.
