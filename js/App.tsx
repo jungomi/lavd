@@ -101,7 +101,7 @@ export const App = () => {
         const { data, lastEventId } = e as MessageEvent;
         const eventId = Number.parseInt(lastEventId);
         if (eventId > lastEvent) {
-          const d = new Map(Object.entries(JSON.parse(data)));
+          const d: DataMap = new Map(Object.entries(JSON.parse(data)));
           setNewData(d);
           lastEvent = eventId;
         }
