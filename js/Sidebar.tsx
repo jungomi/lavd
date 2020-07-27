@@ -7,11 +7,23 @@ import {
   colourString,
   defaultColour,
 } from "./colour/definition";
+import { Optional } from "./data";
 import { EmptyDash, SmallEmpty } from "./Empty";
+import { useDebounce } from "./hook/debounce";
 import * as styles from "./Sidebar.styles";
 import { SmallLoading } from "./Spinner";
 
-export type Names = { active: Array<string>; inactive: Array<string> };
+export type Names = {
+  active: Array<string>;
+  inactive: Array<string>;
+};
+
+export type FilteredNames = {
+  active: Array<string>;
+  inactive: Array<string>;
+  activeVisible: Array<string>;
+  inactiveVisible: Array<string>;
+};
 
 export const VisibilityIcon: React.FC<{ visible?: boolean }> = ({
   visible,
@@ -34,8 +46,9 @@ type ShownColourpicker = {
 };
 
 type Props = {
-  names: Names;
+  names: FilteredNames;
   setNames: (names: Names) => void;
+  setNameFilter: (filter: Optional<RegExp>) => void;
   colours: ColourMap;
   setColour: (name: string, colour: Colour) => void;
   loading: boolean;
@@ -44,6 +57,7 @@ type Props = {
 export const Sidebar: React.FC<Props> = ({
   names,
   setNames,
+  setNameFilter,
   colours,
   setColour,
   loading,
@@ -63,6 +77,15 @@ export const Sidebar: React.FC<Props> = ({
       mediaQuery.removeListener(updateShown);
     };
   });
+  const [filterValue, setFilterValue] = useState<string>("");
+  const debouncedFilterValue = useDebounce(filterValue, 300);
+  useEffect(() => {
+    const filter =
+      debouncedFilterValue === ""
+        ? undefined
+        : new RegExp(debouncedFilterValue);
+    setNameFilter(filter);
+  }, [debouncedFilterValue, setNameFilter]);
 
   const showColourPicker = (name: string, clientY: number) => {
     if (listRef.current !== null) {
@@ -97,7 +120,7 @@ export const Sidebar: React.FC<Props> = ({
     });
   };
 
-  const activeNameList = names.active.map((name) => {
+  const activeNameList = names.activeVisible.map((name) => {
     const colour: Colour = colours.get(name) || defaultColour;
     return (
       <div key={name} className={styles.entry}>
@@ -113,7 +136,7 @@ export const Sidebar: React.FC<Props> = ({
       </div>
     );
   });
-  const inactiveNameList = names.inactive.map((name) => {
+  const inactiveNameList = names.inactiveVisible.map((name) => {
     const colour: Colour = colours.get(name) || defaultColour;
     return (
       <div key={name} className={styles.hiddenEntry}>
@@ -129,7 +152,9 @@ export const Sidebar: React.FC<Props> = ({
       </div>
     );
   });
-  const hasData = activeNameList.length > 0 || inactiveNameList.length > 0;
+  const hasData = names.active.length > 0 || names.inactive.length > 0;
+  const hasVisibleData =
+    activeNameList.length > 0 || inactiveNameList.length > 0;
 
   const nameLists = (
     <>
@@ -184,7 +209,34 @@ export const Sidebar: React.FC<Props> = ({
           className={shown ? styles.nameListContainer : styles.nameListHidden}
           ref={listRef}
         >
-          {hasData ? nameLists : <SmallEmpty text="data" />}
+          <div className={styles.inputContainer}>
+            <input
+              placeholder="Filter Experiments (Regex)"
+              className={styles.input}
+              value={filterValue}
+              onChange={(e) => setFilterValue(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Escape") {
+                  setFilterValue("");
+                }
+              }}
+            />
+            {filterValue !== "" && (
+              <div
+                className={styles.inputRemoveControls}
+                onClick={() => setFilterValue("")}
+              >
+                <span className={styles.plus}></span>
+              </div>
+            )}
+          </div>
+          {hasVisibleData ? (
+            nameLists
+          ) : (
+            <SmallEmpty
+              text={hasData ? "data matching filter" : "data available"}
+            />
+          )}
         </div>
       )}
     </div>

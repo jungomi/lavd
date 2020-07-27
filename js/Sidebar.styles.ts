@@ -1,5 +1,6 @@
 import { css, cx } from "emotion";
 import { bgColour } from "./App.styles";
+import * as commandStyles from "./Commands.styles";
 
 export const sidebar = css({
   display: "flex",
@@ -179,3 +180,12 @@ export const visibilityIconHidden = cx(
     },
   })
 );
+
+// Based on command styles
+export const input = cx(commandStyles.input, css({ margin: "0 0.4rem" }));
+export const inputContainer = cx(
+  commandStyles.inputContainer,
+  css({ marginTop: 0, marginBottom: "1rem" })
+);
+export const inputRemoveControls = commandStyles.inputRemoveControls;
+export const plus = commandStyles.plus;

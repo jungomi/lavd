@@ -4,7 +4,7 @@ import { fetchData } from "./api";
 import * as styles from "./App.styles";
 import { Colour, ColourMap } from "./colour/definition";
 import { Commands } from "./Commands";
-import { DataMap } from "./data";
+import { DataMap, Optional } from "./data";
 import { Header } from "./Header";
 import { Images } from "./Images";
 import { Logs } from "./Logs";
@@ -60,6 +60,7 @@ export const App = () => {
   if (Content === null) {
     navigate("/scalars");
   }
+  const [nameFilter, setNameFilter] = useState<Optional<RegExp>>(undefined);
   const [names, setNames] = useState<Names>(
     retrieveNames([...data.keys()].sort())
   );
@@ -118,6 +119,18 @@ export const App = () => {
     overlayContext.hide();
     return nextPath;
   });
+  const filteredNames = {
+    active: names.active,
+    inactive: names.inactive,
+    activeVisible:
+      nameFilter === undefined
+        ? names.active
+        : names.active.filter((n) => nameFilter.test(n)),
+    inactiveVisible:
+      nameFilter === undefined
+        ? names.inactive
+        : names.inactive.filter((n) => nameFilter.test(n)),
+  };
   const hideName = (name: string) => {
     setNames({
       active: names.active.filter((n) => n !== name),
@@ -131,8 +144,9 @@ export const App = () => {
       <Header />
       <div className={styles.wrapper}>
         <Sidebar
-          names={names}
+          names={filteredNames}
           setNames={setNames}
+          setNameFilter={setNameFilter}
           colours={colours}
           setColour={setNewColour}
           loading={!hasFetched}
@@ -144,7 +158,7 @@ export const App = () => {
                 <Content
                   data={data}
                   colours={colours}
-                  names={names.active}
+                  names={filteredNames.activeVisible}
                   hideName={hideName}
                 />
               </div>

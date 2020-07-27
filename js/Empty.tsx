@@ -29,7 +29,7 @@ export const Empty: React.FC<Props> = ({ text }) => {
 };
 
 export const SmallEmpty: React.FC<Props> = ({ text }) => {
-  return <div className={smallEmptyClass}>No {text} available</div>;
+  return <div className={smallEmptyClass}>No {text}</div>;
 };
 
 export const EmptyDash: React.FC = () => {
