@@ -207,6 +207,12 @@ export const LinePlot: React.FC<Props> = ({
             stroke={colour}
             fill={colour}
             className={styles.plotElement}
+            onMouseEnter={() => {
+              setHovered(d.name);
+            }}
+            onMouseLeave={() => {
+              setHovered(undefined);
+            }}
             key={d.name}
           />
         );
@@ -295,8 +301,14 @@ export const LinePlot: React.FC<Props> = ({
         // Shifted down by labelSize, since the SVG element starts before the
         // actual coordinate system.
         const coordY = svgHeight * (y / height) - styles.labelSize;
-        // Only show update the tooltip if the cursor is in the actual graph
-        if (coordX >= offsetLeft && coordY <= svgHeight - offsetBottom) {
+        // Only show update the tooltip if the cursor is in the actual graph.
+        // That is also the case when an element is drawn partly outside of the
+        // graph, hence when it is hovered it should be counted as in the graph
+        // as well.
+        if (
+          (coordX >= offsetLeft && coordY <= svgHeight - offsetBottom) ||
+          hovered !== undefined
+        ) {
           const xValue = ((coordX - offsetLeft) / xLength) * rangeX + startX;
           let xClosest = xyKeysSorted[0];
           let distanceClosest = Math.abs(xValue - xClosest);
