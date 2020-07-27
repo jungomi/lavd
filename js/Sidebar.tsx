@@ -95,16 +95,21 @@ export const Sidebar: React.FC<Props> = ({
       setShownColourPicker({ name, offset });
     }
   };
-  const hideAll = () => {
+  // Only the visible ones are hidden/shown, because that makes more sense, as
+  // those are the only ones shown in the list. This also allows to filter the
+  // list and hide/show multiple at once.
+  const hideAllVisible = () => {
     setNames({
-      active: [],
-      inactive: [...names.active, ...names.inactive].sort(),
+      active: names.active.filter((n) => !names.activeVisible.includes(n)),
+      inactive: [...names.activeVisible, ...names.inactive].sort(),
     });
   };
-  const showAll = () => {
+  const showAllVisible = () => {
     setNames({
-      active: [...names.active, ...names.inactive].sort(),
-      inactive: [],
+      active: [...names.active, ...names.inactiveVisible].sort(),
+      inactive: names.inactive.filter(
+        (n) => !names.inactiveVisible.includes(n)
+      ),
     });
   };
   const hideName = (name: string) => {
@@ -170,7 +175,7 @@ export const Sidebar: React.FC<Props> = ({
       )}
       <div className={styles.nameListGroup}>
         <span className={styles.title}>Active</span>
-        <span className={styles.visibilityAll} onClick={() => hideAll()}>
+        <span className={styles.visibilityAll} onClick={() => hideAllVisible()}>
           <VisibilityIcon visible={true} />
         </span>
         {activeNameList.length > 0 ? (
@@ -181,7 +186,7 @@ export const Sidebar: React.FC<Props> = ({
       </div>
       <div className={styles.nameListGroup}>
         <span className={styles.title}>Inactive</span>
-        <span className={styles.visibilityAll} onClick={() => showAll()}>
+        <span className={styles.visibilityAll} onClick={() => showAllVisible()}>
           <VisibilityIcon visible={false} />
         </span>
         {inactiveNameList.length > 0 ? (
