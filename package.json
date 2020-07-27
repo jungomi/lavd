@@ -49,14 +49,12 @@
   },
   "dependencies": {
     "@emotion/core": "^10.0.28",
-    "apexcharts": "^3.19.3",
     "diff": "^4.0.2",
     "emotion": "^10.0.27",
     "emotion-reset": "^2.0.7",
     "github-markdown-css": "^4.0.0",
     "hookrouter": "^1.2.3",
     "react": "^16.13.1",
-    "react-apexcharts": "^1.3.7",
     "react-dom": "^16.13.1",
     "react-markdown": "^4.3.1"
   }

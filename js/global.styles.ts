@@ -51,44 +51,6 @@ export const scrollbar = `
 }
 `;
 
-// Apex charts are not that well integrated into React, therefore the styling
-// is done with global CSS styles and often requires !important to overwrite
-// their styles
-export const apexcharts = `
-.apexcharts-tooltip {
-  line-height: 0.5;
-  padding: 0.3rem;
-  color: #ffffff;
-  font-weight: bold;
-  background: rgba(0, 0, 0, 0.65) !important;
-  border: 2px solid #666666 !important;
-  transition: none !important;
-}
-.apexcharts-tooltip-marker {
-  width: 0.6rem !important;
-  height: 0.6rem !important;
-  margin-right: 0.4rem !important;
-  flex-shrink: 0;
-}
-.apexcharts-tooltip-series-group.active {
-  padding-bottom: 0 !important;
-}
-.apexcharts-tooltip-text {
-  width: 100%;
-}
-.apexcharts-tooltip-y-group {
-  display: flex;
-  justify-content: space-between;
-}
-.apexcharts-tooltip-text-value {
-  margin-left: 0.5rem !important;
-}
-.apexcharts-tooltip-title {
-  background: none !important;
-  border-bottom: none !important;
-}
-`;
-
 // The GitHub markdown CSS requires a div with the class markdown-body.
 export const markdown = `
 .markdown-body {
