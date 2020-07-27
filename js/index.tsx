@@ -12,7 +12,6 @@ import * as globalCss from "./global.styles";
 injectGlobal`${resetCss}
 ${globalCss.fixHeight}
 ${globalCss.scrollbar}
-${globalCss.apexcharts}
 ${globalCss.markdown}
 `;
 
