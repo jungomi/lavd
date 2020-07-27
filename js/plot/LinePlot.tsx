@@ -49,6 +49,9 @@ function pickLabels(
   } else {
     const min = uniqueSorted[0];
     const max = uniqueSorted[uniqueSorted.length - 1];
+    if (min === max) {
+      return [min];
+    }
     const step = (max - min) / (num - 1);
     for (let i = 0; i < num; i++) {
       labels.push(min + i * step);
@@ -106,7 +109,7 @@ export const LinePlot: React.FC<Props> = ({
   const [hovered, setHovered] = useState<Optional<string>>(undefined);
   const svgRef = useRef<SVGSVGElement>(null);
 
-  const lines = [];
+  const plotElements = [];
   const uniqueXs: Set<number> = new Set();
   const uniqueYs: Set<number> = new Set();
   const xyMap: Map<number, Array<TooltipValues>> = new Map();
@@ -173,15 +176,14 @@ export const LinePlot: React.FC<Props> = ({
     minY !== undefined &&
     maxY !== undefined
   ) {
-    // Another weird behaviour of TypeScript.
-    // Don't know why that is needed, but if minX is used in the map function of
-    // the points, it says that minX might be undefined, even though it had been
-    // check by the if statement. Assigning it here guarantees that startX is
-    // never undefined, as its type is inferred as number.
-    const startX = minX;
-    const startY = minY;
-    const rangeX = maxX - minX;
-    const rangeY = maxY - minY;
+    // If the min and max are the same value, there is only one point on that
+    // axis. In order to display it nicely, it is centred.
+    const startX = minX === maxX ? minX - minX : minX;
+    const startY = minY === maxY ? minY - minY : minY;
+    const endX = minX === maxX ? minX + minX : maxX;
+    const endY = minY === maxY ? minY + minY : maxY;
+    const rangeX = endX - startX;
+    const rangeY = endY - startY;
     for (const d of data) {
       // Sort by x to have the data points in order to get a continuous line
       const points = d.points
@@ -192,22 +194,40 @@ export const LinePlot: React.FC<Props> = ({
           // at the top left.
           const coordX = xLength * ((x - startX) / rangeX) + offsetLeft;
           const coordY = (yLength - offsetBottom) * (1 - (y - startY) / rangeY);
-          return `${coordX},${coordY}`;
+          return { coordX, coordY };
         });
-      lines.push(
-        <polyline
-          points={points.join(" ")}
-          stroke={colourString(d.colour)}
-          className={styles.polyline}
-          onMouseEnter={() => {
-            setHovered(d.name);
-          }}
-          onMouseLeave={() => {
-            setHovered(undefined);
-          }}
-          key={d.name}
-        />
-      );
+      if (points.length === 1) {
+        const { coordX, coordY } = points[0];
+        const colour = colourString(d.colour);
+        plotElements.push(
+          <circle
+            cx={coordX}
+            cy={coordY}
+            r={1}
+            stroke={colour}
+            fill={colour}
+            className={styles.plotElement}
+            key={d.name}
+          />
+        );
+      } else if (points.length >= 2) {
+        plotElements.push(
+          <polyline
+            points={points
+              .map(({ coordX, coordY }) => `${coordX},${coordY}`)
+              .join(" ")}
+            stroke={colourString(d.colour)}
+            className={styles.plotElement}
+            onMouseEnter={() => {
+              setHovered(d.name);
+            }}
+            onMouseLeave={() => {
+              setHovered(undefined);
+            }}
+            key={d.name}
+          />
+        );
+      }
     }
     for (const labelX of labelsX) {
       const coordX = xLength * ((labelX - startX) / rangeX) + offsetLeft;
@@ -343,7 +363,7 @@ export const LinePlot: React.FC<Props> = ({
         </g>
         <g className={styles.labelsX}>{labelsXSvg}</g>
         <g className={styles.labelsY}>{labelsYSvg}</g>
-        {lines}
+        {plotElements}
       </svg>
       <div className={styles.sidebar}>
         {tooltip !== undefined && (

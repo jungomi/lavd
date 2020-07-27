@@ -36,7 +36,7 @@ export const svg = css({
   flexShrink: 0,
 });
 
-export const polyline = css({
+export const plotElement = css({
   vectorEffect: "non-scaling-stroke",
   ":hover": {
     strokeWidth: `${2.5 * strokeWidth}px`,

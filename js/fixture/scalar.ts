@@ -24,6 +24,16 @@ export const scalars: DataMap = new Map([
             4: { value: 0.22 },
           },
         },
+        "Single Value": {
+          steps: {
+            1: { value: 99 },
+          },
+        },
+        "Single Value with others": {
+          steps: {
+            1: { value: 99 },
+          },
+        },
       },
     },
   ],
@@ -59,6 +69,12 @@ export const scalars: DataMap = new Map([
             3: { value: 10 },
             4: { value: 30 },
             5: { value: 40 },
+          },
+        },
+        "Single Value with others": {
+          steps: {
+            1: { value: 22 },
+            2: { value: 33 },
           },
         },
       },
