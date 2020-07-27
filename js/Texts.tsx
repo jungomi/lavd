@@ -21,6 +21,7 @@ export type Text = {
 type TextProps = {
   actual: string;
   expected?: string;
+  categoryFilter?: RegExp;
 };
 
 export const Text: React.FC<TextProps> = ({ actual, expected }) => {
@@ -100,11 +101,18 @@ type Props = {
   colours: ColourMap;
   names: Array<string>;
   hideName: (name: string) => void;
+  categoryFilter?: RegExp;
 };
 
-export const Texts: React.FC<Props> = ({ data, colours, names, hideName }) => {
+export const Texts: React.FC<Props> = ({
+  data,
+  colours,
+  names,
+  hideName,
+  categoryFilter,
+}) => {
   const kind = "texts";
-  const dataOfKind = getDataKind(data, kind, names, colours);
+  const dataOfKind = getDataKind(data, kind, names, colours, categoryFilter);
   const cards = dataOfKind
     .map(
       (d) =>

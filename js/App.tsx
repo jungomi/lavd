@@ -5,6 +5,7 @@ import * as styles from "./App.styles";
 import { Colour, ColourMap } from "./colour/definition";
 import { Commands } from "./Commands";
 import { DataMap, Optional } from "./data";
+import { Filter } from "./Filter";
 import { Header } from "./Header";
 import { Images } from "./Images";
 import { Logs } from "./Logs";
@@ -26,6 +27,7 @@ type RouteProps = {
   colours: ColourMap;
   names: Array<string>;
   hideName: (name: string) => void;
+  categoryFilter?: RegExp;
 };
 
 type Routes = {
@@ -33,20 +35,49 @@ type Routes = {
 };
 
 const routes: Routes = {
-  "/scalars": () => ({ data, colours, names }) => (
-    <Scalars data={data} colours={colours} names={names} />
+  "/scalars": () => ({ data, colours, names, categoryFilter }) => (
+    <Scalars
+      data={data}
+      colours={colours}
+      names={names}
+      categoryFilter={categoryFilter}
+    />
   ),
-  "/images": () => ({ data, colours, names, hideName }) => (
-    <Images data={data} colours={colours} names={names} hideName={hideName} />
+  "/images": () => ({ data, colours, names, hideName, categoryFilter }) => (
+    <Images
+      data={data}
+      colours={colours}
+      names={names}
+      hideName={hideName}
+      categoryFilter={categoryFilter}
+    />
   ),
-  "/text": () => ({ data, colours, names, hideName }) => (
-    <Texts data={data} colours={colours} names={names} hideName={hideName} />
+  "/text": () => ({ data, colours, names, hideName, categoryFilter }) => (
+    <Texts
+      data={data}
+      colours={colours}
+      names={names}
+      hideName={hideName}
+      categoryFilter={categoryFilter}
+    />
   ),
-  "/logs": () => ({ data, colours, names, hideName }) => (
-    <Logs data={data} colours={colours} names={names} hideName={hideName} />
+  "/logs": () => ({ data, colours, names, hideName, categoryFilter }) => (
+    <Logs
+      data={data}
+      colours={colours}
+      names={names}
+      hideName={hideName}
+      categoryFilter={categoryFilter}
+    />
   ),
-  "/markdown": () => ({ data, colours, names, hideName }) => (
-    <Markdown data={data} colours={colours} names={names} hideName={hideName} />
+  "/markdown": () => ({ data, colours, names, hideName, categoryFilter }) => (
+    <Markdown
+      data={data}
+      colours={colours}
+      names={names}
+      hideName={hideName}
+      categoryFilter={categoryFilter}
+    />
   ),
   "/commands": () => ({ data, colours, names, hideName }) => (
     <Commands data={data} colours={colours} names={names} hideName={hideName} />
@@ -63,6 +94,9 @@ export const App = () => {
   const [nameFilter, setNameFilter] = useState<Optional<RegExp>>(undefined);
   const [names, setNames] = useState<Names>(
     retrieveNames([...data.keys()].sort())
+  );
+  const [categoryFilter, setCategoryFilter] = useState<Optional<RegExp>>(
+    undefined
   );
   const [colours, setColours] = useState(retrieveColours(names));
   // A copy map of the Map is created such that React re-renders it, since
@@ -152,6 +186,10 @@ export const App = () => {
           loading={!hasFetched}
         />
         <main className={styles.main}>
+          <Filter
+            updateFilter={setCategoryFilter}
+            placeholder="Filter Categories (Regex)"
+          />
           {hasFetched ? (
             Content && (
               <div className={styles.content}>
@@ -160,6 +198,7 @@ export const App = () => {
                   colours={colours}
                   names={filteredNames.activeVisible}
                   hideName={hideName}
+                  categoryFilter={categoryFilter}
                 />
               </div>
             )

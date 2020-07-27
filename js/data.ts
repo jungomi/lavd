@@ -67,7 +67,8 @@ export function getDataKind<K extends DataKind>(
   data: DataMap | undefined,
   kind: K,
   names: Array<string>,
-  colours: ColourMap
+  colours: ColourMap,
+  filter?: RegExp
 ): Array<DataOfKind<K>> {
   if (data === undefined) {
     return [];
@@ -79,9 +80,19 @@ export function getDataKind<K extends DataKind>(
     if (dat === undefined || colour === undefined) {
       continue;
     }
-    const d = dat[kind];
+    let d = dat[kind];
     if (d === undefined) {
       continue;
+    }
+    if (filter !== undefined) {
+      // The d as { [s: string]: any } is again to resolve a TypeScript oddity.
+      // For some reason, the .filter() makes the Object.entries reject the
+      // actual type, even though without .filter() it's perfectly happy.
+      d = Object.fromEntries(
+        Object.entries(d as { [s: string]: any }).filter(([key, _]) =>
+          filter.test(key)
+        )
+      );
     }
     dataOfKind.push({
       name,
@@ -139,7 +150,8 @@ export function sortObject<V>(
 export function aggregateSortedCategories(
   data: DataMap | undefined,
   kind: DataKind,
-  names: Array<string>
+  names: Array<string>,
+  filter?: RegExp
 ): Array<string> {
   if (data === undefined) {
     return [];
@@ -155,7 +167,9 @@ export function aggregateSortedCategories(
       continue;
     }
     for (const key of Object.keys(datOfKind)) {
-      uniqueCategories.add(key);
+      if (filter === undefined || filter.test(key)) {
+        uniqueCategories.add(key);
+      }
     }
   }
   return Array.from(uniqueCategories).sort();

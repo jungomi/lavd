@@ -45,11 +45,22 @@ type Props = {
   data: DataMap;
   colours: ColourMap;
   names: Array<string>;
+  categoryFilter?: RegExp;
 };
 
-export const Scalars: React.FC<Props> = ({ data, colours, names }) => {
+export const Scalars: React.FC<Props> = ({
+  data,
+  colours,
+  names,
+  categoryFilter,
+}) => {
   const kind = "scalars";
-  const categories = aggregateSortedCategories(data, kind, names);
+  const categories = aggregateSortedCategories(
+    data,
+    kind,
+    names,
+    categoryFilter
+  );
   const cards = categories.map((category) => {
     const scalars = nonEmptyScalars(data, category, names, colours);
     return (

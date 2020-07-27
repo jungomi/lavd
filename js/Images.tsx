@@ -479,11 +479,18 @@ type Props = {
   colours: ColourMap;
   names: Array<string>;
   hideName: (name: string) => void;
+  categoryFilter?: RegExp;
 };
 
-export const Images: React.FC<Props> = ({ data, colours, names, hideName }) => {
+export const Images: React.FC<Props> = ({
+  data,
+  colours,
+  names,
+  hideName,
+  categoryFilter,
+}) => {
   const kind = "images";
-  const dataOfKind = getDataKind(data, kind, names, colours);
+  const dataOfKind = getDataKind(data, kind, names, colours, categoryFilter);
   const cards = dataOfKind
     .map(
       (d) =>

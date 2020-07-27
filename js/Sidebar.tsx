@@ -9,7 +9,7 @@ import {
 } from "./colour/definition";
 import { Optional } from "./data";
 import { EmptyDash, SmallEmpty } from "./Empty";
-import { useDebounce } from "./hook/debounce";
+import { Filter } from "./Filter";
 import * as styles from "./Sidebar.styles";
 import { SmallLoading } from "./Spinner";
 
@@ -77,15 +77,6 @@ export const Sidebar: React.FC<Props> = ({
       mediaQuery.removeListener(updateShown);
     };
   });
-  const [filterValue, setFilterValue] = useState<string>("");
-  const debouncedFilterValue = useDebounce(filterValue, 300);
-  useEffect(() => {
-    const filter =
-      debouncedFilterValue === ""
-        ? undefined
-        : new RegExp(debouncedFilterValue);
-    setNameFilter(filter);
-  }, [debouncedFilterValue, setNameFilter]);
 
   const showColourPicker = (name: string, clientY: number) => {
     if (listRef.current !== null) {
@@ -214,27 +205,10 @@ export const Sidebar: React.FC<Props> = ({
           className={shown ? styles.nameListContainer : styles.nameListHidden}
           ref={listRef}
         >
-          <div className={styles.inputContainer}>
-            <input
-              placeholder="Filter Experiments (Regex)"
-              className={styles.input}
-              value={filterValue}
-              onChange={(e) => setFilterValue(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === "Escape") {
-                  setFilterValue("");
-                }
-              }}
-            />
-            {filterValue !== "" && (
-              <div
-                className={styles.inputRemoveControls}
-                onClick={() => setFilterValue("")}
-              >
-                <span className={styles.plus}></span>
-              </div>
-            )}
-          </div>
+          <Filter
+            updateFilter={setNameFilter}
+            placeholder="Filter Experiments (Regex)"
+          />
           {hasVisibleData ? (
             nameLists
           ) : (

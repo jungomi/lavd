@@ -21,6 +21,7 @@ type Props = {
   colours: ColourMap;
   names: Array<string>;
   hideName: (name: string) => void;
+  categoryFilter?: RegExp;
 };
 
 export const Markdown: React.FC<Props> = ({
@@ -28,9 +29,10 @@ export const Markdown: React.FC<Props> = ({
   colours,
   names,
   hideName,
+  categoryFilter,
 }) => {
   const kind = "markdown";
-  const dataOfKind = getDataKind(data, kind, names, colours);
+  const dataOfKind = getDataKind(data, kind, names, colours, categoryFilter);
   const cards = dataOfKind
     .map(
       (d) =>

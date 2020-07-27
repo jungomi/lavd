@@ -14,6 +14,7 @@ export const main = css({
   flexDirection: "column",
   position: "relative",
   padding: "1.5rem",
+  paddingTop: "1rem",
   overflow: "scroll",
   width: "100%",
   background: bgColour,
