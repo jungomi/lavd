@@ -271,7 +271,9 @@ class Logger(object):
         self.log(tag, msg)
 
     @maybe_disable
-    def progress_bar(self, name: str, *args, prefix: bool = True, **kwargs):
+    def progress_bar(
+        self, name: str, *args, prefix: bool = True, **kwargs
+    ) -> "ProgressBar":
         """
         Creates a progress bar for the given name. This is essentially a tqdm progress
         bar, but it additionally logs the start and end of the duration.
@@ -287,7 +289,7 @@ class Logger(object):
                 Arguments to tqdm, see https://github.com/tqdm/tqdm
 
         Returns:
-            ProgressBar:
+            progressbar (ProgressBar):
                 Can be use exactly like a tqdm() progress bar.
         """
         # The prefixed is added to the description if desired. When no description is
@@ -299,7 +301,7 @@ class Logger(object):
         return ProgressBar(self, name, prefix, *args, **kwargs)
 
     @maybe_disable
-    def spinner(self, name: str, *args, prefix: bool = True, **kwargs):
+    def spinner(self, name: str, *args, prefix: bool = True, **kwargs) -> "Spinner":
         """
         Creates a spinner for the given name. This is essentially a Halo spinner, but it
         additionally logs the start and end of the duration.
@@ -315,7 +317,7 @@ class Logger(object):
                 Arguments to the spinner, see https://github.com/manrajgrover/halo
 
         Returns:
-            Spinner:
+            spinner (Spinner):
                 Can be use exactly like a Halo() spinner.
         """
         # The prefixed is added to the text if desired. When no text is provided, the
@@ -975,13 +977,13 @@ class Spinner(Halo):
         self.prefix = prefix
         super(Spinner, self).__init__(*args, **kwargs)
 
-    def start(self, text: Optional[str] = None):
+    def start(self, text: Optional[str] = None) -> "Spinner":
         if self._spinner_id is None and self.enabled and self._check_stream():
             self.logger.start(self.name, prefix=self.prefix, tag="SPINNER_START")
             super().start(text)
         return self
 
-    def stop(self):
+    def stop(self) -> "Spinner":
         if self._spinner_id is not None:
             super().stop()
             self.logger.end(self.name, prefix=self.prefix, tag="SPINNER_END")
