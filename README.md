@@ -3,6 +3,8 @@
 ![](https://github.com/jungomi/lavd/workflows/Node.js/badge.svg)
 ![](https://github.com/jungomi/lavd/workflows/Python/badge.svg)
 
+![Lavd Screenshot](.github/lavd.png)
+
 Tracking the progress of Machine Learning (ML) experiments is essential for
 deciding what model works well with the available data. Using some kind of
 metric, for example Intersection over Union (IoU) for object detection, gives
