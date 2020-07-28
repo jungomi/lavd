@@ -1,4 +1,4 @@
-from typing import Callable
+from functools import wraps
 
 
 class NoOp(object):
@@ -30,7 +30,8 @@ class NoOp(object):
 no_op = NoOp()
 
 
-def maybe_disable(method: Callable) -> Callable:
+def maybe_disable(method):
+    @wraps(method)
     def maybe_disabled_method(self, *args, **kwargs):
         if self.disabled:
             return no_op
