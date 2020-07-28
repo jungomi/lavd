@@ -34,6 +34,8 @@ _...and more to come._
   - [Spinner](#spinner)
   - [Progress Bar](#progress-bar)
   - [Saving a PyTorch Model](#saving-a-pytorch-model)
+  - [Saving any Object](#saving-any-object)
+  - [Disabling the Logger](#disabling-the-logger)
 - [Data Layout](#data-layout)
 - [Comparison to TensorBoard](#comparison-to-tensorboard)
 - [Known Issues](#known-issues)
@@ -274,6 +276,52 @@ distributed_model = nn.parallel.DistributedDataParallel(
 )
 # Distributed model and also saving the gradients
 logger.save_model(distributed_model, step=4, grads=True)
+```
+
+### Saving any Object
+
+_[PyTorch][pytorch] is optional, but must be installed to use this feature._
+
+Saves any object by serialising it with `torch.save`.
+
+```python
+logger.save_obj({ "key": 99 }, "a-dict")
+
+logger.save_obj((1, 2), "some_tuple", step=4)
+```
+
+### Disabling the Logger
+
+All logging actions can be disabled, either creating a disabled logger or by
+later disabling it. The logging actions will be a no-op instead and all methods
+can be used as if they were a regular logger but without having any output.
+Methods that produce some useful information without logging anything continue
+to function as usual.
+
+Disabling the logger is particularly useful when the same script is launched
+multiple in multiple processes, but only the main process should create the
+logs.
+
+```python
+# Create a disabled logger
+# No log directory will be created
+logger = lavd.Logger("some-experiment-name", disabled=True)
+
+# Does nothing
+logger.println("hello")
+
+# Won't show the spinner
+with logger.spinner("Loading..."):
+    # Do something that takes a while
+
+# Create a normal logger
+logger = lavd.Logger("some-experiment-name")
+
+# Disable it later
+logger.disable()
+
+# Enable it (also works if the logger was initially disabled)
+logger.enable()
 ```
 
 ## Data Layout
