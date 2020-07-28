@@ -826,6 +826,41 @@ class Logger(object):
             path = self.get_file_path("{}.grad".format(name), step, extension=extension)
             torch.save(grad_dict, path)
 
+    def save_obj(
+        self,
+        obj: Any,
+        name: str,
+        step: Optional[int] = None,
+        extension: str = ".pt",
+    ):
+        """
+        Saves any object by serialising it with `torch.save`.
+
+        Requires torch
+
+        Arguments:
+            object (any):
+                Object to be saved
+            name (str):
+                Name of the object to be saved.
+            step (int):
+                Step/epoch to which the object belongs, If unspecified, it is
+                saved at the top level instead. [Default: None]
+            extension (str):
+                The extension of the serialised object. It is recommended to use ".pt"
+                for this. Even though ".pth" is frequently used, it is in conflict with
+                Python's path configuration files
+                (see https://docs.python.org/3/library/site.html).
+                Might as well make sure to avoid that.
+                To further avoid ambiguities, ".pt" is used for serialised data and
+                ".ptc" is used for JIT exported modules (c = compiled).
+                [Default: ".pt"]
+        """
+        assert HAS_TORCH, "save_model requires torch (PyTorch) to be installed"
+        path = self.get_file_path(name, step, extension=extension)
+        path.parent.mkdir(parents=True, exist_ok=True)
+        torch.save(obj, path)
+
 
 class ProgressBar(tqdm):
     """
