@@ -14,21 +14,27 @@ export const Filter: React.FC<FilterProps> = ({
   delay = 300,
 }) => {
   const [filterValue, setFilterValue] = useState<string>("");
+  const [invalid, setInvalid] = useState(false);
   const debouncedFilterValue = useDebounce(filterValue, delay);
 
   useEffect(() => {
-    const filter =
-      debouncedFilterValue === ""
-        ? undefined
-        : new RegExp(debouncedFilterValue);
-    updateFilter(filter);
+    try {
+      const filter =
+        debouncedFilterValue === ""
+          ? undefined
+          : new RegExp(debouncedFilterValue);
+      updateFilter(filter);
+      setInvalid(false);
+    } catch {
+      setInvalid(true);
+    }
   }, [debouncedFilterValue, updateFilter]);
 
   return (
     <div className={styles.inputContainer}>
       <input
         placeholder={placeholder === undefined ? "Filter (Regex)" : placeholder}
-        className={styles.input}
+        className={invalid ? styles.inputInvalid : styles.input}
         value={filterValue}
         onChange={(e) => setFilterValue(e.target.value)}
         onKeyDown={(e) => {
@@ -42,7 +48,7 @@ export const Filter: React.FC<FilterProps> = ({
           className={styles.inputRemoveControls}
           onClick={() => setFilterValue("")}
         >
-          <span className={styles.plus}></span>
+          <span className={invalid ? styles.crossInvalid : styles.cross}></span>
         </div>
       )}
     </div>
