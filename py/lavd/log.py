@@ -14,6 +14,7 @@ from tqdm import tqdm
 
 from .file_types import SAVE_ALL_EXTENSIONS
 from .fs import write_json, write_text_file
+from .noop import maybe_disable
 
 try:
     import torch
@@ -39,6 +40,7 @@ table_separator_regex = re.compile("[^|]")
 
 
 class Logger(object):
+    disabled: bool
     name: str
     delimiter: str
     num_digits: int
@@ -62,6 +64,7 @@ class Logger(object):
         num_digits: int = 4,
         indent_size: int = 4,
         delimiter: str = "\t",
+        disabled: bool = False,
     ):
         """
         Arguments:
@@ -83,10 +86,19 @@ class Logger(object):
                 Delimiter to separate columns of the log files
                 This should not be changed if the logs are visualised with Lavd.
                 [Default: "\t"]
+            disabled (bool):
+                Whether to disable all logging actions, which use a no-op instead,
+                allowing the use of all methods as usual but without having any output.
+                Methods that produce some useful information without logging anything,
+                such as `get_file_path` will still work as usual.
+                Particularly useful when the same script is launched in multiple
+                processing, but only the main process should create the logs.
+                [Default: False]
         """
         super(Logger, self).__init__()
         self.base_dir = pathlib.Path(log_dir)
         self.delimiter = delimiter
+        self.disabled = disabled
         self.num_digits = num_digits
         self.indent_size = indent_size
         self.created_timestamp = datetime.now()
@@ -122,7 +134,8 @@ class Logger(object):
         self.prefix = ""
         self.events_time = {}
         self.to_pil = None if ToPILImage is None else ToPILImage()
-        self.log_dir.mkdir(parents=True, exist_ok=True)
+        if not self.disabled:
+            self.log_dir.mkdir(parents=True, exist_ok=True)
 
     def __del__(self):
         if self.events_file is not None:
@@ -131,6 +144,21 @@ class Logger(object):
             self.stdout_file.close()
         if self.stderr_file is not None:
             self.stderr_file.close()
+
+    def enable(self):
+        """
+        Enables all logging actions, should they have been disabled.
+        """
+        # Make sure the directory is created, which wouldn't be the case if a disabled
+        # logger was created.
+        self.log_dir.mkdir(parents=True, exist_ok=True)
+        self.disabled = False
+
+    def disable(self):
+        """
+        Disables all logging actions.
+        """
+        self.disabled = True
 
     def get_start_time(self) -> str:
         return self.created_timestamp.strftime("%Y-%m-%d %H:%M:%S")
@@ -165,6 +193,7 @@ class Logger(object):
         """
         self.prefix = prefix
 
+    @maybe_disable
     def start(self, name: str, prefix: bool = True, tag: str = "START"):
         """
         Starts an event with the given name and keeps track of its execution time.
@@ -188,6 +217,7 @@ class Logger(object):
         )
         self.log(tag, msg)
 
+    @maybe_disable
     def end(self, name: str, prefix: bool = True, tag: str = "END"):
         """
         Ends an event of the given name and logs its execution time if the event had
@@ -217,6 +247,7 @@ class Logger(object):
             msg = "{} - Duration: {}".format(msg, elapsed_time)
         self.log(tag, msg)
 
+    @maybe_disable
     def progress_bar(self, name: str, *args, prefix: bool = True, **kwargs):
         """
         Creates a progress bar for the given name. This is essentially a tqdm progress
@@ -244,6 +275,7 @@ class Logger(object):
         )
         return ProgressBar(self, name, prefix, *args, **kwargs)
 
+    @maybe_disable
     def spinner(self, name: str, *args, prefix: bool = True, **kwargs):
         """
         Creates a spinner for the given name. This is essentially a Halo spinner, but it
@@ -269,6 +301,7 @@ class Logger(object):
         kwargs["text"] = "{} {}".format(self.prefix, text) if prefix else text
         return Spinner(self, name, prefix, *args, **kwargs)
 
+    @maybe_disable
     def log(self, tag: str, msg: str):
         """
         Logs a message to the log file (events.log) with the given tag.
@@ -291,6 +324,7 @@ class Logger(object):
         self.events_file.write(msg)
         self.events_file.write("\n")
 
+    @maybe_disable
     def println(self, msg: str, *args, **kwargs):
         """
         Prints a message to STDOUT while also logging it to the appropriate files.
@@ -317,6 +351,7 @@ class Logger(object):
         self.log("STDOUT", formatted_msg)
         print(formatted_msg)
 
+    @maybe_disable
     def eprintln(self, msg: str, *args, **kwargs):
         """
         Prints a message to STDERR while also logging it to the appropriate files.
@@ -343,6 +378,7 @@ class Logger(object):
         self.log("STDERR", formatted_msg)
         print(formatted_msg, file=sys.stderr)
 
+    @maybe_disable
     def print_table(
         self,
         header: List[str],
@@ -421,6 +457,7 @@ class Logger(object):
             line = "| {fields} |".format(fields=" | ".join(r))
             self.println("{indent}{line}".format(indent=indent, line=line))
 
+    @maybe_disable
     def log_summary(
         self,
         infos: Optional[Dict[str, Any]] = None,
@@ -533,6 +570,7 @@ class Logger(object):
                     else:
                         fd.write("{}\n".format(section_content))
 
+    @maybe_disable
     def log_scalar(self, scalar: Union[int, float], name: str, step: int):
         """
         Logs a scalar
@@ -557,6 +595,7 @@ class Logger(object):
         scalar_dict = {"scalars": {"value": scalar}}
         write_json(scalar_dict, path, merge=True)
 
+    @maybe_disable
     def log_text(
         self,
         text: str,
@@ -596,6 +635,7 @@ class Logger(object):
             path = self.get_file_path(name, step, extension=".txt")
             write_text_file(text, path)
 
+    @maybe_disable
     def log_markdown(self, markdown: str, name: str, step: Optional[int] = None):
         """
         Logs a Markdown document
@@ -616,6 +656,7 @@ class Logger(object):
         path = self.get_file_path(name, step, extension=".md")
         write_text_file(markdown, path)
 
+    @maybe_disable
     def log_image(
         self,
         image: Union[Image.Image, "torch.Tensor", "np.array"],
@@ -711,6 +752,7 @@ class Logger(object):
                 image_dict["images"]["minProbability"] = threshold
             write_json(image_dict, json_path, merge=True)
 
+    @maybe_disable
     def log_command(
         self,
         parser: argparse.ArgumentParser,
@@ -765,6 +807,7 @@ class Logger(object):
 
     # The type annotation is given as string because torch might not be available, this
     # allows to still make it work while having type checking as well.
+    @maybe_disable
     def save_model(
         self,
         model: "Union[nn.Module, nn.DataParallel, nn.parallel.DistributedDataParallel]",
@@ -826,12 +869,9 @@ class Logger(object):
             path = self.get_file_path("{}.grad".format(name), step, extension=extension)
             torch.save(grad_dict, path)
 
+    @maybe_disable
     def save_obj(
-        self,
-        obj: Any,
-        name: str,
-        step: Optional[int] = None,
-        extension: str = ".pt",
+        self, obj: Any, name: str, step: Optional[int] = None, extension: str = ".pt",
     ):
         """
         Saves any object by serialising it with `torch.save`.
