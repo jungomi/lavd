@@ -161,11 +161,34 @@ class Logger(object):
         self.disabled = True
 
     def get_start_time(self) -> str:
+        """
+        Retrieves the time when the logger was created in a human readable format.
+
+        Returns:
+            timestamp (str): Date and time when the logger was created
+        """
         return self.created_timestamp.strftime("%Y-%m-%d %H:%M:%S")
 
     def get_file_path(
         self, name: str, step: Optional[int] = None, extension: str = ""
     ) -> pathlib.Path:
+        """
+        Assembles the path that corresponds to the file corresponding to the name and
+        step (if any) with the corresponding extension.
+
+        Arguments:
+            name (str):
+                Name of the target
+            step (int):
+                Step/epoch to which the target belongs, If unspecified, it is located at
+                the top level instead. [Default: None]
+            extension (str):
+                File extension for the target file.
+
+        Returns:
+            path (pathlib.Path):
+                Path to the corresponding file
+        """
         step_dir = (
             ""
             if step is None
