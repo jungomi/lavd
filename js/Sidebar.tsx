@@ -198,26 +198,24 @@ export const Sidebar: React.FC<Props> = ({
       >
         <path d="M11.727 26.71l9.977-9.999a1.012 1.012 0 000-1.429l-9.97-9.991c-.634-.66-1.748-.162-1.723.734v19.943c-.023.893 1.083 1.377 1.716.742zm7.84-10.713l-7.55 7.566V8.431l7.55 7.566z" />
       </svg>
-      {loading ? (
-        <SmallLoading />
-      ) : (
-        <div
-          className={shown ? styles.nameListContainer : styles.nameListHidden}
-          ref={listRef}
-        >
-          <Filter
-            updateFilter={setNameFilter}
-            placeholder="Filter Experiments (Regex)"
+      <div
+        className={shown ? styles.nameListContainer : styles.nameListHidden}
+        ref={listRef}
+      >
+        <Filter
+          updateFilter={setNameFilter}
+          placeholder="Filter Experiments (Regex)"
+        />
+        {loading ? (
+          <SmallLoading />
+        ) : hasVisibleData ? (
+          nameLists
+        ) : (
+          <SmallEmpty
+            text={hasData ? "data matching filter" : "data available"}
           />
-          {hasVisibleData ? (
-            nameLists
-          ) : (
-            <SmallEmpty
-              text={hasData ? "data matching filter" : "data available"}
-            />
-          )}
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 };
