@@ -952,5 +952,9 @@ export const Commands: React.FC<Props> = ({
         />
       )
   );
-  return cards.length === 0 ? <Empty text="commands" /> : <>{cards}</>;
+  return cards.length === 0 ? (
+    <Empty text="commands available" />
+  ) : (
+    <>{cards}</>
+  );
 };

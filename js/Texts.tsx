@@ -158,5 +158,13 @@ export const Texts: React.FC<Props> = ({
         )
     )
     .filter((c) => c);
-  return cards.length === 0 ? <Empty text={kind} /> : <>{cards}</>;
+  return cards.length === 0 ? (
+    <Empty
+      text={`${kind} ${
+        categoryFilter === undefined ? "available" : "matching filter"
+      }`}
+    />
+  ) : (
+    <>{cards}</>
+  );
 };

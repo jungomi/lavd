@@ -25,7 +25,7 @@ type Props = {
 };
 
 export const Empty: React.FC<Props> = ({ text }) => {
-  return <div className={emptyClass}>No {text} available</div>;
+  return <div className={emptyClass}>No {text}</div>;
 };
 
 export const SmallEmpty: React.FC<Props> = ({ text }) => {
