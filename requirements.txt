@@ -4,8 +4,8 @@ simplejson==3.17.2
 tornado==6.0.4
 tqdm==4.48.0
 watchdog==0.10.3
-torch==1.5.1
-torchvision==0.6.1
+torch==1.6.0
+torchvision==0.7.0
 mypy==0.782
 flake8==3.8.3
 black==19.10b0
