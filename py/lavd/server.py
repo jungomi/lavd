@@ -38,7 +38,10 @@ class Application(tornado.web.Application):
                 r"/(.*)",
                 FrontendFileHandler,
                 {
-                    "path": os.path.join(package_dir, "static",),
+                    "path": os.path.join(
+                        package_dir,
+                        "static",
+                    ),
                     "default_filename": "index.html",
                 },
             ),

@@ -112,14 +112,16 @@ class Logger(object):
             )
             self.git_hash = (
                 subprocess.check_output(
-                    ["git", "rev-parse", "HEAD"], cwd=self.repo_path,
+                    ["git", "rev-parse", "HEAD"],
+                    cwd=self.repo_path,
                 )
                 .strip()
                 .decode("utf-8")
             )
             self.git_branch = (
                 subprocess.check_output(
-                    ["git", "rev-parse", "--abbrev-ref", "HEAD"], cwd=self.repo_path,
+                    ["git", "rev-parse", "--abbrev-ref", "HEAD"],
+                    cwd=self.repo_path,
                 )
                 .strip()
                 .decode("utf-8")
@@ -517,7 +519,8 @@ class Logger(object):
         """
         try:
             diff = subprocess.check_output(
-                ["git", "diff", "HEAD"], cwd=self.repo_path,
+                ["git", "diff", "HEAD"],
+                cwd=self.repo_path,
             ).decode("utf-8")
         except subprocess.CalledProcessError:
             diff = ""
@@ -896,7 +899,11 @@ class Logger(object):
 
     @maybe_disable
     def save_obj(
-        self, obj: Any, name: str, step: Optional[int] = None, extension: str = ".pt",
+        self,
+        obj: Any,
+        name: str,
+        step: Optional[int] = None,
+        extension: str = ".pt",
     ):
         """
         Saves any object by serialising it with `torch.save`.
@@ -1068,7 +1075,9 @@ def extract_parser_options(
 
 
 def assign_args_to_options(
-    args: argparse.Namespace, positionals: Dict[str, Dict], options: Dict[str, Dict],
+    args: argparse.Namespace,
+    positionals: Dict[str, Dict],
+    options: Dict[str, Dict],
 ) -> Dict[str, Union[List, Dict]]:
     pos = []
     opts = {}

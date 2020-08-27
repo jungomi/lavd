@@ -99,7 +99,12 @@ def insert_file(
             text = json_data["texts"]
             text_len = len(text.get("actual", "")) + len(text.get("expeted", ""))
             data.set(
-                "texts", name, step, category, text, truncate=text_len > MAX_TEXT_LEN,
+                "texts",
+                name,
+                step,
+                category,
+                text,
+                truncate=text_len > MAX_TEXT_LEN,
             )
         if "images" in json_data:
             image_dict = json_data["images"]
@@ -132,7 +137,12 @@ def insert_file(
     elif file_category == "log":
         logs = read_log_file(abs_path)
         data.set(
-            "logs", name, step, category, logs, truncate=len(logs["lines"]) > MAX_LINES,
+            "logs",
+            name,
+            step,
+            category,
+            logs,
+            truncate=len(logs["lines"]) > MAX_LINES,
         )
     elif file_category == "markdown":
         markdown = read_text_file(abs_path)
