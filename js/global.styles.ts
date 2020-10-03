@@ -61,4 +61,7 @@ export const markdown = `
 .markdown-body > pre {
   background: #f7f7f7;
 }
+.markdown-body > ol {
+  list-style: decimal;
+}
 `;
