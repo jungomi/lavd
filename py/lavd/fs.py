@@ -1,5 +1,6 @@
 import base64
 import csv
+import errno
 import io
 import json
 import os
@@ -416,7 +417,23 @@ class FileWatcher(object):
             self.log_dir,
             recursive=True,
         )
-        self.observer.start()
+        try:
+            self.observer.start()
+        except OSError as err:
+            if err.errno == errno.ENOSPC:
+                msg = (
+                    "{}\n"
+                    "\n"
+                    "Try increasing the number of allowed watches:\n"
+                    "\n"
+                    "  sudo sysctl fs.inotify.max_user_watches=524288\n"
+                    "\n"
+                    "See also: "
+                    "https://github.com/jungomi/lavd#inotify-watch-limit-reached"
+                ).format(err.strerror)
+                raise OSError(err.errno, msg)
+            else:
+                raise err
 
     def stop(self):
         self.observer.stop()
