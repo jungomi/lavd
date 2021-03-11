@@ -55,7 +55,7 @@ class Logger(object):
     stdout_file: Optional[TextIO]
     stderr_file: Optional[TextIO]
     events_time: Dict[str, float]
-    to_pil: Optional[Callable[[Union["torch.Tensor", "np.array"]], Image.Image]]
+    to_pil: Optional[Callable[[Union["torch.Tensor", "np.ndarray"]], Image.Image]]
 
     def __init__(
         self,
@@ -687,7 +687,7 @@ class Logger(object):
     @maybe_disable
     def log_image(
         self,
-        image: Union[Image.Image, "torch.Tensor", "np.array"],
+        image: Union[Image.Image, "torch.Tensor", "np.ndarray"],
         name: str,
         step: Optional[int] = None,
         boxes: Optional[List[Dict]] = None,
