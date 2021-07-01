@@ -47,7 +47,7 @@ class Application(tornado.web.Application):
             ),
         ]
         self.file_watcher = FileWatcher(self.log_dir, self.data, self.update_lock)
-        super(Application, self).__init__(handlers, debug=debug)
+        super(Application, self).__init__(handlers, debug=debug, compress_response=True)
 
     def load_data(self) -> Data:
         with Halo("Scanning files"):
