@@ -42,6 +42,7 @@
     "eslint-plugin-react": "^7.20.3",
     "eslint-plugin-react-app": "^6.2.2",
     "eslint-plugin-react-hooks": "^4.0.8",
+    "node-gyp": "^8.2.0",
     "parcel": "^1.12.4",
     "prettier": "^2.0.5",
     "rimraf": "^3.0.2",
