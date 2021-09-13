@@ -3,13 +3,16 @@
     "target": "esnext",
     "module": "esnext",
     "moduleResolution": "node",
+    "allowJs": false,
     "jsx": "react",
     "rootDir": "./js/",
     "strict": true,
     "noImplicitAny": true,
     "strictNullChecks": true,
     "allowSyntheticDefaultImports": true,
-    "esModuleInterop": true
+    "esModuleInterop": false,
+    "isolatedModules": true,
+    "useDefineForClassFields": true
   },
   "include": ["js/"]
 }
