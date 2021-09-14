@@ -1,5 +1,6 @@
 import React from "react";
 import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 import { Card, CategoryCard } from "./Card";
 import { ColourMap } from "./colour/definition";
 import {
@@ -63,10 +64,9 @@ export const Markdown: React.FC<Props> = ({
                         <DataLoader data={selectedValue}>
                           {(loadedData) => (
                             <div className="markdown-body">
-                              <ReactMarkdown
-                                source={loadedData.raw}
-                                escapeHtml={false}
-                              />
+                              <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                                {loadedData.raw}
+                              </ReactMarkdown>
                             </div>
                           )}
                         </DataLoader>

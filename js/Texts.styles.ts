@@ -1,4 +1,4 @@
-import { css, cx } from "emotion";
+import { css, cx } from "@emotion/css";
 import { card } from "./Card.styles";
 
 const labelColour = "#616161";

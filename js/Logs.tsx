@@ -13,8 +13,8 @@ import { Empty } from "./Empty";
 import * as styles from "./Logs.styles";
 import { formatDate, parseDate, timeElapsed } from "./time";
 
-export type Log = {
-  lines: Array<LogLine>;
+export type LogProps = {
+  lines: Array<LogLineContent>;
 };
 
 type LogLineProps = {
@@ -56,7 +56,7 @@ const LogLine: React.FC<LogLineProps> = ({
   );
 };
 
-export type LogLine = {
+export type LogLineContent = {
   message: string;
   timestamp?: string;
   elapsed?: string;
@@ -64,7 +64,7 @@ export type LogLine = {
   lineNr?: number;
 };
 
-export const Log: React.FC<Log> = ({ lines }) => {
+export const Log: React.FC<LogProps> = ({ lines }) => {
   let start = undefined;
   const showColumn = {
     timestamp: false,
@@ -74,7 +74,10 @@ export const Log: React.FC<Log> = ({ lines }) => {
   };
   const logLines = [];
   for (const [i, line] of lines.entries()) {
-    const currentLine: LogLine = { message: line.message, lineNr: i + 1 };
+    const currentLine: LogLineContent = {
+      message: line.message,
+      lineNr: i + 1,
+    };
     if (line.timestamp) {
       const timestamp = parseDate(line.timestamp);
       if (timestamp) {

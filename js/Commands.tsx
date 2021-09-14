@@ -51,11 +51,11 @@ export type Command = {
   parser?: Parser;
 };
 
-export type Commands = {
+export type CommandsDefinition = {
   command: Command;
 };
 
-export type CommandMap = Map<string, Commands>;
+export type CommandMap = Map<string, CommandsDefinition>;
 
 function optionsToString(opt: OptionalParserOption): string {
   if (opt === undefined) {

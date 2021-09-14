@@ -35,59 +35,82 @@ type Routes = {
 };
 
 const routes: Routes = {
-  "/scalars": () => ({ data, colours, names, categoryFilter }) => (
-    <Scalars
-      data={data}
-      colours={colours}
-      names={names}
-      categoryFilter={categoryFilter}
-    />
-  ),
-  "/images": () => ({ data, colours, names, hideName, categoryFilter }) => (
-    <Images
-      data={data}
-      colours={colours}
-      names={names}
-      hideName={hideName}
-      categoryFilter={categoryFilter}
-    />
-  ),
-  "/text": () => ({ data, colours, names, hideName, categoryFilter }) => (
-    <Texts
-      data={data}
-      colours={colours}
-      names={names}
-      hideName={hideName}
-      categoryFilter={categoryFilter}
-    />
-  ),
-  "/logs": () => ({ data, colours, names, hideName, categoryFilter }) => (
-    <Logs
-      data={data}
-      colours={colours}
-      names={names}
-      hideName={hideName}
-      categoryFilter={categoryFilter}
-    />
-  ),
-  "/markdown": () => ({ data, colours, names, hideName, categoryFilter }) => (
-    <Markdown
-      data={data}
-      colours={colours}
-      names={names}
-      hideName={hideName}
-      categoryFilter={categoryFilter}
-    />
-  ),
-  "/commands": () => ({ data, colours, names, hideName }) => (
-    <Commands data={data} colours={colours} names={names} hideName={hideName} />
-  ),
+  "/scalars":
+    () =>
+    ({ data, colours, names, categoryFilter }) =>
+      (
+        <Scalars
+          data={data}
+          colours={colours}
+          names={names}
+          categoryFilter={categoryFilter}
+        />
+      ),
+  "/images":
+    () =>
+    ({ data, colours, names, hideName, categoryFilter }) =>
+      (
+        <Images
+          data={data}
+          colours={colours}
+          names={names}
+          hideName={hideName}
+          categoryFilter={categoryFilter}
+        />
+      ),
+  "/text":
+    () =>
+    ({ data, colours, names, hideName, categoryFilter }) =>
+      (
+        <Texts
+          data={data}
+          colours={colours}
+          names={names}
+          hideName={hideName}
+          categoryFilter={categoryFilter}
+        />
+      ),
+  "/logs":
+    () =>
+    ({ data, colours, names, hideName, categoryFilter }) =>
+      (
+        <Logs
+          data={data}
+          colours={colours}
+          names={names}
+          hideName={hideName}
+          categoryFilter={categoryFilter}
+        />
+      ),
+  "/markdown":
+    () =>
+    ({ data, colours, names, hideName, categoryFilter }) =>
+      (
+        <Markdown
+          data={data}
+          colours={colours}
+          names={names}
+          hideName={hideName}
+          categoryFilter={categoryFilter}
+        />
+      ),
+  "/commands":
+    () =>
+    ({ data, colours, names, hideName }) =>
+      (
+        <Commands
+          data={data}
+          colours={colours}
+          names={names}
+          hideName={hideName}
+        />
+      ),
 };
 
 export const App = () => {
   const [data, setData] = useState<DataMap>(new Map());
   const [hasFetched, setHasFetched] = useState(false);
-  const Content: React.FC<RouteProps> = useRoutes(routes);
+  const Content: React.FC<RouteProps> | null = useRoutes(routes);
   if (Content === null) {
     navigate("/scalars");
   }
@@ -95,9 +118,8 @@ export const App = () => {
   const [names, setNames] = useState<Names>(
     retrieveNames([...data.keys()].sort())
   );
-  const [categoryFilter, setCategoryFilter] = useState<Optional<RegExp>>(
-    undefined
-  );
+  const [categoryFilter, setCategoryFilter] =
+    useState<Optional<RegExp>>(undefined);
   const [colours, setColours] = useState(retrieveColours(names));
   // A copy map of the Map is created such that React re-renders it, since
   // mutating it change the reference and therefore not trigger a re-render.

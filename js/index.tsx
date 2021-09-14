@@ -2,7 +2,7 @@
 // directory.
 import "github-markdown-css";
 
-import { injectGlobal } from "emotion";
+import { injectGlobal } from "@emotion/css";
 import resetCss from "emotion-reset";
 import React from "react";
 import ReactDOM from "react-dom";

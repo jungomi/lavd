@@ -13,7 +13,7 @@ import { DataLoader } from "./DataLoader";
 import { Empty } from "./Empty";
 import * as styles from "./Texts.styles";
 
-export type Text = {
+export type TextContent = {
   actual: string;
   expected?: string;
 };

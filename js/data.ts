@@ -1,7 +1,7 @@
 import { Image } from "./Images";
 import { Scalar } from "./Scalars";
-import { Text } from "./Texts";
-import { Log } from "./Logs";
+import { TextContent } from "./Texts";
+import { LogProps } from "./Logs";
 import { MarkdownDocument } from "./Markdown";
 import { Command } from "./Commands";
 import { ColourMap, Colour } from "./colour/definition";
@@ -34,8 +34,8 @@ export type Data = {
     }>;
   };
   images?: DataList<Image>;
-  texts?: DataList<Text>;
-  logs?: DataList<Log>;
+  texts?: DataList<TextContent>;
+  logs?: DataList<LogProps>;
   markdown?: DataList<MarkdownDocument>;
   command?: Optional<Command>;
 };

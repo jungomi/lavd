@@ -1,4 +1,4 @@
-import { css, cx } from "emotion";
+import { css, cx } from "@emotion/css";
 import * as commandStyles from "./Commands.styles";
 
 // Based on command styles

@@ -1,4 +1,4 @@
-import { css, keyframes } from "emotion";
+import { css, keyframes } from "@emotion/css";
 
 const animation = keyframes({
   "0%": { transform: "scale(0)" },

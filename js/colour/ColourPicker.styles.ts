@@ -1,4 +1,4 @@
-import { css } from "emotion";
+import { css } from "@emotion/css";
 
 export const boxShadow = `
   0px 3px 3px -2px rgba(0, 0, 0, 0.2),

@@ -289,12 +289,8 @@ export const LinePlot: React.FC<Props> = ({
     const xyKeysSorted = [...xyMap.keys()].sort((a, b) => a - b);
     updateTooltip = (clientX: number, clientY: number) => {
       if (svgRef.current !== null && setTooltip !== undefined) {
-        const {
-          left,
-          top,
-          width,
-          height,
-        } = svgRef.current.getBoundingClientRect();
+        const { left, top, width, height } =
+          svgRef.current.getBoundingClientRect();
         const x = clientX - left;
         const y = clientY - top;
         const coordX = svgWidth * (x / width);
