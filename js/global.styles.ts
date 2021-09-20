@@ -1,3 +1,6 @@
+import * as themeStyles from "./theme.styles";
+import { cssVars } from "./theme.styles";
+
 export const fixHeight = `
 html, body {
   height: 100%;
@@ -13,10 +16,10 @@ html, body {
 
 const scrollbarConfig = {
   colour: {
-    fg: "rgba(0, 0, 0, 0.2)",
+    fg: cssVars.scrollbar.fg,
     bg: "transparent",
-    hover: "rgba(0, 0, 0, 0.3)",
-    active: "rgba(0, 0, 0, 0.5)",
+    hover: cssVars.scrollbar.hover,
+    active: cssVars.scrollbar.active,
   },
   size: "0.5rem",
   thumb: { minSize: "1.4rem" },
@@ -57,11 +60,52 @@ export const markdown = `
   overflow: scroll;
   padding-left: 1rem;
   padding-right: 1rem;
+  color: ${cssVars.fg};
+  background: inherit;
 }
-.markdown-body > pre {
-  background: #f7f7f7;
+.markdown-body a {
+  color: ${cssVars.link};
 }
-.markdown-body > ol {
+.markdown-body pre {
+  background: ${cssVars.code};
+}
+.markdown-body ol {
   list-style: decimal;
+}
+.markdown-body table tr {
+  background-color: inherit;
+}
+.markdown-body table tr:nth-child(2n) {
+  background-color: ${cssVars.code};
+}
+.markdown-body table td, 
+.markdown-body table th {
+  border-color: ${cssVars.table.border};
+}
+`;
+
+export const theme = `
+:root {
+  ${themeStyles.light}
+}
+@media(prefers-color-scheme: dark) {
+  :root {
+    ${themeStyles.dark}
+  }
+  img {
+    filter: brightness(.8) contrast(1.1);
+  }
+}
+[data-theme="light"] {
+  ${themeStyles.light}
+}
+[data-theme="dark"] {
+  ${themeStyles.dark}
+}
+[data-theme="light"] img {
+  filter: unset;
+}
+[data-theme="dark"] img {
+  filter: brightness(.8) contrast(1.1);
 }
 `;

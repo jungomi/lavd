@@ -1,7 +1,6 @@
 import { css, cx } from "@emotion/css";
 import { card } from "./Card.styles";
-
-const labelColour = "#616161";
+import { cssVars } from "./theme.styles";
 
 export const textCard = cx(
   card,
@@ -33,7 +32,7 @@ export const columnTitle = css({
   justifyContent: "center",
   fontSize: "1rem",
   fontWeight: 500,
-  color: labelColour,
+  color: cssVars.fg3,
   marginBottom: "0.8em",
 });
 
@@ -85,14 +84,14 @@ const diffChanges = css({
 export const diffAdded = cx(
   diffChanges,
   css({
-    background: "#97f295",
+    background: cssVars.diff.added,
   })
 );
 
 export const diffRemoved = cx(
   diffChanges,
   css({
-    background: "#ffb6ba",
+    background: cssVars.diff.removed,
   })
 );
 

@@ -152,10 +152,7 @@ const RgbInput: React.FC<InputProps> = ({ colour, setColour, switchMode }) => {
       </div>
       <div className={styles.inputSwitch} onClick={switchMode}>
         <svg xmlns="http://www.w3.org/2000/svg" height="24px" width="24px">
-          <path
-            fill="#333"
-            d="M12 5.83L15.17 9l1.41-1.41L12 3 7.41 7.59 8.83 9 12 5.83zM12 18.17L8.83 15l-1.41 1.41L12 21l4.59-4.59L15.17 15z"
-          />
+          <path d="M12 5.83L15.17 9l1.41-1.41L12 3 7.41 7.59 8.83 9 12 5.83zM12 18.17L8.83 15l-1.41 1.41L12 21l4.59-4.59L15.17 15z" />
         </svg>
       </div>
     </div>
@@ -291,10 +288,7 @@ const HslInput: React.FC<InputProps> = ({ colour, setColour, switchMode }) => {
       </div>
       <div className={styles.inputSwitch} onClick={switchMode}>
         <svg xmlns="http://www.w3.org/2000/svg" height="24px" width="24px">
-          <path
-            fill="#333"
-            d="M12 5.83L15.17 9l1.41-1.41L12 3 7.41 7.59 8.83 9 12 5.83zM12 18.17L8.83 15l-1.41 1.41L12 21l4.59-4.59L15.17 15z"
-          />
+          <path d="M12 5.83L15.17 9l1.41-1.41L12 3 7.41 7.59 8.83 9 12 5.83zM12 18.17L8.83 15l-1.41 1.41L12 21l4.59-4.59L15.17 15z" />
         </svg>
       </div>
     </div>
@@ -355,10 +349,7 @@ const HexInput: React.FC<InputProps> = ({ colour, setColour, switchMode }) => {
       </div>
       <div className={styles.inputSwitch} onClick={switchMode}>
         <svg xmlns="http://www.w3.org/2000/svg" height="24px" width="24px">
-          <path
-            fill="#333"
-            d="M12 5.83L15.17 9l1.41-1.41L12 3 7.41 7.59 8.83 9 12 5.83zM12 18.17L8.83 15l-1.41 1.41L12 21l4.59-4.59L15.17 15z"
-          />
+          <path d="M12 5.83L15.17 9l1.41-1.41L12 3 7.41 7.59 8.83 9 12 5.83zM12 18.17L8.83 15l-1.41 1.41L12 21l4.59-4.59L15.17 15z" />
         </svg>
       </div>
     </div>

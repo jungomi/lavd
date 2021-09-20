@@ -1,12 +1,13 @@
 import { css } from "@emotion/css";
-
-export const bgColour = "#f8fafc";
+import { cssVars } from "./theme.styles";
 
 export const wrapper = css({
   display: "flex",
   flexShrink: 0,
   height: "100%",
   position: "relative",
+  background: cssVars.bg,
+  color: cssVars.fg,
 });
 
 export const main = css({
@@ -17,7 +18,6 @@ export const main = css({
   paddingTop: "1rem",
   overflow: "scroll",
   width: "100%",
-  background: bgColour,
 });
 
 export const content = css({

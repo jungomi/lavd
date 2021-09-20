@@ -1,5 +1,5 @@
 import { css, cx } from "@emotion/css";
-import { bgColour } from "./App.styles";
+import { cssVars } from "./theme.styles";
 import * as commandStyles from "./Commands.styles";
 
 export const sidebar = css({
@@ -12,8 +12,7 @@ export const sidebar = css({
   flexShrink: 0,
   // The transition is `In Out - Cubic` in Chrome dev tools.
   transition: "all 0.3s cubic-bezier(0.65, 0.05, 0.36, 1)",
-  background: bgColour,
-  borderRight: "2px solid #e9e9e9",
+  borderRight: `2px solid ${cssVars.border}`,
   zIndex: 50,
 });
 
@@ -39,7 +38,7 @@ export const entry = css({
 export const hiddenEntry = cx(
   entry,
   css({
-    color: "#929292",
+    color: cssVars.fg2,
   })
 );
 
@@ -52,7 +51,7 @@ export const title = css({
   display: "flex",
   justifyContent: "center",
   fontWeight: 500,
-  color: "#616161",
+  color: cssVars.fg,
   marginBottom: "0.5rem",
 });
 
@@ -61,7 +60,7 @@ export const colour = css({
   height: "1.0rem",
   flexShrink: 0,
   borderRadius: "50%",
-  border: "1px solid #dadada",
+  border: `1px solid ${cssVars.border2}`,
   cursor: "pointer",
 });
 

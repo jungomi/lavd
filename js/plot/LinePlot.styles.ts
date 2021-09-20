@@ -1,4 +1,5 @@
 import { css, cx } from "@emotion/css";
+import { cssVars } from "../theme.styles";
 
 export const container = css({
   display: "flex",
@@ -15,16 +16,11 @@ export const sidebar = css({
 
 export const title = css({
   marginBottom: "0.3rem",
-  color: "#575757",
+  color: cssVars.fg3,
   textOverflow: "ellipsis",
   whiteSpace: "nowrap",
   overflow: "hidden",
   maxWidth: "330px",
-});
-
-export const selection = css({
-  backgroundColor: "#90CAF9",
-  border: "solid 1px #0D47A1",
 });
 
 export const strokeWidth = 2;
@@ -44,7 +40,7 @@ export const plotElement = css({
 });
 
 export const grid = css({
-  stroke: "#ccc",
+  stroke: cssVars.plot.axis,
 });
 
 export const axis = css({
@@ -53,20 +49,20 @@ export const axis = css({
 
 export const guide = css({
   vectorEffect: "non-scaling-stroke",
-  stroke: "#bbb",
+  stroke: cssVars.plot.grid,
   strokeWidth: `${strokeWidth / 2}px`,
 });
 
 export const labelSize = 2;
 
 export const labelsX = css({
-  fill: "#555",
+  fill: cssVars.plot.label,
   fontSize: `${labelSize}px`,
   textAnchor: "middle",
 });
 
 export const labelsY = css({
-  fill: "#555",
+  fill: cssVars.plot.label,
   fontSize: `${labelSize}px`,
   textAnchor: "end",
 });
@@ -75,9 +71,9 @@ export const tooltip = css({
   display: "flex",
   flexDirection: "column",
   padding: "0.6rem",
-  color: "#ffffff",
-  background: "rgba(0, 0, 0, 0.65)",
-  border: "2px solid rgba(100, 100, 100, 0.3)",
+  color: cssVars.plot.tooltip.fg,
+  background: cssVars.plot.tooltip.bg,
+  border: `2px solid ${cssVars.plot.tooltip.border}`,
   borderRadius: "6px",
   marginBottom: "0.2em",
   marginRight: "0.2em",
@@ -129,7 +125,7 @@ export const tooltipValueHovered = cx(
   tooltipValue,
   css({
     fontWeight: 800,
-    color: "#fff",
+    color: cssVars.plot.tooltip.fg,
   })
 );
 
@@ -138,6 +134,6 @@ export const tooltipColour = css({
   height: "0.8em",
   flexShrink: 0,
   borderRadius: "50%",
-  border: "1px solid #dadada",
+  border: `1px solid ${cssVars.border2}`,
   cursor: "pointer",
 });

@@ -1,4 +1,5 @@
 import { css } from "@emotion/css";
+import { cssVars } from "../theme.styles";
 
 export const inputPanel = css({
   width: "100%",
@@ -25,26 +26,27 @@ export const inputSwitch = css({
   marginRight: "0.8rem",
   cursor: "pointer",
   userSelect: "none",
+  fill: cssVars.fg3,
   border: "2px solid transparent",
   borderRadius: "50%",
   ":hover": {
-    background: "rgba(0, 0, 0, 0.06)",
+    background: cssVars.picker.switch.hover,
   },
   ":active": {
-    background: "rgba(0, 0, 0, 0.12)",
+    background: cssVars.picker.switch.active,
   },
 });
 
 export const input = css({
   width: "80%",
   height: "1.6rem",
-  border: "thin solid rgba(0, 0, 0, 0.12)",
+  border: `thin solid ${cssVars.input.border}`,
   borderRadius: "4px",
   textAlign: "center",
-  color: "rgba(0, 0, 0, 0.6)",
+  color: cssVars.fg2,
 });
 
 export const label = css({
-  color: "rgba(0, 0, 0, 0.6)",
+  color: cssVars.fg2,
   margin: "0.5rem 0",
 });

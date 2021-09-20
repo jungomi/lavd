@@ -1,4 +1,5 @@
 import { css } from "@emotion/css";
+import { cssVars } from "../theme.styles";
 
 export const boxShadow = `
   0px 3px 3px -2px rgba(0, 0, 0, 0.2),
@@ -18,8 +19,8 @@ export const blackGradient = css({
   background: "linear-gradient(to bottom, rgba(0, 0, 0, 0), black)",
 });
 
-export const fieldWidth = 300;
-export const fieldHeight = 150;
+export const fieldWidth = 320;
+export const fieldHeight = 160;
 export const sliderWidth = 180;
 export const sliderHeight = 12;
 export const pointerSize = 12;
@@ -31,7 +32,8 @@ export const popup = css({
   flexDirection: "column",
   alignItems: "center",
   top: "2rem",
-  background: "#ffffff",
+  background: cssVars.picker.bg,
+  border: `1px solid ${cssVars.border2}`,
   zIndex: 100,
   boxShadow,
 });
@@ -70,7 +72,7 @@ export const preview = css({
   height: "2.0rem",
   flexShrink: 0,
   borderRadius: "50%",
-  border: "1px solid #dadada",
+  border: `1px solid ${cssVars.border2}`,
 });
 
 export const sliders = css({

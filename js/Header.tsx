@@ -1,5 +1,6 @@
 import { A, useInterceptor, usePath } from "hookrouter";
 import React, { useEffect, useState } from "react";
+import { QuickSettings } from "./QuickSettings";
 import * as styles from "./Header.styles";
 
 type LinkProps = {
@@ -26,16 +27,16 @@ export const Header = () => {
   const mediaQuery = window.matchMedia("(max-width: 896px)");
   const [smallScreen, setSmallScreen] = useState(mediaQuery.matches);
   useEffect(() => {
-    const updateScreenSize = () => {
-      setSmallScreen(mediaQuery.matches);
+    const updateScreenSize = (e: MediaQueryListEvent) => {
+      setSmallScreen(e.matches);
       // The menu is closed once the media query triggers, whether it goes from
       // small to big or the other way around doesn't matter.
       setIsOpen(false);
     };
     // Update when the media media query is toggled.
-    mediaQuery.addListener(updateScreenSize);
+    mediaQuery.addEventListener("change", updateScreenSize);
     return () => {
-      mediaQuery.removeListener(updateScreenSize);
+      mediaQuery.removeEventListener("change", updateScreenSize);
     };
   });
   // The interceptor gets called everytime the route changes. When it happens,
@@ -60,6 +61,9 @@ export const Header = () => {
   };
   return (
     <header className={isOpen ? styles.headerOpen : styles.header}>
+      <div onClick={() => setIsOpen(!isOpen)} className={styles.burgerMenu}>
+        <div className={iconClass} />
+      </div>
       <nav className={isOpen ? styles.navOpen : styles.nav}>
         <Link
           href="/scalars"
@@ -110,9 +114,7 @@ export const Header = () => {
           Commands
         </Link>
       </nav>
-      <div onClick={() => setIsOpen(!isOpen)} className={styles.burgerMenu}>
-        <div className={iconClass} />
-      </div>
+      <QuickSettings />
     </header>
   );
 };

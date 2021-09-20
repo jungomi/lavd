@@ -1,6 +1,5 @@
 import { css, cx } from "@emotion/css";
-
-const labelColour = "#616161";
+import { cssVars } from "./theme.styles";
 
 export const smallImageSize = 200;
 
@@ -14,7 +13,7 @@ export const title = css({
 export const category = css({
   fontSize: "1.1rem",
   fontWeight: 500,
-  color: labelColour,
+  color: cssVars.fg3,
   marginBottom: "0.2rem",
 });
 
@@ -43,7 +42,7 @@ export const classList = css({
 
 export const classListTitle = css({
   fontWeight: 500,
-  color: labelColour,
+  color: cssVars.fg3,
   marginBottom: "0.8rem",
 });
 
@@ -137,7 +136,7 @@ export const colour = css({
   height: "0.7rem",
   flexShrink: 0,
   borderRadius: "0.6rem",
-  border: "1px solid #dadada",
+  border: `1px solid ${cssVars.border2}`,
   cursor: "pointer",
   marginRight: "0.4rem",
 });
@@ -150,26 +149,26 @@ export const probability = css({
 
 export const probabilityLabel = css({
   marginRight: "0.5rem",
-  color: labelColour,
+  color: cssVars.fg3,
 });
 
 export const probabilityInput = css({
   background: "none",
   height: "1.8rem",
-  border: "thin solid rgba(0, 0, 0, 0.12)",
+  border: `thin solid ${cssVars.input.border}`,
   borderRadius: "4px",
-  color: "#484848",
+  color: cssVars.fg,
   padding: "0 0.6rem",
   width: "8rem",
   ":hover": {
-    borderColor: "rgba(0, 0, 0, 0.36)",
+    borderColor: cssVars.input.hover.border,
   },
   ":focus": {
     // That's the default in Chrome, so other browsers now look the same.
     borderColor: "#469bde",
   },
   "::placeholder": {
-    color: "rgba(0, 0, 0, 0.4)",
+    color: cssVars.input.placeholder,
     textAlign: "center",
     // Firefox lowers the opacity for the placeholders, but that has already
     // been incorporated into the text colour, so that would double dip.
@@ -225,9 +224,9 @@ export const tooltipBox = css({
   display: "flex",
   flexDirection: "column",
   padding: "0.6rem",
-  color: "#ffffff",
-  background: "rgba(0, 0, 0, 0.65)",
-  border: "2px solid rgba(100, 100, 100, 0.3)",
+  color: cssVars.plot.tooltip.fg,
+  background: cssVars.plot.tooltip.bg,
+  border: `2px solid  ${cssVars.plot.tooltip.border}`,
   borderRadius: "6px",
   marginBottom: "0.2em",
   marginRight: "0.2em",
@@ -236,7 +235,7 @@ export const tooltipBox = css({
 export const tooltipBoxFullscreen = cx(
   tooltipBox,
   css({
-    background: "#141414",
+    background: "rgba(50, 52, 56, 0.9)",
   })
 );
 

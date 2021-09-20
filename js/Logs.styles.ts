@@ -1,8 +1,6 @@
 import { css, cx } from "@emotion/css";
-import { bgColour } from "./App.styles";
 import { categoryCard } from "./Card.styles";
-
-const labelColour = "#616161";
+import { cssVars } from "./theme.styles";
 
 export const logCard = cx(
   categoryCard,
@@ -21,13 +19,13 @@ export const tableContent = css({
 
 export const th = css({
   fontWeight: 500,
-  color: labelColour,
+  color: cssVars.fg3,
   paddingBottom: "0.8rem",
   position: "sticky",
   top: 0,
   // Needs to be over the line numbers, which are also sticky.
   zIndex: 2,
-  background: bgColour,
+  background: cssVars.bg,
 });
 
 export const td = css({
@@ -36,24 +34,24 @@ export const td = css({
 
 export const tr = css({
   ":hover": {
-    background: "#ebebeb87",
+    background: cssVars.log.hover,
     "& > td": {
       "::before": {
         // When the row is hovered, the line number (::before pseudo element)
         // changes colour.
-        color: "rgba(27, 31, 35, 0.6)",
+        color: cssVars.log.linenr.hover,
       },
     },
   },
 });
 
 export const lineNr = css({
-  color: "rgba(27, 31, 35, 0.3)",
+  color: cssVars.log.linenr.text,
   textAlign: "right",
   position: "sticky",
   left: 0,
   paddingRight: "0.4rem",
-  background: bgColour,
+  background: cssVars.bg,
   "::before": {
     // Show the line nr as ::before pseudo element
     content: "attr(data-line-nr)",
@@ -63,7 +61,7 @@ export const lineNr = css({
 export const time = cx(
   td,
   css({
-    color: "#5f5f5f",
+    color: cssVars.log.timestamp,
     textAlign: "right",
   })
 );

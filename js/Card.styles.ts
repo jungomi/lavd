@@ -1,9 +1,6 @@
 import { css, cx } from "@emotion/css";
 import { boxShadow } from "./colour/ColourPicker.styles";
-
-const labelColour = "#616161";
-const iconColour = "#cecece";
-const iconHoverColour = "#929292";
+import { cssVars } from "./theme.styles";
 
 export const card = css({
   display: "flex",
@@ -14,6 +11,7 @@ export const card = css({
   borderRadius: "4px",
   width: "100%",
   minWidth: "20rem",
+  background: cssVars.card.bg,
   boxShadow,
 });
 
@@ -50,7 +48,7 @@ export const categoryTitle = css({
   position: "relative",
   padding: "0.8rem",
   marginBottom: "0.8rem",
-  borderBottom: "1px solid #eaecef",
+  borderBottom: `1px solid ${cssVars.card.border}`,
   cursor: "pointer",
   userSelect: "none",
   "::before": {
@@ -60,7 +58,7 @@ export const categoryTitle = css({
     flexShrink: 0,
     height: "0.4rem",
     width: "0.4rem",
-    color: iconColour,
+    color: cssVars.card.icon.fg,
     borderStyle: "solid",
     // All mouse events are passed through the element below it.
     pointerEvents: "none",
@@ -69,9 +67,9 @@ export const categoryTitle = css({
     transition: "transform 0.2s ease-in-out",
   },
   ":hover": {
-    background: "rgba(0, 0, 0, 0.02)",
+    background: cssVars.card.hover,
     "::before": {
-      color: iconHoverColour,
+      color: cssVars.card.icon.hover,
     },
   },
 });
@@ -88,7 +86,7 @@ export const categoryTitleCollapsed = cx(
 
 export const category = css({
   fontWeight: 500,
-  color: labelColour,
+  color: cssVars.fg3,
   marginLeft: "1.4rem",
 });
 
@@ -97,18 +95,18 @@ export const name = css({
 });
 
 export const arrowLeftDisabled = css({
-  fill: "#cccccc",
+  fill: cssVars.card.arrow.disabled,
   height: "1em",
   width: "1em",
   cursor: "default",
 });
 
 export const arrowLeft = css({
-  fill: "#515151",
+  fill: cssVars.card.arrow.enabled,
   height: "1em",
   width: "1em",
   ":hover": {
-    fill: "#ff9800b0",
+    fill: cssVars.card.arrow.hover,
   },
 });
 
@@ -134,7 +132,7 @@ export const categorySteps = css({
 });
 
 export const step = css({
-  color: "rgba(0, 0, 0, 0.6)",
+  color: cssVars.fg3,
   height: "1em",
   minWidth: "1em",
   margin: "0 0.4em",
@@ -142,7 +140,7 @@ export const step = css({
   cursor: "pointer",
   userSelect: "none",
   ":hover": {
-    color: "#ff9800b0",
+    color: cssVars.card.arrow.hover,
   },
 });
 
@@ -162,10 +160,10 @@ export const input = css({
   height: "1.6em",
   width: "2.6em",
   margin: "0 0.4rem",
-  border: "thin solid rgba(0, 0, 0, 0.12)",
+  border: `thin solid ${cssVars.input.border}`,
   borderRadius: "4px",
   textAlign: "center",
-  color: "rgba(0, 0, 0, 0.6)",
+  color: cssVars.fg,
   // Get rid of the arrows at the end
   // This only works for Firefox
   appearance: "textfield",
@@ -173,8 +171,11 @@ export const input = css({
   "::-webkit-outer-spin-button, ::-webkit-inner-spin-button": {
     appearance: "none",
   },
+  ":hover": {
+    borderColor: cssVars.input.hover.border,
+  },
   "::placeholder": {
-    color: "rgba(0, 0, 0, 0.4)",
+    color: cssVars.input.placeholder,
     textAlign: "center",
     // Firefox lowers the opacity for the placeholders, but that has already
     // been incorporated into the text colour, so that would double dip.

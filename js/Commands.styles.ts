@@ -1,10 +1,6 @@
 import { css, cx } from "@emotion/css";
-import { bgColour } from "./App.styles";
 import { card } from "./Card.styles";
-
-const labelColour = "#616161";
-const iconColour = "#cecece";
-const iconHoverColour = "#929292";
+import { cssVars } from "./theme.styles";
 
 export const commandCard = cx(
   card,
@@ -30,24 +26,43 @@ export const commandPreview = css({
 
 export const copy = css({
   display: "flex",
+  position: "relative",
   width: "1rem",
   height: "1rem",
   marginLeft: "0.4rem",
   marginRight: "0.4rem",
   cursor: "pointer",
-  boxShadow: "0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24)",
+  background: cssVars.copy.bg,
+  boxShadow: `0 1px 3px ${cssVars.copy.shadow.primary}, 0 1px 2px ${cssVars.copy.shadow.secondary}`,
   padding: "0.6rem 0.5rem 0.4rem 0.6rem",
   borderRadius: "6px",
   userSelect: "none",
   ":hover": {
-    background: "rgba(237, 237, 237, 0.50)",
+    background: cssVars.copy.hover,
   },
   "::before": {
     content: "'Copied!'",
     fontSize: "0.9rem",
+    fontWeight: 300,
+    fontStyle: "italic",
     position: "absolute",
-    top: "-1.3rem",
-    left: "-0.5rem",
+    top: "0.35em",
+    left: "-5.0em",
+    background: cssVars.copy.tooltip,
+    padding: "0.3em 0.5em",
+    borderRadius: "0.4em",
+    pointerEvents: "none",
+    zIndex: 100,
+    transition: "opacity 0.2s ease-in-out",
+    opacity: 0,
+  },
+  "::after": {
+    content: "''",
+    position: "absolute",
+    top: "0.67em",
+    left: "-0.5em",
+    border: "0.35em solid",
+    borderColor: `transparent transparent transparent ${cssVars.copy.tooltip}`,
     pointerEvents: "none",
     zIndex: 100,
     transition: "opacity 0.2s ease-in-out",
@@ -58,7 +73,7 @@ export const copy = css({
 export const copySuccess = cx(
   copy,
   css({
-    "::before": {
+    "::before, ::after": {
       opacity: 1,
     },
   })
@@ -67,7 +82,7 @@ export const copySuccess = cx(
 export const copyIcon = css({
   width: "0.8rem",
   height: "1rem",
-  border: "solid 1px black",
+  border: `solid 1px ${cssVars.fg3}`,
   borderRadius: "1px",
   position: "relative",
   "::before": {
@@ -77,8 +92,8 @@ export const copyIcon = css({
     top: "-0.2rem",
     width: "0.8rem",
     height: "1rem",
-    borderTop: "solid 1px black",
-    borderLeft: "solid 1px black",
+    borderTop: `solid 1px ${cssVars.fg3}`,
+    borderLeft: `solid 1px ${cssVars.fg3}`,
     borderRadius: "1px 0 0 0",
   },
   "::after": {
@@ -111,7 +126,7 @@ export const copyIconSuccess = cx(
 export const commandPreviewCode = css({
   display: "flex",
   fontFamily: "monospace",
-  background: "#e5e5e56b",
+  background: cssVars.code,
   width: "100%",
   padding: "0.8rem",
   borderRadius: "2px",
@@ -135,25 +150,18 @@ export const table = css({
 
 export const th = css({
   fontWeight: 500,
-  color: labelColour,
+  color: cssVars.fg3,
   paddingBottom: "0.8rem",
   position: "sticky",
   top: 0,
   // Needs to be over the line numbers, which are also sticky.
   zIndex: 2,
-  background: bgColour,
+  background: cssVars.bg,
 });
 
 export const tr = css({
   ":hover": {
-    background: "#ebebeb87",
-    "& > td": {
-      "::before": {
-        // When the row is hovered, the line number (::before pseudo element)
-        // changes colour.
-        color: "rgba(27, 31, 35, 0.6)",
-      },
-    },
+    background: cssVars.log.hover,
   },
 });
 
@@ -183,7 +191,7 @@ export const shortName = cx(
 export const description = cx(
   td,
   css({
-    color: "#5f5f5f",
+    color: cssVars.fg3,
   })
 );
 
@@ -218,20 +226,20 @@ export const input = css({
   fontSize: "0.9rem",
   boxSizing: "border-box",
   height: "1.8rem",
-  border: "thin solid rgba(0, 0, 0, 0.12)",
+  border: `thin solid ${cssVars.input.border}`,
   borderRadius: "4px",
-  color: "#484848",
+  color: cssVars.fg,
   padding: "0 0.6rem",
   width: "100%",
   ":hover": {
-    borderColor: "rgba(0, 0, 0, 0.36)",
+    borderColor: cssVars.input.hover.border,
   },
   ":focus": {
     // That's the default in Chrome, so other browsers now look the same.
     borderColor: "#469bde",
   },
   "::placeholder": {
-    color: "rgba(0, 0, 0, 0.4)",
+    color: cssVars.input.placeholder,
     textAlign: "center",
     // Firefox lowers the opacity for the placeholders, but that has already
     // been incorporated into the text colour, so that would double dip.
@@ -296,7 +304,7 @@ export const selectContainer = css({
     justifyContent: "center",
     width: "100%",
     pointerEvents: "none",
-    color: "rgba(0, 0, 0, 0.4)",
+    color: cssVars.input.placeholder,
   },
   "::after": {
     content: "''",
@@ -305,7 +313,7 @@ export const selectContainer = css({
     flexShrink: 0,
     width: "0.4rem",
     height: "0.4rem",
-    color: iconColour,
+    color: cssVars.card.icon.fg,
     borderStyle: "solid",
     borderWidth: "0 2px 2px 0",
     // Rotate to make it point down
@@ -315,7 +323,7 @@ export const selectContainer = css({
   },
   ":hover": {
     "::after": {
-      color: iconHoverColour,
+      color: cssVars.card.icon.hover,
     },
   },
 });
@@ -328,6 +336,11 @@ export const select = cx(
     cursor: "pointer",
   })
 );
+
+export const option = css({
+  // This does not seem to work in Firefox, the menu there is unchanged.
+  background: cssVars.input.dropdown.bg,
+});
 
 export const inputRemoveControls = css({
   position: "absolute",
@@ -348,7 +361,7 @@ export const plus = css({
   // Horizontal line
   "::before": {
     content: "''",
-    background: iconColour,
+    background: cssVars.card.icon.fg,
     position: "absolute",
     flexShrink: 0,
     height: "2px",
@@ -360,7 +373,7 @@ export const plus = css({
   // Vertical line
   "::after": {
     content: "''",
-    background: iconColour,
+    background: cssVars.card.icon.fg,
     position: "absolute",
     flexShrink: 0,
     height: "60%",
@@ -371,7 +384,7 @@ export const plus = css({
   },
   ":hover": {
     "::before, ::after": {
-      background: iconHoverColour,
+      background: cssVars.card.icon.hover,
     },
   },
 });
@@ -389,7 +402,7 @@ export const addInput = css({
     flexShrink: 0,
     width: "0.4rem",
     height: "0.4rem",
-    color: iconColour,
+    color: cssVars.card.icon.fg,
     borderStyle: "solid",
     borderWidth: "0 2px 2px 0",
     // Rotate to make it point down
@@ -397,7 +410,7 @@ export const addInput = css({
   },
   ":hover": {
     "::before": {
-      color: iconHoverColour,
+      color: cssVars.card.icon.hover,
     },
   },
 });

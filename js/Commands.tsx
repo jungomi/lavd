@@ -301,9 +301,9 @@ const Input: React.FC<InputProps> = ({
           }}
           className={styles.select}
         >
-          <option value="" />
+          <option value="" className={styles.option} />
           {choices.map((c) => (
-            <option value={c} key={c}>
+            <option value={c} key={c} className={styles.option}>
               {c}
             </option>
           ))}
