@@ -26,5 +26,4 @@ export const content = css({
   flexShrink: 0,
   position: "relative",
   marginBottom: "1.5rem",
-  marginRight: "1.5rem",
 });

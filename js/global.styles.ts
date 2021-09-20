@@ -14,6 +14,15 @@ html, body {
 }
 `;
 
+export const resets = `
+html {
+  box-sizing: border-box;
+}
+*, *:before, *:after {
+  box-sizing: inherit;
+}
+`;
+
 const scrollbarConfig = {
   colour: {
     fg: cssVars.scrollbar.fg,

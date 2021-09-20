@@ -20,8 +20,8 @@ export const inputField = css({
 });
 
 export const inputSwitch = css({
-  width: "24px",
-  height: "24px",
+  width: "28px",
+  height: "28px",
   marginBottom: "0.8rem",
   marginRight: "0.8rem",
   cursor: "pointer",
@@ -38,8 +38,8 @@ export const inputSwitch = css({
 });
 
 export const input = css({
-  width: "80%",
-  height: "1.6rem",
+  width: "90%",
+  height: "1.9rem",
   border: `thin solid ${cssVars.input.border}`,
   borderRadius: "4px",
   textAlign: "center",

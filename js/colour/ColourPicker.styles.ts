@@ -64,12 +64,12 @@ export const panel = css({
   alignItems: "center",
   justifyContent: "space-evenly",
   width: "100%",
-  padding: "0.8rem",
+  padding: "0.8rem 0",
 });
 
 export const preview = css({
-  width: "2.0rem",
-  height: "2.0rem",
+  width: "2.1rem",
+  height: "2.1rem",
   flexShrink: 0,
   borderRadius: "50%",
   border: `1px solid ${cssVars.border2}`,

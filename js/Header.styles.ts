@@ -10,7 +10,6 @@ export const header = css({
   height: "3rem",
   background: cssVars.header.bg,
   transition: "all 0.2s ease-out",
-  boxSizing: "border-box",
   padding: "0 1rem",
   // Needs to be on top for the shadow to show
   zIndex: 100,

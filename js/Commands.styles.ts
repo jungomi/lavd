@@ -27,8 +27,8 @@ export const commandPreview = css({
 export const copy = css({
   display: "flex",
   position: "relative",
-  width: "1rem",
-  height: "1rem",
+  width: "2rem",
+  height: "2rem",
   marginLeft: "0.4rem",
   marginRight: "0.4rem",
   cursor: "pointer",
@@ -224,7 +224,6 @@ export const input = css({
   // <input> automatically uses Arial, so make it the same font as the rest.
   font: "inherit",
   fontSize: "0.9rem",
-  boxSizing: "border-box",
   height: "1.8rem",
   border: `thin solid ${cssVars.input.border}`,
   borderRadius: "4px",
@@ -272,8 +271,8 @@ export const checkbox = cx(
       content: "''",
       flexShrink: 0,
       // Small rectangle with a border to create an L shape
-      width: "0.3rem",
-      height: "0.6rem",
+      width: "0.5rem",
+      height: "0.8rem",
       borderStyle: "solid",
       borderWidth: "0 3px 3px 0",
       // Rotate the L to look like a checkmark
@@ -356,7 +355,6 @@ export const plus = css({
   borderRadius: "50%",
   flexShrink: 0,
   position: "relative",
-  boxSizing: "border-box",
   cursor: "pointer",
   // Horizontal line
   "::before": {

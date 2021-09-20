@@ -157,8 +157,8 @@ export const stepEllipsis = cx(
 
 export const input = css({
   background: "none",
-  height: "1.6em",
-  width: "2.6em",
+  height: "2em",
+  width: "3em",
   margin: "0 0.4rem",
   border: `thin solid ${cssVars.input.border}`,
   borderRadius: "4px",

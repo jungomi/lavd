@@ -56,8 +56,8 @@ export const title = css({
 });
 
 export const colour = css({
-  width: "1.0rem",
-  height: "1.0rem",
+  width: "1.1rem",
+  height: "1.1rem",
   flexShrink: 0,
   borderRadius: "50%",
   border: `1px solid ${cssVars.border2}`,

@@ -10,6 +10,7 @@ import { App } from "./App";
 import * as globalCss from "./global.styles";
 
 injectGlobal`${resetCss}
+${globalCss.resets}
 ${globalCss.theme}
 ${globalCss.fixHeight}
 ${globalCss.scrollbar}

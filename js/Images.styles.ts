@@ -104,8 +104,8 @@ export const imageContainerFullscreen = cx(
 );
 
 export const expandSmall = css({
-  width: "1.3rem",
-  height: "1.3rem",
+  width: "2.3rem",
+  height: "2.3rem",
   padding: "0.5rem",
   cursor: "pointer",
   fill: "#555555",
@@ -132,8 +132,8 @@ export const svg = css({
 });
 
 export const colour = css({
-  width: "2.5rem",
-  height: "0.7rem",
+  width: "2.3rem",
+  height: "0.8rem",
   flexShrink: 0,
   borderRadius: "0.6rem",
   border: `1px solid ${cssVars.border2}`,
@@ -154,12 +154,12 @@ export const probabilityLabel = css({
 
 export const probabilityInput = css({
   background: "none",
-  height: "1.8rem",
+  height: "2rem",
   border: `thin solid ${cssVars.input.border}`,
   borderRadius: "4px",
   color: cssVars.fg,
   padding: "0 0.6rem",
-  width: "8rem",
+  width: "9rem",
   ":hover": {
     borderColor: cssVars.input.hover.border,
   },
@@ -213,7 +213,6 @@ export const tooltipBoxListFullscreen = cx(
     flexWrap: "wrap-reverse",
     bottom: 0,
     right: 0,
-    boxSizing: "border-box",
     padding: "1rem",
     height: "unset",
     pointerEvents: "none",

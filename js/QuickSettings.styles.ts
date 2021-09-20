@@ -92,7 +92,6 @@ export const themePreview = css({
   display: "flex",
   flexDirection: "column",
   flexShrink: 0,
-  boxSizing: "border-box",
   background: cssVars.bg,
   width: "150px",
   height: "110px",
@@ -111,7 +110,6 @@ export const themePreviewUpperHalf = cx(
 export const previewHeader = css({
   display: "flex",
   alignItems: "center",
-  boxSizing: "border-box",
   height: "14px",
   background: cssVars.header.bg,
   marginBottom: "14px",
@@ -153,7 +151,6 @@ export const previewIcon = css({
 
 export const circle = css({
   display: "flex",
-  boxSizing: "border-box",
   background: cssVars.fg,
   width: "20px",
   height: "20px",
@@ -163,7 +160,6 @@ export const circle = css({
 
 export const textLine = css({
   display: "flex",
-  boxSizing: "border-box",
   background: cssVars.fg,
   width: "90px",
   height: "14px",
