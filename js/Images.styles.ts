@@ -136,7 +136,7 @@ export const colour = css({
   height: "0.8rem",
   flexShrink: 0,
   borderRadius: "0.6rem",
-  border: `1px solid ${cssVars.border2}`,
+  border: `1px solid ${cssVars.border}`,
   cursor: "pointer",
   marginRight: "0.4rem",
 });
@@ -164,8 +164,10 @@ export const probabilityInput = css({
     borderColor: cssVars.input.hover.border,
   },
   ":focus": {
-    // That's the default in Chrome, so other browsers now look the same.
-    borderColor: "#469bde",
+    outline: "1px solid",
+  },
+  "::-webkit-outer-spin-button, ::-webkit-inner-spin-button": {
+    cursor: "pointer",
   },
   "::placeholder": {
     color: cssVars.input.placeholder,

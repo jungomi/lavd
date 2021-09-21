@@ -234,8 +234,10 @@ export const input = css({
     borderColor: cssVars.input.hover.border,
   },
   ":focus": {
-    // That's the default in Chrome, so other browsers now look the same.
-    borderColor: "#469bde",
+    outline: "1px solid",
+  },
+  "::-webkit-outer-spin-button, ::-webkit-inner-spin-button": {
+    cursor: "pointer",
   },
   "::placeholder": {
     color: cssVars.input.placeholder,

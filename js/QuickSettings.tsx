@@ -61,10 +61,17 @@ export const QuickSettings: React.FC = () => {
         setIsOpen(false);
       }
     };
+    const pressEscape = (e: KeyboardEvent) => {
+      if (isOpen && e.key === "Escape") {
+        setIsOpen(false);
+      }
+    };
     window.addEventListener("click", outsideClick);
+    window.addEventListener("keydown", pressEscape);
     // Clean up when the component is destroyed
     return () => {
       window.removeEventListener("click", outsideClick);
+      window.removeEventListener("keydown", pressEscape);
     };
   });
 
@@ -78,6 +85,9 @@ export const QuickSettings: React.FC = () => {
       </button>
       <div className={isOpen ? styles.panelOpen : styles.panel} ref={panelRef}>
         <h2 className={styles.title}>Settings</h2>
+        <button className={styles.closeButton} onClick={() => setIsOpen(false)}>
+          <span className={styles.closeIcon}></span>
+        </button>
         <div className={styles.themes}>
           <h3 className={styles.themeTitle}>Theme</h3>
           <div className={styles.themesList}>

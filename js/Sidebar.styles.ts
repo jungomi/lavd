@@ -12,8 +12,10 @@ export const sidebar = css({
   flexShrink: 0,
   // The transition is `In Out - Cubic` in Chrome dev tools.
   transition: "all 0.3s cubic-bezier(0.65, 0.05, 0.36, 1)",
-  borderRight: `2px solid ${cssVars.border}`,
   zIndex: 50,
+  boxShadow: cssVars.shadow,
+  // Clip all shadows but the right
+  clipPath: "inset(0 -3rem 0 0)",
 });
 
 export const sidebarHidden = cx(
@@ -60,7 +62,7 @@ export const colour = css({
   height: "1.1rem",
   flexShrink: 0,
   borderRadius: "50%",
-  border: `1px solid ${cssVars.border2}`,
+  border: `1px solid ${cssVars.border}`,
   cursor: "pointer",
 });
 

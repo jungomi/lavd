@@ -1,5 +1,4 @@
 import { css, cx } from "@emotion/css";
-import { boxShadow } from "./colour/ColourPicker.styles";
 import { cssVars } from "./theme.styles";
 
 export const header = css({
@@ -9,11 +8,11 @@ export const header = css({
   width: "100%",
   height: "3rem",
   background: cssVars.header.bg,
+  borderBottom: `1px solid ${cssVars.border}`,
   transition: "all 0.2s ease-out",
   padding: "0 1rem",
   // Needs to be on top for the shadow to show
   zIndex: 100,
-  boxShadow,
   "@media only screen and (max-width: 896px)": {
     padding: 0,
   },
@@ -61,7 +60,7 @@ export const item = css({
   textDecoration: "none",
   height: "3rem",
   color: cssVars.header.fg,
-  fontWeight: 500,
+  fontWeight: 600,
   userSelect: "none",
   cursor: "pointer",
   overflow: "hidden",
@@ -84,6 +83,9 @@ export const item = css({
     padding: 0,
     visibility: "hidden",
   },
+  ":hover": {
+    color: cssVars.header.hover,
+  },
 });
 
 export const itemOpen = cx(
@@ -103,6 +105,9 @@ export const activeOpen = cx(
   itemOpen,
   css({
     color: cssVars.header.active,
+    ":hover": {
+      color: cssVars.header.active,
+    },
   })
 );
 
@@ -110,12 +115,18 @@ export const active = cx(
   item,
   css({
     color: cssVars.header.active,
+    ":hover": {
+      color: cssVars.header.active,
+    },
     "@media only screen and (max-width: 896px)": {
       width: "inherit",
       height: "3rem",
       margin: "unset",
       padding: "unset",
       visibility: "unset",
+      ":hover": {
+        color: cssVars.header.hover,
+      },
     },
   })
 );
@@ -140,14 +151,14 @@ export const burgerMenu = css({
 export const burgerIcon = css({
   display: "block",
   position: "relative",
-  background: cssVars.header.icon,
+  background: cssVars.header.fg,
   width: "18px",
   height: "2px",
   flexShrink: 0,
   "::before": {
     content: "''",
     position: "absolute",
-    background: cssVars.header.icon,
+    background: cssVars.header.fg,
     width: "100%",
     height: "100%",
     flexShrink: 0,
@@ -157,7 +168,7 @@ export const burgerIcon = css({
   "::after": {
     content: "''",
     position: "absolute",
-    background: cssVars.header.icon,
+    background: cssVars.header.fg,
     width: "100%",
     height: "100%",
     flexShrink: 0,

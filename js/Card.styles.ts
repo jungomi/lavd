@@ -1,5 +1,4 @@
 import { css, cx } from "@emotion/css";
-import { boxShadow } from "./colour/ColourPicker.styles";
 import { cssVars } from "./theme.styles";
 
 export const card = css({
@@ -12,7 +11,7 @@ export const card = css({
   width: "100%",
   minWidth: "20rem",
   background: cssVars.card.bg,
-  boxShadow,
+  boxShadow: cssVars.shadow,
 });
 
 export const content = css({
@@ -173,6 +172,9 @@ export const input = css({
   },
   ":hover": {
     borderColor: cssVars.input.hover.border,
+  },
+  ":focus": {
+    outline: "1px solid",
   },
   "::placeholder": {
     color: cssVars.input.placeholder,

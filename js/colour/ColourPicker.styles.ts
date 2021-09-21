@@ -33,9 +33,9 @@ export const popup = css({
   alignItems: "center",
   top: "2rem",
   background: cssVars.picker.bg,
-  border: `1px solid ${cssVars.border2}`,
+  border: `1px solid ${cssVars.border}`,
   zIndex: 100,
-  boxShadow,
+  boxShadow: cssVars.shadow,
 });
 
 export const colourField = css({
@@ -72,7 +72,7 @@ export const preview = css({
   height: "2.1rem",
   flexShrink: 0,
   borderRadius: "50%",
-  border: `1px solid ${cssVars.border2}`,
+  border: `1px solid ${cssVars.border}`,
 });
 
 export const sliders = css({

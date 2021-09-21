@@ -20,12 +20,11 @@ export const properties = {
   link: "--colour-link",
   error: "--colour-error",
   border: "--colour-border",
-  border2: "--colour-border-secondary",
   header: {
     bg: "--colour-header-background",
     fg: "--colour-header-text",
     active: "--colour-header-text-active",
-    icon: "--colour-header-icon",
+    hover: "--colour-header-text-hover",
   },
   scrollbar: {
     fg: "--colour-scrollbar-fg",
@@ -98,6 +97,7 @@ export const properties = {
       active: "--colour-picker-switch-active",
     },
   },
+  shadow: "--shadow",
 };
 
 // For convenience to avoid having to write var(...) every time.
@@ -114,12 +114,11 @@ export const dark = `
   ${properties.fg3}: #bfbfbf;
   ${properties.link}: #7ab4fc;
   ${properties.error}: rgba(255, 80, 80, 0.20);
-  ${properties.border}: #2d2d2d;
-  ${properties.border2}: #595959;
+  ${properties.border}: #353637;
   ${properties.header.bg}: #202225;
   ${properties.header.fg}: #aaaaaa;
   ${properties.header.active}: #ffffff;
-  ${properties.header.icon}: #ffffff;
+  ${properties.header.hover}: #37c390;
   ${properties.scrollbar.fg}: rgba(255, 255, 255, 0.2);
   ${properties.scrollbar.hover}: rgba(255, 255, 255, 0.3);
   ${properties.scrollbar.active}: rgba(255, 255, 255, 0.5);
@@ -157,6 +156,7 @@ export const dark = `
   ${properties.picker.bg}: #2c2e31;
   ${properties.picker.switch.hover}: rgba(255, 255, 255, 0.06);
   ${properties.picker.switch.active}: rgba(255, 255, 255, 0.12);
+  ${properties.shadow}: 0px 4px 24px #171924, 0px 1px 2px #171924;
 `;
 
 export const light = `
@@ -167,12 +167,11 @@ export const light = `
   ${properties.fg3}: #616161;
   ${properties.link}: #0969da;
   ${properties.error}: rgba(255, 0, 0, 0.20);
-  ${properties.border}: #eceeef;
-  ${properties.border2}: #dadada;
-  ${properties.header.bg}: #353535;
-  ${properties.header.fg}: #aaaaaa;
-  ${properties.header.active}: #ffffff;
-  ${properties.header.icon}: #ffffff;
+  ${properties.border}: #dadada;
+  ${properties.header.bg}: #f7f7f8;
+  ${properties.header.fg}: #9da2b7;
+  ${properties.header.active}: #171924;
+  ${properties.header.hover}: #3861fb;
   ${properties.scrollbar.fg}: rgba(0, 0, 0, 0.2);
   ${properties.scrollbar.hover}: rgba(0, 0, 0, 0.3);
   ${properties.scrollbar.active}: rgba(0, 0, 0, 0.5);
@@ -210,4 +209,5 @@ export const light = `
   ${properties.picker.bg}: #ffffff;
   ${properties.picker.switch.hover}: rgba(0, 0, 0, 0.06);
   ${properties.picker.switch.active}: rgba(0, 0, 0, 0.12);
+  ${properties.shadow}: 0px 1px 2px rgb(128 138 157 / 12%), 0px 8px 24px rgb(128 138 157 / 24%);
 `;

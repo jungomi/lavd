@@ -1,11 +1,15 @@
 import { css, cx } from "@emotion/css";
-import { boxShadow } from "./colour/ColourPicker.styles";
+import * as commandStyles from "./Commands.styles";
 import { cssVars } from "./theme.styles";
 
 export const settings = css({
   display: "flex",
   overflow: "visible",
   zIndex: 300,
+  marginRight: "1rem",
+  "@media only screen and (max-width: 896px)": {
+    marginRight: 0,
+  },
 });
 
 export const settingsButton = css({
@@ -21,28 +25,37 @@ export const settingsButton = css({
   cursor: "pointer",
   outline: "none",
   userSelect: "none",
+  marginLeft: "auto",
 });
 
 export const settingsIcon = css({
-  fill: cssVars.header.icon,
-  width: "28px",
-  height: "28px",
+  fill: cssVars.header.fg,
+  width: "26px",
+  height: "26px",
+  ":hover": {
+    fill: cssVars.header.hover,
+  },
 });
 
 export const panel = css({
   display: "flex",
   flexDirection: "column",
+  alignItems: "center",
   position: "absolute",
   background: cssVars.header.bg,
   minWidth: "min(100vw, 550px)",
-  top: "3rem",
-  right: 0,
+  padding: "1rem",
+  top: 0,
+  right: "2rem",
   zIndex: 300,
   cursor: "auto",
-  boxShadow,
+  boxShadow: cssVars.shadow,
   visibility: "hidden",
   opacity: 0,
   transition: "opacity 0.2s, visibility 0.2s",
+  "@media only screen and (max-width: 896px)": {
+    right: 0,
+  },
 });
 
 export const panelOpen = cx(
@@ -54,18 +67,34 @@ export const panelOpen = cx(
 );
 
 export const title = css({
-  alignSelf: "flex-start",
-  margin: "0.5rem 1.5rem",
   fontSize: "1.2rem",
   fontWeight: 500,
-  color: cssVars.header.fg,
+  color: cssVars.fg3,
+  marginBottom: "1.5rem",
 });
+
+export const closeButton = cx(
+  settingsButton,
+  css({
+    position: "absolute",
+    top: 0,
+    right: 0,
+  })
+);
+
+export const closeIcon = cx(
+  commandStyles.plus,
+  css({
+    width: "2rem",
+    height: "2rem",
+    transform: "rotate(45deg)",
+  })
+);
 
 export const themes = css({
   display: "flex",
   flexDirection: "column",
   alignItems: "center",
-  padding: "1rem",
 });
 
 export const themesList = css({
@@ -75,10 +104,10 @@ export const themesList = css({
 
 export const themeTitle = css({
   alignSelf: "flex-start",
-  marginLeft: "0.5rem",
+  marginLeft: "1rem",
   fontSize: "1.1rem",
   fontWeight: 500,
-  color: cssVars.header.fg,
+  color: cssVars.fg3,
 });
 
 export const theme = css({
@@ -96,7 +125,7 @@ export const themePreview = css({
   width: "150px",
   height: "110px",
   marginBottom: "0.5rem",
-  borderBottom: `1px solid ${cssVars.border2}`,
+  borderBottom: `1px solid ${cssVars.border}`,
 });
 
 export const themePreviewUpperHalf = cx(
@@ -114,6 +143,7 @@ export const previewHeader = css({
   background: cssVars.header.bg,
   marginBottom: "14px",
   padding: "0 6px",
+  borderBottom: `1px solid ${cssVars.border}`,
 });
 
 export const headerText = css({
@@ -144,7 +174,7 @@ export const previewSettings = css({
 });
 
 export const previewIcon = css({
-  fill: cssVars.header.icon,
+  fill: cssVars.header.fg,
   width: "10px",
   height: "10px",
 });
@@ -154,7 +184,7 @@ export const circle = css({
   background: cssVars.fg,
   width: "20px",
   height: "20px",
-  border: `1px solid ${cssVars.border2}`,
+  border: `1px solid ${cssVars.border}`,
   borderRadius: "50%",
 });
 
@@ -164,13 +194,12 @@ export const textLine = css({
   width: "90px",
   height: "14px",
   margin: "0 6px",
-  border: `1px solid ${cssVars.border2}`,
+  border: `1px solid ${cssVars.border}`,
   borderRadius: "6px",
 });
 
 export const label = css({
-  color: cssVars.header.fg,
-  border: `1px solid ${cssVars.border2}`,
+  border: `1px solid ${cssVars.border}`,
   borderRadius: "0.3rem",
   paddingBottom: "0.5rem",
   overflow: "hidden",
@@ -183,7 +212,7 @@ export const labelDescription = css({
 });
 
 export const labelText = css({
-  color: cssVars.header.fg,
+  color: cssVars.fg3,
 });
 
 export const radio = css({

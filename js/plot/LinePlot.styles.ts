@@ -134,6 +134,6 @@ export const tooltipColour = css({
   height: "0.8em",
   flexShrink: 0,
   borderRadius: "50%",
-  border: `1px solid ${cssVars.border2}`,
+  border: `1px solid ${cssVars.border}`,
   cursor: "pointer",
 });
