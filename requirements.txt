@@ -1,6 +1,7 @@
 halo==0.0.31
 Pillow==8.3.2
 simplejson==3.17.5
+types-simplejson==3.17.0
 tornado==6.1
 tqdm==4.62.3
 watchdog==2.1.6
