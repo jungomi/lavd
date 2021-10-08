@@ -1,6 +1,6 @@
 {
   "name": "lavd",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "Log and Visualise Data",
   "repository": "https://github.com/jungomi/lavd",
   "author": "Michael Jungo <michaeljungo92@gmail.com>",
