@@ -53,7 +53,7 @@ if __name__ == "__main__":
         url="https://github.com/jungomi/lavd",
         packages=["lavd"],
         package_dir={"": "py"},
-        package_data={"lavd": ["static/*"]},
+        package_data={"lavd": ["static/*", "static/*/*"]},
         include_package_data=True,
         python_requires=">=3.6",
         install_requires=requirements,
