@@ -41,7 +41,9 @@ def read_log_file(path: str) -> Dict[str, List[Dict]]:
     with open(path, "r", encoding="utf-8") as fd:
         reader = csv.reader(fd, delimiter="\t", quoting=csv.QUOTE_NONE, quotechar="")
         for line in reader:
-            if len(line) == 1:
+            if len(line) == 0:
+                lines.append({"message": ""})
+            elif len(line) == 1:
                 lines.append({"message": line[0]})
             elif len(line) == 2:
                 lines.append({"message": line[1], "timestamp": line[0]})
