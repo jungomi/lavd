@@ -8,7 +8,7 @@ jobs:
 
     strategy:
       matrix:
-        python-version: [3.7, 3.8, 3.9]
+        python-version: [3.8, 3.9, 3.10]
 
     steps:
     - uses: actions/checkout@v2
@@ -23,8 +23,10 @@ jobs:
     - name: Lint
       run: flake8 py/
     - name: Type Check
-      run: mypy py/ setup.py --ignore-missing-imports
+      run: mypy py/ setup.py
     - name: Formatting
-      run: black --check py/ setup.py
+      run: black --check --diff py/ setup.py
+    - name: Imports Formatting
+      run: isort --check --diff py/ setup.py
     - name: Package Build
       run: python -m pep517.build .
