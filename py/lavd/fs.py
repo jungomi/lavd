@@ -4,7 +4,7 @@ import errno
 import io
 import json
 import os
-import pathlib
+from pathlib import Path
 from typing import Dict, List, Optional, Union
 
 from PIL import Image
@@ -19,7 +19,7 @@ MAX_TEXT_LEN = 1024
 MAX_LINES = 100
 
 
-def load_json(path: str) -> Dict:
+def load_json(path: Union[str, os.PathLike]) -> Dict:
     try:
         with open(path, "r", encoding="utf-8") as fd:
             json_data = json.load(fd)
@@ -31,12 +31,12 @@ def load_json(path: str) -> Dict:
         return {}
 
 
-def read_text_file(path: str) -> str:
+def read_text_file(path: Union[str, os.PathLike]) -> str:
     with open(path, "r", encoding="utf-8") as fd:
         return fd.read()
 
 
-def read_log_file(path: str) -> Dict[str, List[Dict]]:
+def read_log_file(path: Union[str, os.PathLike]) -> Dict[str, List[Dict]]:
     lines = []
     with open(path, "r", encoding="utf-8") as fd:
         reader = csv.reader(fd, delimiter="\t", quoting=csv.QUOTE_NONE, quotechar="")
@@ -53,8 +53,12 @@ def read_log_file(path: str) -> Dict[str, List[Dict]]:
 
 
 def prepare_image(
-    abs_path: str, root: str = "", thumbnail_size: int = 40
+    abs_path: Union[str, os.PathLike],
+    root: Union[str, os.PathLike] = "",
+    thumbnail_size: int = 40,
 ) -> Optional[Dict]:
+    abs_path = Path(abs_path)
+    root = Path(root).absolute()
     try:
         image = Image.open(abs_path).convert("RGB")
         width, height = image.size
@@ -70,7 +74,7 @@ def prepare_image(
         # at least another event will be fired when it's fully written to disk.
         return None
     return {
-        "source": pathlib.Path("/data/", os.path.relpath(abs_path, root)).as_posix(),
+        "source": Path("/data/", abs_path.relative_to(root)).as_posix(),
         "thumbnail": {
             "base64": "data:image/jpeg;base64,{}".format(thumbnail),
             "width": width,
@@ -79,21 +83,22 @@ def prepare_image(
     }
 
 
-def list_experiments(path: str) -> List[str]:
-    _, dir_names, _ = next(os.walk(path))
+def list_experiments(path: Union[str, os.PathLike]) -> List[str]:
+    _, dir_names, _ = next(os.walk(os.fspath(path)))
     dir_names.sort()
     return dir_names
 
 
 def insert_file(
     data: Data,
-    abs_path: str,
+    abs_path: Union[str, os.PathLike],
     name: str,
     step: Union[str, int],
     category: str,
     file_category: Optional[str],
-    root: str = "",
+    root: Union[str, os.PathLike] = "",
 ):
+    abs_path = Path(abs_path)
     if file_category == "json":
         json_data = load_json(abs_path)
         if "scalars" in json_data:
@@ -113,8 +118,8 @@ def insert_file(
             image_dict = json_data["images"]
             image_source = image_dict.get("source")
             if image_source:
-                image_path = pathlib.Path(os.path.dirname(abs_path), image_source)
-                image = prepare_image(str(image_path), root=root)
+                image_path = abs_path.parent / image_source
+                image = prepare_image(image_path, root=root)
                 if image is not None:
                     image_dict.update(image)
                     data.set("images", name, step, category, image_dict)
@@ -161,13 +166,14 @@ def insert_file(
 
 def gather_files(
     data: Data,
-    abs_path: str,
+    abs_path: Union[str, os.PathLike],
     step: Union[str, int],
     name: str,
-    root: str = "",
+    root: Union[str, os.PathLike] = "",
     ignore_dirs: List[str] = [],
 ):
-    assert os.path.isabs(abs_path), "abs_path needs to be an absolute path"
+    abs_path = Path(abs_path)
+    assert abs_path.is_absolute(), "abs_path needs to be an absolute path"
     for dir, dir_names, file_names in os.walk(abs_path, topdown=True):
         rel_path = os.path.relpath(dir, abs_path)
         if rel_path == ".":
@@ -180,8 +186,8 @@ def gather_files(
             file_category = categorise_file(file_name)
             if file_category is not None:
                 base_name, _ = os.path.splitext(file_name)
-                category = pathlib.Path(rel_path, base_name)
-                full_path = pathlib.Path(dir, file_name)
+                category = Path(rel_path, base_name)
+                full_path = Path(dir, file_name)
                 insert_file(
                     data,
                     full_path.as_posix(),
@@ -193,17 +199,23 @@ def gather_files(
                 )
 
 
-def gather_experiment(data: Data, abs_path: str, name: str, root: str = ""):
-    assert os.path.isabs(abs_path), "abs_path needs to be an absolute path"
+def gather_experiment(
+    data: Data,
+    abs_path: Union[str, os.PathLike],
+    name: str,
+    root: Union[str, os.PathLike] = "",
+):
+    abs_path = Path(abs_path)
+    assert abs_path.is_absolute(), "abs_path needs to be an absolute path"
     _, dir_names, file_names = next(os.walk(abs_path))
     if "command.json" in file_names:
-        data.set_command(name, load_json(os.path.join(abs_path, "command.json")))
+        data.set_command(name, load_json(abs_path / "command.json"))
     # isdigit is only true for non-negative integers, so exactly what the steps can be.
     step_dirs = [d for d in dir_names if d.isdigit()]
     for step_dir in step_dirs:
         gather_files(
             data,
-            os.path.join(abs_path, step_dir),
+            abs_path / step_dir,
             step=int(step_dir),
             name=name,
             root=root,
@@ -213,14 +225,14 @@ def gather_experiment(data: Data, abs_path: str, name: str, root: str = ""):
     )
 
 
-def gather_data(path: str) -> Data:
+def gather_data(path: Union[str, os.PathLike]) -> Data:
     data = Data()
-    abs_path = os.path.abspath(path)
+    abs_path = Path(path).absolute()
     experiment_names = list_experiments(abs_path)
     for experiment_name in experiment_names:
         # The experiment name is always added, to also include empty experiments.
         data.add_name(experiment_name)
-        experiment_path = os.path.join(abs_path, experiment_name)
+        experiment_path = abs_path / experiment_name
         gather_experiment(data, experiment_path, name=experiment_name, root=abs_path)
     return data
 
@@ -228,15 +240,18 @@ def gather_data(path: str) -> Data:
 class FileWatcherHandler(events.FileSystemEventHandler):
     """Handler for file events"""
 
-    def __init__(self, log_dir: str, data: Data, update_lock: locks.Condition):
+    def __init__(
+        self, log_dir: Union[str, os.PathLike], data: Data, update_lock: locks.Condition
+    ):
         super().__init__()
         self.data = data
-        self.log_dir = log_dir
+        self.log_dir = Path(log_dir).absolute()
         self.update_lock = update_lock
 
-    def update_file(self, abs_path: str):
-        rel_path = os.path.relpath(abs_path, self.log_dir)
-        parts = pathlib.Path(rel_path).parts
+    def update_file(self, abs_path: Union[str, os.PathLike]):
+        abs_path = Path(abs_path)
+        rel_path = abs_path.relative_to(self.log_dir)
+        parts = rel_path.parts
         # Files depending on their paths
         # filename (ignored)
         # name, file (global of name)
@@ -263,12 +278,12 @@ class FileWatcherHandler(events.FileSystemEventHandler):
             name, first_dir, *rest = parts
             if first_dir.isdigit():
                 step: Union[int, str] = int(first_dir)
-                file_name = pathlib.Path(*rest).as_posix()
+                file_name = Path(*rest).as_posix()
             else:
                 step = "global"
                 # The file is a nested on if it isn't part of a step, therefore the
                 # file path is actually: dir/*/file
-                file_name = pathlib.Path(first_dir, *rest).as_posix()
+                file_name = Path(first_dir, *rest).as_posix()
             base_name, _ = os.path.splitext(file_name)
             file_category = categorise_file(file_name)
             insert_file(
@@ -282,15 +297,16 @@ class FileWatcherHandler(events.FileSystemEventHandler):
             )
             self.update_lock.notify_all()
 
-    def remove_file(self, abs_path: str, is_dir: bool = False):
-        rel_path = os.path.relpath(abs_path, self.log_dir)
+    def remove_file(self, abs_path: Union[str, os.PathLike], is_dir: bool = False):
+        abs_path = Path(abs_path)
+        rel_path = abs_path.relative_to(self.log_dir)
         if is_dir:
-            if rel_path == ".":
+            if str(rel_path) == ".":
                 # Resetting the data, since the whole directory is removed.
                 self.data.remove()
                 self.update_lock.notify_all()
                 return
-            parts = pathlib.Path(rel_path).parts
+            parts = rel_path.parts
             # Directories depending on their paths
             # name
             # name, i (step i of name)
@@ -311,10 +327,10 @@ class FileWatcherHandler(events.FileSystemEventHandler):
                 name, first_dir, *rest = parts
                 if first_dir.isdigit():
                     step: Union[int, str] = int(first_dir)
-                    category = pathlib.Path(*rest).as_posix()
+                    category = Path(*rest).as_posix()
                 else:
                     step = "global"
-                    category = pathlib.Path(first_dir, *rest).as_posix()
+                    category = Path(first_dir, *rest).as_posix()
                 self.data.remove(name, step=step, category=category, is_dir=True)
             self.update_lock.notify_all()
 
@@ -323,7 +339,7 @@ class FileWatcherHandler(events.FileSystemEventHandler):
             # The extension needs to be removed, since the categories do not include the
             # extension
             rel_path_no_ext, _ = os.path.splitext(rel_path)
-            parts = pathlib.Path(rel_path_no_ext).parts
+            parts = Path(rel_path_no_ext).parts
             kind = None
             if file_category == "image":
                 kind = "images"
@@ -349,21 +365,20 @@ class FileWatcherHandler(events.FileSystemEventHandler):
                 name, first_dir, *rest = parts
                 if first_dir.isdigit():
                     step = int(first_dir)
-                    category = pathlib.Path(*rest).as_posix()
+                    category = Path(*rest).as_posix()
                 else:
                     step = "global"
-                    category = pathlib.Path(first_dir, *rest).as_posix()
+                    category = Path(first_dir, *rest).as_posix()
                 self.data.remove(name, step=step, category=category, kind=kind)
                 self.update_lock.notify_all()
 
     def on_created(self, event: Union[events.DirCreatedEvent, events.FileCreatedEvent]):
-        full_path = event.src_path
+        full_path = Path(event.src_path)
         if isinstance(event, events.DirCreatedEvent):
-            rel_path = os.path.relpath(full_path, self.log_dir)
-            parts = pathlib.Path(rel_path).parts
+            rel_path = full_path.relative_to(self.log_dir)
             # Creating directory only adds the experiment if it didn't exist, but once
             # it exists there are no further changes
-            self.data.add_name(parts[0])
+            self.data.add_name(rel_path.parts[0])
             self.update_lock.notify_all()
         elif isinstance(event, events.FileCreatedEvent):
             self.update_file(full_path)
@@ -383,19 +398,18 @@ class FileWatcherHandler(events.FileSystemEventHandler):
             self.remove_file(event.src_path, is_dir=False)
 
     def on_moved(self, event: Union[events.DirMovedEvent, events.FileMovedEvent]):
-        old_path = event.src_path
-        new_path = event.dest_path
+        old_path = Path(event.src_path)
+        new_path = Path(event.dest_path)
         if isinstance(event, events.DirMovedEvent):
-            old_rel_path = os.path.relpath(old_path, self.log_dir)
-            old_parts = pathlib.Path(old_rel_path).parts
+            old_rel_path = old_path.relative_to(self.log_dir)
             # Moving a directory is only relevant to the experiment names, all others
             # have no effect unless there are files moved inside the directory, which
             # all fire a separate event.
-            if len(old_parts) == 1:
+            if len(old_rel_path.parts) == 1:
                 self.remove_file(old_path, is_dir=True)
             # If the destinatino is also an experiment, it needs to be created.
-            new_rel_path = os.path.relpath(new_path, self.log_dir)
-            new_parts = pathlib.Path(new_rel_path).parts
+            new_rel_path = new_path.relative_to(self.log_dir)
+            new_parts = new_rel_path.parts
             if len(new_parts) == 1:
                 self.data.add_name(new_parts[0])
                 self.update_lock.notify_all()
@@ -408,10 +422,12 @@ class FileWatcherHandler(events.FileSystemEventHandler):
 class FileWatcher:
     """FileWatcher that watches the file system for changes in the logged data"""
 
-    def __init__(self, log_dir: str, data: Data, update_lock: locks.Condition):
+    def __init__(
+        self, log_dir: Union[str, os.PathLike], data: Data, update_lock: locks.Condition
+    ):
         super().__init__()
         self.data = data
-        self.log_dir = os.path.abspath(log_dir)
+        self.log_dir = Path(log_dir).absolute()
         self.update_lock = update_lock
         self.observer = Observer()
         self.observer.schedule(
@@ -444,10 +460,11 @@ class FileWatcher:
         self.stop()
 
 
-def write_json(data: Dict, path: pathlib.Path, merge: bool = True):
+def write_json(data: Dict, path: Union[str, os.PathLike], merge: bool = True):
+    path = Path(path)
     path.parent.mkdir(parents=True, exist_ok=True)
     if path.is_file():
-        out = load_json(str(path))
+        out = load_json(path)
         out.update(data)
     else:
         out = data
@@ -456,8 +473,12 @@ def write_json(data: Dict, path: pathlib.Path, merge: bool = True):
 
 
 def write_text_file(
-    content: str, path: pathlib.Path, append: bool = False, ensure_newline: bool = True
+    content: str,
+    path: Union[str, os.PathLike],
+    append: bool = False,
+    ensure_newline: bool = True,
 ):
+    path = Path(path)
     path.parent.mkdir(parents=True, exist_ok=True)
     mode = "a" if append else "w"
     with open(path, mode, encoding="utf-8") as fd:

@@ -1,21 +1,23 @@
 import json
 import os
 import subprocess
+from pathlib import Path
+from typing import Union
 
 from setuptools import setup
 
 
-def read_file(path: str) -> str:
+def read_file(path: Union[str, os.PathLike]) -> str:
     with open(path, "r", encoding="utf-8") as fd:
         return fd.read()
 
 
-def read_version(path: str) -> str:
+def read_version(path: Union[str, os.PathLike]) -> str:
     with open(path, "r", encoding="utf-8") as fd:
         return json.load(fd)["version"]
 
 
-root_dir = os.path.dirname(os.path.abspath(__file__))
+root_dir = Path(__file__).absolute().parent
 
 version = read_version("package.json")
 readme = read_file("README.md")
@@ -34,7 +36,9 @@ except subprocess.CalledProcessError:
 
 
 def generate_version():
-    with open(os.path.join(root_dir, "py", "lavd", "version.py"), "w") as version_fd:
+    with open(
+        root_dir / "py" / "lavd" / "version.py", "w", encoding="utf-8"
+    ) as version_fd:
         version_fd.write('__version__ = "{}"\n'.format(version))
         version_fd.write('git_commit = "{}"\n'.format(git_hash))
 

@@ -2,6 +2,7 @@ import argparse
 import asyncio
 import os
 import sys
+from pathlib import Path
 
 import simplejson
 import tornado.ioloop
@@ -15,7 +16,7 @@ from .fs import FileWatcher, gather_data
 from .version import __version__
 
 default_port = 4343
-package_dir = os.path.dirname(os.path.abspath(__file__))
+package_dir = Path(__file__).absolute().parent
 
 
 class Application(tornado.web.Application):
@@ -38,10 +39,7 @@ class Application(tornado.web.Application):
                 r"/(.*)",
                 FrontendFileHandler,
                 {
-                    "path": os.path.join(
-                        package_dir,
-                        "static",
-                    ),
+                    "path": package_dir / "static",
                     "default_filename": "index.html",
                 },
             ),

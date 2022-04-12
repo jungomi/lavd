@@ -1,5 +1,6 @@
+import os
 from collections import OrderedDict
-from typing import Optional
+from typing import Optional, Union
 
 EXTENSIONS = OrderedDict(
     json=[".json"],
@@ -33,8 +34,8 @@ EXTENSIONS = OrderedDict(
 SAVE_ALL_EXTENSIONS = [".gif", ".tiff", ".tif"]
 
 
-def categorise_file(path: str) -> Optional[str]:
-    lower_case = path.lower()
+def categorise_file(path: Union[str, os.PathLike]) -> Optional[str]:
+    lower_case = os.fspath(path).lower()
     for category, extensions in EXTENSIONS.items():
         for ext in extensions:
             if lower_case.endswith(ext):

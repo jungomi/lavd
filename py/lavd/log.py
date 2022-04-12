@@ -1,11 +1,11 @@
 import argparse
 import os
-import pathlib
 import re
 import subprocess
 import sys
 import time
 from datetime import datetime
+from pathlib import Path
 from typing import Any, Callable, Dict, List, Optional, TextIO, Tuple, Union
 
 from halo import Halo
@@ -46,9 +46,9 @@ class Logger:
     num_digits: int
     indent_size: int
     created_timestamp: datetime
-    base_dir: pathlib.Path
-    log_dir: pathlib.Path
-    repo_path: Optional[str]
+    base_dir: Path
+    log_dir: Path
+    repo_path: Optional[Path]
     git_hash: Optional[str]
     git_branch: Optional[str]
     events_file: Optional[TextIO]
@@ -60,7 +60,7 @@ class Logger:
     def __init__(
         self,
         name: str = None,
-        log_dir: str = "./log",
+        log_dir: Union[str, os.PathLike] = "./log",
         num_digits: int = 4,
         indent_size: int = 4,
         delimiter: str = "\t",
@@ -72,7 +72,7 @@ class Logger:
                 Name of the experiment. If not specified uses the current date and time
                 as name.
                 [Default: None]
-            log_dir (str):
+            log_dir (str | os.PathLike):
                 Base directory of the logs [Default: ./log]
             num_digits (int):
                 Minimum number of digits for the step/epoch directories.
@@ -95,7 +95,7 @@ class Logger:
                 processing, but only the main process should create the logs.
                 [Default: False]
         """
-        self.base_dir = pathlib.Path(log_dir)
+        self.base_dir = Path(log_dir)
         super().__init__()
         self.delimiter = delimiter
         self.disabled = disabled
@@ -103,9 +103,9 @@ class Logger:
         self.indent_size = indent_size
         self.created_timestamp = datetime.now()
         self.name = self.get_start_time() if name is None else name
-        self.log_dir = pathlib.Path(log_dir, self.name)
+        self.log_dir = Path(log_dir, self.name)
         try:
-            self.repo_path = (
+            self.repo_path = Path(
                 subprocess.check_output(["git", "rev-parse", "--show-toplevel"])
                 .strip()
                 .decode("utf-8")
@@ -173,7 +173,7 @@ class Logger:
 
     def get_file_path(
         self, name: str, step: Optional[int] = None, extension: str = ""
-    ) -> pathlib.Path:
+    ) -> Path:
         """
         Assembles the path that corresponds to the file corresponding to the name and
         step (if any) with the corresponding extension.
@@ -188,7 +188,7 @@ class Logger:
                 File extension for the target file.
 
         Returns:
-            path (pathlib.Path):
+            path (Path):
                 Path to the corresponding file
         """
         step_dir = (
@@ -197,7 +197,7 @@ class Logger:
             else "{num:0>{pad}}".format(num=step, pad=self.num_digits)
         )
         name += extension
-        return pathlib.Path(self.log_dir, step_dir, name)
+        return Path(self.log_dir, step_dir, name)
 
     def set_prefix(self, prefix: str):
         """
@@ -773,7 +773,9 @@ class Logger:
         image.save(img_path, save_all=extension in SAVE_ALL_EXTENSIONS)
         if boxes is not None:
             json_path = self.get_file_path(name, step, extension=".json")
-            image_dict = {"images": {"source": img_path.name, "boxes": boxes}}
+            image_dict: Dict[str, Dict] = {
+                "images": {"source": img_path.name, "boxes": boxes}
+            }
             if classes is not None:
                 image_dict["images"]["classes"] = classes
             if threshold is not None:
