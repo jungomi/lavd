@@ -342,7 +342,10 @@ class Logger:
         now = datetime.now()
         if self.events_file is None:
             self.events_file = open(
-                os.path.join(self.log_dir, "events.log"), "w", buffering=1
+                self.log_dir / "events.log",
+                "w",
+                buffering=1,
+                encoding="utf-8",
             )
         self.events_file.write(str(now))
         self.events_file.write(self.delimiter)
@@ -370,7 +373,10 @@ class Logger:
         """
         if self.stdout_file is None:
             self.stdout_file = open(
-                os.path.join(self.log_dir, "stdout.log"), "w", buffering=1
+                self.log_dir / "stdout.log",
+                "w",
+                buffering=1,
+                encoding="utf-8",
             )
         formatted_msg = msg.format(*args, **kwargs)
         self.stdout_file.write(formatted_msg)
@@ -397,7 +403,10 @@ class Logger:
         """
         if self.stderr_file is None:
             self.stderr_file = open(
-                os.path.join(self.log_dir, "stderr.log"), "w", buffering=1
+                self.log_dir / "stderr.log",
+                "w",
+                buffering=1,
+                encoding="utf-8",
             )
         formatted_msg = msg.format(*args, **kwargs)
         self.stderr_file.write(formatted_msg)
@@ -524,11 +533,11 @@ class Logger:
             ).decode("utf-8")
         except subprocess.CalledProcessError:
             diff = ""
-        diff_file = os.path.join(self.log_dir, "changes.patch")
+        diff_file = self.log_dir / "changes.patch"
         if len(diff) > 0:
-            with open(diff_file, "w") as fd:
+            with open(diff_file, "w", encoding="utf-8") as fd:
                 fd.write(diff)
-        with open(os.path.join(self.log_dir, "summary.md"), "w") as fd:
+        with open(self.log_dir / "summary.md", "w", encoding="utf-8") as fd:
             fd.write("# {}\n\n".format(self.name))
             fd.write("- **Start**: {}\n".format(self.get_start_time()))
             fd.write("- **Git**:\n")
