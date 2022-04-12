@@ -460,38 +460,16 @@ class Logger:
             >>> # | Validation | 90      | 100   | 0.90000  |
             >>> # | Test       | -       | 50    | -        |
         """
-        rows_formatted = []
-        # Keeps track of the longest field length in each column, so that the table can
-        # be aligned nicely.
-        column_widths = [len(name) for name in header]
-        for row in rows:
-            row_formatted = []
-            for column, field in enumerate(row):
-                field_str = placeholder
-                if isinstance(field, str):
-                    field_str = field
-                elif isinstance(field, int):
-                    field_str = str(field)
-                elif isinstance(field, float):
-                    field_str = "{num:.{precision}f}".format(
-                        num=field, precision=precision
-                    )
-                row_formatted.append(field_str)
-                # Check whether the field is longer than current maximum column width
-                # and expand it if necessary.
-                if len(field_str) > column_widths[column]:
-                    column_widths[column] = len(field_str)
-            rows_formatted.append(row_formatted)
-        indent = " " * indent_level * self.indent_size
-        header = pad_table_row(header, column_widths)
-        line = "| {fields} |".format(fields=" | ".join(header))
-        self.println("{indent}{line}".format(indent=indent, line=line))
-        separator = table_separator_regex.sub("-", line)
-        self.println("{indent}{line}".format(indent=indent, line=separator))
-        for r in rows_formatted:
-            r = pad_table_row(r, column_widths)
-            line = "| {fields} |".format(fields=" | ".join(r))
-            self.println("{indent}{line}".format(indent=indent, line=line))
+        table_lines = create_markdown_table(
+            header,
+            rows,
+            indent_level=indent_level,
+            indent_size=self.indent_size,
+            placeholder=placeholder,
+            precision=precision,
+        )
+        for line in table_lines:
+            self.println(line)
 
     @maybe_disable
     def log_summary(
@@ -1117,3 +1095,45 @@ def pad_table_row(row: List[str], widths: List[int], value: str = " ") -> List[s
         "{field:{pad}<{width}}".format(field=field, pad=value, width=width)
         for field, width in zip(row, widths)
     ]
+
+
+def create_markdown_table(
+    header: List[str],
+    rows: List[List[Optional[Union[str, int, float]]]],
+    indent_level: int = 0,
+    indent_size: int = 2,
+    placeholder: str = "-",
+    precision: int = 5,
+) -> List[str]:
+    rows_formatted = []
+    # Keeps track of the longest field length in each column, so that the table can
+    # be aligned nicely.
+    column_widths = [len(name) for name in header]
+    for row in rows:
+        row_formatted = []
+        for column, field in enumerate(row):
+            field_str = placeholder
+            if isinstance(field, str):
+                field_str = field
+            elif isinstance(field, int):
+                field_str = str(field)
+            elif isinstance(field, float):
+                field_str = "{num:.{precision}f}".format(num=field, precision=precision)
+            row_formatted.append(field_str)
+            # Check whether the field is longer than current maximum column width
+            # and expand it if necessary.
+            if len(field_str) > column_widths[column]:
+                column_widths[column] = len(field_str)
+        rows_formatted.append(row_formatted)
+    lines = []
+    indent = " " * indent_level * indent_size
+    header = pad_table_row(header, column_widths)
+    line = "| {fields} |".format(fields=" | ".join(header))
+    lines.append("{indent}{line}".format(indent=indent, line=line))
+    separator = table_separator_regex.sub("-", line)
+    lines.append("{indent}{line}".format(indent=indent, line=separator))
+    for r in rows_formatted:
+        r = pad_table_row(r, column_widths)
+        line = "| {fields} |".format(fields=" | ".join(r))
+        lines.append("{indent}{line}".format(indent=indent, line=line))
+    return lines
