@@ -1,8 +1,7 @@
 import os
-from collections import OrderedDict
 from typing import Optional, Union
 
-EXTENSIONS = OrderedDict(
+EXTENSIONS = dict(
     json=[".json"],
     log=[".log"],
     text=[".txt", ".text"],
