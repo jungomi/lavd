@@ -1,7 +1,7 @@
 # Log and Visualise Data (Lavd)
 
-![](https://github.com/jungomi/lavd/workflows/Node.js/badge.svg)
-![](https://github.com/jungomi/lavd/workflows/Python/badge.svg)
+[![Node.js][actions-nodejs-badge]][actions-nodejs-link]
+[![Python][actions-python-badge]][actions-python-link]
 
 ![Lavd Screenshot](.github/lavd.png)
 
@@ -454,6 +454,10 @@ increased:
 sudo sysctl fs.inotify.max_user_watches=524288
 ```
 
+[actions-nodejs-badge]: https://github.com/jungomi/lavd/actions/workflows/nodejs.yml/badge.svg
+[actions-nodejs-link]: https://github.com/jungomi/lavd/actions/workflows/nodejs.yml
+[actions-python-badge]: https://github.com/jungomi/lavd/actions/workflows/python.yml/badge.svg
+[actions-python-link]: https://github.com/jungomi/lavd/actions/workflows/python.yml
 [halo]: https://github.com/manrajgrover/halo
 [pytorch]: https://pytorch.org
 [tensorboard]: https://github.com/tensorflow/tensorboard
