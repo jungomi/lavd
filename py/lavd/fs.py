@@ -229,7 +229,7 @@ class FileWatcherHandler(events.FileSystemEventHandler):
     """Handler for file events"""
 
     def __init__(self, log_dir: str, data: Data, update_lock: locks.Condition):
-        super(FileWatcherHandler, self).__init__()
+        super().__init__()
         self.data = data
         self.log_dir = log_dir
         self.update_lock = update_lock
@@ -405,11 +405,11 @@ class FileWatcherHandler(events.FileSystemEventHandler):
             self.update_file(new_path)
 
 
-class FileWatcher(object):
+class FileWatcher:
     """FileWatcher that watches the file system for changes in the logged data"""
 
     def __init__(self, log_dir: str, data: Data, update_lock: locks.Condition):
-        super(FileWatcher, self).__init__()
+        super().__init__()
         self.data = data
         self.log_dir = os.path.abspath(log_dir)
         self.update_lock = update_lock

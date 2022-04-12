@@ -39,7 +39,7 @@ except ImportError:
 table_separator_regex = re.compile("[^|]")
 
 
-class Logger(object):
+class Logger:
     disabled: bool
     name: str
     delimiter: str
@@ -95,8 +95,8 @@ class Logger(object):
                 processing, but only the main process should create the logs.
                 [Default: False]
         """
-        super(Logger, self).__init__()
         self.base_dir = pathlib.Path(log_dir)
+        super().__init__()
         self.delimiter = delimiter
         self.disabled = disabled
         self.num_digits = num_digits
@@ -955,7 +955,7 @@ class ProgressBar(tqdm):
         self.name = name
         self.prefix = prefix
         self.logger.start(self.name, prefix=self.prefix, tag="PROGRESS_START")
-        super(ProgressBar, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     def close(self):
         if self.disable:
@@ -982,7 +982,7 @@ class Spinner(Halo):
         self.logger = logger
         self.name = name
         self.prefix = prefix
-        super(Spinner, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     def start(self, text: Optional[str] = None) -> "Spinner":
         if self._spinner_id is None and self.enabled and self._check_stream():

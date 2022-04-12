@@ -9,7 +9,7 @@ def get_or_insert_dict(d: Dict, key: Any) -> Dict:
     return d[key]
 
 
-class Data(object):
+class Data:
     """
     Holds the data from the log directory
 
@@ -29,7 +29,7 @@ class Data(object):
     """
 
     def __init__(self):
-        super(Data, self).__init__()
+        super().__init__()
         self.full = {}
         self.truncated = {}
 

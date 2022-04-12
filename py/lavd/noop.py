@@ -1,7 +1,7 @@
 from functools import wraps
 
 
-class NoOp(object):
+class NoOp:
     """
     A No-Op class where the most common actions are no-ops, while also returning the
     no-op object, which allows to have chained no-ops.
