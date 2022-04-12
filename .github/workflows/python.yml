@@ -8,7 +8,7 @@ jobs:
 
     strategy:
       matrix:
-        python-version: [3.8, 3.9, 3.10]
+        python-version: ["3.8", "3.9", "3.10"]
 
     steps:
     - uses: actions/checkout@v2
@@ -29,4 +29,4 @@ jobs:
     - name: Imports Formatting
       run: isort --check --diff py/ setup.py
     - name: Package Build
-      run: python -m pep517.build .
+      run: python -m build .
