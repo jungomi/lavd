@@ -5,7 +5,9 @@ import sys
 from pathlib import Path
 
 import simplejson
+import tornado.httpserver
 import tornado.ioloop
+import tornado.netutil
 import tornado.web
 from halo import Halo
 from tornado import locks
@@ -152,8 +154,18 @@ class FrontendFileHandler(tornado.web.StaticFileHandler):
 
 def run(log_dir: str, port: int = default_port, debug: bool = False):
     app = Application(log_dir, debug=debug)
-    app.listen(port)
-    print("Running on http://localhost:{}".format(port))
+    server = tornado.httpserver.HTTPServer(app)
+    try:
+        sockets = tornado.netutil.bind_sockets(port)
+    except OSError as e:
+        # Error code 98: Address already in use
+        if e.errno != 98:
+            raise
+        print(f"⚠️ Port {port} already in use, choosing a random free port instead")
+        sockets = tornado.netutil.bind_sockets(0)
+    actual_port = sockets[0].getsockname()[1]
+    server.add_sockets(sockets)
+    print(f"⇒ Running on http://localhost:{actual_port}")
     tornado.ioloop.IOLoop.current().start()
 
 
