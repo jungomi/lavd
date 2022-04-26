@@ -1,6 +1,17 @@
+import sys
+
+# This needs to be done before tornado is imported to work correctly.
+if sys.platform == "win32":
+    import mimetypes
+
+    # The Windows MIME types are just wrong for some file types and gives
+    # text/plain. Absolutely baffling for such basics to be problematic nowadays.
+    # These are workarounds for some of files used here.
+    mimetypes.add_type("application/javascript", ".js")
+    mimetypes.add_type("text/css", ".css")
+
 import argparse
 import asyncio
-import mimetypes
 import os
 import sys
 from pathlib import Path
@@ -196,14 +207,8 @@ def main():
 
 
 if __name__ == "__main__":
-    if sys.platform == "win32":
-        # The Windows MIME types are just wrong for some file types and gives
-        # text/plain. Absolutely baffling for such basics to be problematic nowadays.
-        # These are workarounds for some of files used here.
-        mimetypes.add_type("application/javascript", ".js")
-        mimetypes.add_type("text/css", ".css")
-        # Python 3.8 on Windows switched to a Proactor event loop, but tornado requires
-        # the Selector, since the Proactor doesn't support some needed APIs (yet).
-        if sys.version_info[:2] == (3, 8):
-            asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+    # Python 3.8 on Windows switched to a Proactor event loop, but tornado requires the
+    # Selector, since the Proactor doesn't support some needed APIs (yet).
+    if sys.platform == "win32" and sys.version_info[:2] == (3, 8):
+        asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
     main()
