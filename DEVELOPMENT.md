@@ -191,7 +191,7 @@ install the tool). Most tools have very good defaults anyway.
 - [Prettier][prettier]: Formatting JavaScript/TypeScript — integrated into
   ESLint, therefore `yarn fix` will automatically format all files.
 - [TypeScript][typescript]: Type checking TypeScript — `yarn type-check`
-- [Flake8][flake8]: Linting Python — `yarn lint-python`
+- [ruff][ruff]: Linting Python — `yarn lint-python`
 - [Black][black]: Formatting Python — `yarn fmt-check-python`, and
   `yarn fix-python` to automatically fix/format Python files.
 - [Mypy][mypy]: Type checking Python — `yarn type-check-python`
@@ -207,7 +207,7 @@ yarn check-all
 [css-insert-rule]: https://developer.mozilla.org/en-US/docs/Web/API/CSSStyleSheet/insertRule
 [emotion]: https://emotion.sh/
 [eslint]: https://eslint.org/
-[flake8]: https://flake8.pycqa.org/en/latest/
+[ruff]: https://github.com/astral-sh/ruff
 [mypy]: https://github.com/python/mypy
 [nodejs]: https://nodejs.org/en/
 [parcel]: https://parceljs.org/

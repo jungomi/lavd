@@ -13,7 +13,7 @@
     "lint": "eslint js/ --ext .js,.ts,.tsx ",
     "type-check": "tsc --noEmit",
     "fix": "eslint js/ --ext .js,.ts,.tsx --fix",
-    "lint-python": "flake8 py/",
+    "lint-python": "ruff --show-source py/",
     "type-check-python": "mypy py/ setup.py --ignore-missing-imports",
     "fmt-check-python": "black --check py/ setup.py",
     "fix-python": "black py/ setup.py",
