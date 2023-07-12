@@ -59,7 +59,7 @@ class Logger:
 
     def __init__(
         self,
-        name: str = None,
+        name: Optional[str] = None,
         log_dir: Union[str, os.PathLike] = "./log",
         num_digits: int = 4,
         indent_size: int = 4,
