@@ -39,7 +39,7 @@ def read_text_file(path: Union[str, os.PathLike]) -> str:
 def read_log_file(path: Union[str, os.PathLike]) -> Dict[str, List[Dict]]:
     lines = []
     with open(path, "r", encoding="utf-8") as fd:
-        reader = csv.reader(fd, delimiter="\t", quoting=csv.QUOTE_NONE, quotechar="")
+        reader = csv.reader(fd, delimiter="\t", quoting=csv.QUOTE_NONE, quotechar=None)
         for line in reader:
             if len(line) == 0:
                 lines.append({"message": ""})
