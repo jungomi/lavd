@@ -1070,24 +1070,56 @@ def assign_args_to_options(
 ) -> Dict[str, Union[List, Dict]]:
     pos = []
     opts = {}
-    for key, value in vars(args).items():
+    for key, o in options.items():
         # None values are not saved, they just cause trouble because they are null and
         # undefined, and they should rather not be present than being null.
+        if o is None:
+            continue
+        value = get_recursive_option(args, key)
         if value is None:
             continue
-        if key in positionals:
-            pos.append(value)
-        else:
-            o = options.get(key)
-            if o is not None:
-                name = o.get("name") or key
-                opts[name] = value
+        name = o.get("name") or key
+        opts[name] = ensure_serialisable(value)
+    for key, o in positionals.items():
+        if o is None:
+            continue
+        value = get_recursive_option(args, key)
+        if value is None:
+            continue
+        pos.append(ensure_serialisable(value))
     out: Dict[str, Union[List, Dict]] = {}
     if len(pos) > 0:
         out["positional"] = pos
     if len(opts) > 0:
         out["options"] = opts
     return out
+
+
+# Convert everything that is not serialisable by the JSON module to strings to make them
+# serialisable.
+def ensure_serialisable(value: Any) -> Any:
+    if isinstance(value, dict):
+        return {k: ensure_serialisable(v) for k, v in value.items()}
+    elif isinstance(value, (list, tuple)):
+        return [ensure_serialisable(v) for v in value]
+    elif not isinstance(value, (str, int, float, bool)):
+        return str(value)
+    else:
+        return value
+
+
+def get_recursive_option(options: Any, key: str) -> Optional[Any]:
+    curr = options
+    for k in key.split("."):
+        if not isinstance(options, dict):
+            try:
+                curr = vars(curr)
+            except TypeError:
+                raise KeyError(f"Could not get key={key} from {curr}")
+        curr = curr.get(k)
+        if curr is None:
+            return None
+    return curr
 
 
 def pad_table_row(row: List[str], widths: List[int], value: str = " ") -> List[str]:
