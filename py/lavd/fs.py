@@ -101,21 +101,24 @@ def insert_file(
     abs_path = Path(abs_path)
     if file_category == "json":
         json_data = load_json(abs_path)
-        if "scalars" in json_data:
-            data.set("scalars", name, step, category, json_data["scalars"])
-        if "texts" in json_data:
-            text = json_data["texts"]
-            text_len = len(text.get("actual", "")) + len(text.get("expeted", ""))
+        scalars_dict = json_data.get("scalars")
+        if isinstance(scalars_dict, dict):
+            data.set("scalars", name, step, category, scalars_dict)
+        text_dict = json_data.get("texts")
+        if isinstance(text_dict, dict):
+            text_len = len(text_dict.get("actual", "")) + len(
+                text_dict.get("expeted", "")
+            )
             data.set(
                 "texts",
                 name,
                 step,
                 category,
-                text,
+                text_dict,
                 truncate=text_len > MAX_TEXT_LEN,
             )
-        if "images" in json_data:
-            image_dict = json_data["images"]
+        image_dict = json_data.get("images")
+        if isinstance(image_dict, dict):
             image_source = image_dict.get("source")
             if image_source:
                 image_path = abs_path.parent / image_source
